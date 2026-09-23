@@ -1,8 +1,9 @@
 from flask import Flask, render_template
+from modules.Recherche import Bp_recherche
 
+app = Flask(__name__)
 
-app = Flask(__name__, static_url_path='')
-
+app.register_blueprint(Bp_recherche, url_prefix='/Recherche')
 
 @app.route('/')
 def index():
