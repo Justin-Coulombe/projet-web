@@ -1,0 +1,89 @@
+{% extends "_modele.jinja" %}
+
+{% block contenu %}
+
+<div class="d-flex flex-column align-items-center justify-content-center mt-3">
+    <h2>Ajouter une place</h2>
+    <p>Ajouter une place de stationnement facilement</p>
+</div>
+
+<form class="row g-3" action="{{ url_for('station.ajouter_station') }}" method="post" novalidate>
+    <div class="col-md-6">
+        <label for="adresse" class="form-label">Adresse stationnement</label>
+        <input type="text" name="adresse" class="form-control {{classe_adresse}}" id="adresse" placeholder="133 boulevard de l'entente" value="{{adresse}}">
+        <div class="invalid-feedback">{{msg_adresse}}</div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="input-group">
+            <label for="prix" class="form-label input-group">Prix</label>
+            <input type="number" class="form-control" id="prix" name="prix">
+            <span class="input-group-text">$/heure</span>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <label for="place" class="form-label">Nombre de place</label>
+        <input type="number" class="form-control" id="place" name="place">
+    </div>
+
+    <fieldset class="border">
+        <legend class="float-none w-auto px-2">Les disponibilités du stationnement</legend>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label for="dateDebut" class="form-label">Disponible du :</label>
+                <input type="datetime-local" class="form-control" id="dateDebut" name="dateDebut" required>
+            </div>
+            <div class="col-md-6">
+                <label for="dateFin" class="form-label">Jusqu'au :</label>
+                <input type="datetime-local" class="form-control" id="dateFin" name="dateFin" required>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="col-md-6">
+        <label for="ville" class="form-label">Ville</label>
+        <select id="ville" name="ville" class="form-select">
+            <option selected value="">Choisissez la ville</option>
+            <option>Montréal</option>
+            <option>Québec</option>
+            <option>Laval</option>
+            <option>Gatineau</option>
+            <option>Longueuil</option>
+            <option>Sherbrooke</option>
+            <option>Lévis</option>
+            <option>Saguenay</option>
+            <option>Trois-Rivières</option>
+            <option>Terrebonne</option>
+            <option>Saint-Jean-sur-Richelieu</option>
+            <option>Brossard</option>
+            <option>Repentigny</option>
+            <option>Saint-Jérôme</option>
+            <option>Drummondville</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label for="province" class="form-label">Province</label>
+        <input type="text" class="form-control" id="province" value="Québec" disabled>
+    </div>
+
+    <div class="col-md-2 mb-3">
+        <label for="emplacement" class="form-label">Emplacement</label>
+        <select id="emplacement" name="emplacement" class="form-select">
+            <option selected value="">Sélectionnez</option>
+            <option>Intérieur</option>
+            <option>Extérieur</option>
+        </select>
+    </div>
+
+    <label for="img" class="form-label">Image du stationnement</label>
+    <div class="input-group mb-3">
+        <input type="file" class="form-control" id="img" name="img">
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-dark">Enregistrer</button>
+    </div>
+</form>
+{% endblock %}
