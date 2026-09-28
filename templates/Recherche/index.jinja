@@ -1,26 +1,43 @@
 {% extends '_modele.jinja' %}
 
+{%block script%}
+<script src="{{url_for('static', filename='js/recherche.js')}}"></script>
+{%endblock%}
+
+{%block centered_title %}
+<div class="mx-auto p-2" style="width: 200px;">
+  <h1>RECHERCHE</h1>
+</div>
+{%endblock%}
+
 {%block contenu %}
 <div class="container">
-    <div class="row">
-        <div class="col-9">
-            <h1>{{Arguments}}</h1>
-            <form action="#">
-                <div class="container">
-                    <div class="row gap-2">
-                        <input class="col-3" type="text" placeholder="Ville" id="txt_ville"/>
-                        <input class="col-2" type="date" placeholder="Date de début" id="date_debut"/>
-                        <input class="col-2" type="date" placeholder="Date de fin" id="date_fin"/>
-                        <input class="col-2 rounded-pill bg-dark text-white" type="submit" placeholder="Rechercher"/>
-                    </div>
-                </div>
-            </form>
-        </div>
+    <h1>{{context.arguments}}</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <p class="fs-5"> {{context.nb_article}} {% if context.nb_article > 1%}résultats trouvés {%else%} résultat trouvé {%endif%}</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><button value="tous" class="btn-filter btn btn-light btn-outline-dark" type="button">Tous</button></li>
+            <li class="list-inline-item"><button value="intérieur" class="btn-filter btn btn-light btn-outline-dark" type="button">intérieur</button></li>
+            <li class="list-inline-item"><button value="extérieur" class="btn-filter btn btn-light btn-outline-dark" type="button">extérieur</button></li>
+            <li class="list-inline-item"><button value="couvert" class="btn-filter btn btn-light btn-outline-dark" type="button">couvert</button></li>
+        </ul>
     </div>
 
-    <div class="d-flex">
-        <p> {{nb_article}} résultats trouvés</p>
-        
-    </div>
+    <ul id="display" class="list-group">
+        {# {% for item in context.resultats %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="container">
+                <div class="row gap-2">
+                    <img class="col-2">
+                    <div class="col">
+                        <p>{{item.address}}</p>
+                        <span class="badge rounded-3 bg-dark">{{item.emplacement}}</span>
+                    </div>
+                </div>
+            </div>
+            <span>{{item.prix}}$/jour</span>
+        </li>
+        {% endfor%} #}
+    </ul>
 </div>
 {%endblock%}

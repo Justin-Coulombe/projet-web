@@ -9,12 +9,25 @@ def index():
     Affiche une page de recherche avec des recommendation si la 
     methode est GET. Affiche une page avec les résultats de la recherche
     """
+    context = {}
     if request.method == 'POST':
-        # ville = request.form.get('ville', type=str)
+        # form = request.form
+        # ville = form.get('ville', type=str)
         # date_debut = request.form.get('debut', type=date)
-        # date_fin = request.form.get('fin', type=date)
+        # date_fin = form.get('fin', type=date)
         # envoie à la bd
         return render_template('Recherche/index', element="hello POST")
 
-    return render_template('Recherche/index.jinja', element="Hello GET")
+    context['resultats'] = _get_fake_result()
+    context['arguments'] = 'faux arguments'
+    context['nb_article'] = 3
+    return render_template('recherche/index.jinja', element="Hello GET", context=context)
+
+def _get_fake_result():
+    item = {'prix': 22, 'address': '123 rue campagne', 'emplacement':'dehors'}
+    resultat = []
+    for i in range(2):
+        resultat.append(item)
+
+    return resultat
         

@@ -1,9 +1,11 @@
 from flask import Flask, render_template
 from modules.Recherche import Bp_recherche
+from modules.API import Bp_api
 from Database import bd
 
 app = Flask(__name__)
-app.register_blueprint(Bp_recherche, url_prefix='/Recherche')
+app.register_blueprint(Bp_recherche, url_prefix='/recherche')
+app.register_blueprint(Bp_api, url_prefix='/API')
 bd.init_database()
 
 @app.route('/')
