@@ -1,5 +1,9 @@
 {% extends "_modele.jinja" %}
 
+{% block script %}
+<script defer src="/js/validation.js"></script>
+{% endblock %}
+
 {% block contenu %}
 
 <div class="d-flex flex-column align-items-center justify-content-center mt-3">
@@ -7,8 +11,8 @@
     <p>Ajouter une place de stationnement facilement</p>
 </div>
 
-<form id="ajout_form" class="row g-3" action="{{ url_for('stationnement.ajouter_stationnement') }}" enctype="multipart/form-data" method="post"
-    novalidate>
+<form id="ajout_form" class="row g-3" action="{{ url_for('stationnement.ajouter_stationnement') }}"
+    enctype="multipart/form-data" method="post" novalidate>
     <div class="col-md-6">
         <label for="adresse" class="form-label">Adresse stationnement</label>
         <input type="text" name="adresse" class="form-control {{classe_adresse}}" id="adresse"
@@ -46,7 +50,7 @@
                 <label for="dateFin" class="form-label">Jusqu'au :</label>
                 <input type="datetime-local" class="form-control {{classe_fin}}" id="dateFin" name="dateFin"
                     value="{{fin}}" required>
-                <div class="invalid-feedback">{{msg_fin}}</div>
+                <div class="invalid-feedback" id="msgFin">{{msg_fin}}</div>
 
             </div>
         </div>
@@ -56,7 +60,7 @@
         <label for="ville" class="form-label">Ville</label>
         <select id="ville" name="ville" class="form-select {{classe_ville}}">
             <option selected value="">Choisissez la ville</option>
-            <option  {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
+            <option {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
             <option {% if ville=="Québec" %}selected{% endif %}>Québec</option>
             <option {% if ville=="Laval" %}selected{% endif %}>Laval</option>
             <option {% if ville=="Gatineau" %}selected{% endif %}>Gatineau</option>
@@ -97,8 +101,8 @@
         <input type="file" class="form-control {{classe_image}}" id="image" name="image">
         <div class="invalid-feedback mb-3">{{message_image}}</div>
     </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-dark">Enregistrer</button>
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <button type="submit" class="btn btn-dark">Publier la place de stationnement</button>
     </div>
 </form>
 {% endblock %}

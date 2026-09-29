@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, abort, request, session, Flask
 from Database import bd
 import utilitaire
-import os,time
+import os
+import time
 import re
 import logging
 
@@ -53,7 +54,6 @@ def ajouter_stationnement():
     classe_emplacement = ""
     msg_emplacement = ""
 
-
     message_image = ""
     classe_image = ""
 
@@ -97,7 +97,7 @@ def ajouter_stationnement():
         msg_emplacement = "Ce champ ne peut être vide"
         erreur = True
 
-    # fichier = request.files.get('image')
+
     fichier = request.files['image']
     if not fichier:
         message_image = "Assurez-vous de bien téléverser votre image"
@@ -117,7 +117,6 @@ def ajouter_stationnement():
     )
 
     fichier.save(chemin_complet)
-
 
     if erreur:
         return render_template(
