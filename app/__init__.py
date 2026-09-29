@@ -6,6 +6,7 @@ from app.database.init_db import init_database
 from app.database.queries.users import get_user_by_id
 from dotenv import load_dotenv
 from app.routes.profile import bp_profile
+from app.routes.stationnement import bp_stationnement
 
 load_dotenv()
 
@@ -49,6 +50,11 @@ def create_app():
     app.register_blueprint(
     bp_profile,
     url_prefix="/profile"
+    )
+
+    app.register_blueprint(
+    bp_stationnement,
+    url_prefix="/stationnement"
     )
 
     return app

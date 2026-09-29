@@ -24,3 +24,51 @@ def create_publication_table():
 
     cursor.execute(command)
     close_connection(conn, cursor)
+
+def ajouter_stationnement(
+    address,
+    prix,
+    place,
+    debut,
+    fin,
+    ville,
+    emplacement,
+    image,
+    id_author
+):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    command = """
+        INSERT INTO Publication (
+            author,
+            address,
+            prix,
+            debut,
+            fin,
+            ville,
+            emplacement,
+            image,
+            placemax,
+            placedispo
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+
+    cursor.execute(
+        command,
+        (
+            id_author,
+            address,
+            prix,
+            debut,
+            fin,
+            ville,
+            emplacement,
+            image,
+            place,
+            place
+        )
+    )
+
+    close_connection(conn, cursor)
