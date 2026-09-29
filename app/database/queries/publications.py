@@ -1,4 +1,6 @@
 from app.database.connection import create_connection, close_connection
+from app.database.objects import publication
+
 
 
 def create_publication_table():
@@ -72,3 +74,155 @@ def ajouter_stationnement(
     )
 
     close_connection(conn, cursor)
+
+def get_publications_with_city_date(params):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    command = """
+        SELECT
+            id,
+            author,
+            address,
+            prix,
+            debut,
+            fin,
+            ville,
+            emplacement,
+            image,
+            placedispo
+        FROM Publication
+        WHERE ville LIKE ?
+          AND DATE(debut) <= DATE(?)
+          AND DATE(fin) >= DATE(?)
+    """
+
+    cursor.execute(
+        command,
+        (
+            params.get("city"),
+            params.get("start"),
+            params.get("end")
+        )
+    )
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    publications = []
+
+    for item in results:
+        publications.append(
+            publication(
+                item[0],
+                item[1],
+                item[2],
+                item[3],
+                item[4],
+                item[5],
+                item[6],
+                item[7],
+                item[8],
+                item[9]
+            )
+        )
+
+    return publications
+
+
+def get_all_publications():
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    command = """
+        SELECT
+            id,
+            author,
+            address,
+            prix,
+            debut,
+            fin,
+            ville,
+            emplacement,
+            image,
+            placedispo
+        FROM Publication
+    """
+
+    cursor.execute(command)
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    publications = []
+
+    for item in results:
+        publications.append(
+            publication(
+                item[0],
+                item[1],
+                item[2],
+                item[3],
+                item[4],
+                item[5],
+                item[6],
+                item[7],
+                item[8],
+                item[9]
+            )
+        )
+
+    return publications
+
+
+def get_sample_publications_limit(limite):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    command = """
+        SELECT
+            id,
+            author,
+            address,
+            prix,
+            debut,
+            fin,
+            ville,
+            emplacement,
+            image,
+            placedispo
+        FROM Publication
+        ORDER BY RANDOM()
+        LIMIT ?
+    """
+
+    cursor.execute(command, (limite,))
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    publications = []
+
+    for item in results:
+        publications.append(
+            publication(
+                item[0],
+                item[1],
+                item[2],
+                item[3],
+                item[4],
+                item[5],
+                item[6],
+                item[7],
+                item[8],
+                item[9]
+            )
+        )
+
+    return publications

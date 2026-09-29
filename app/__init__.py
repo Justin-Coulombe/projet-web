@@ -7,6 +7,9 @@ from app.database.queries.users import get_user_by_id
 from dotenv import load_dotenv
 from app.routes.profile import bp_profile
 from app.routes.stationnement import bp_stationnement
+from app.routes.api import Bp_api
+from app.routes.publication import Bp_publication
+from app.database.queries.publications import get_sample_publications_limit
 
 load_dotenv()
 
@@ -45,7 +48,18 @@ def create_app():
 
     @app.route("/")
     def index():
-        return render_template("index.jinja")
+        publications = get_sample_publications_limit(4)
+
+        context = {
+            "publications": publications
+        }
+
+        return render_template(
+            "index.jinja",
+            Entete="Accueil",
+            message="PARKSHARE encore en cours de développement",
+            context=context
+    )
 
     app.register_blueprint(
     bp_profile,
@@ -55,6 +69,15 @@ def create_app():
     app.register_blueprint(
     bp_stationnement,
     url_prefix="/stationnement"
+    )
+
+    app.register_blueprint(
+    Bp_api,
+    url_prefix="/api"
+    )
+    app.register_blueprint(
+    Bp_publication,
+    url_prefix="/publications"
     )
 
     return app
