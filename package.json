@@ -1,0 +1,30 @@
+{
+  "name": "projet-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "sass app/static/scss/main.scss app/static/css/main.css --style=compressed",
+    "watch:css": "sass --watch app/static/scss/main.scss:app/static/css/main.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Justin-Coulombe/projet-web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Justin-Coulombe/projet-web/issues"
+  },
+  "homepage": "https://github.com/Justin-Coulombe/projet-web#readme",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8"
+  },
+  "devDependencies": {
+    "sass": "^1.105.0"
+  }
+}
