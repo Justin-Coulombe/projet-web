@@ -1,0 +1,271 @@
+{% extends "_modele.jinja" %}
+
+{% block titre %}
+Mon profil | ParkShare
+{% endblock %}
+
+
+{% block content %}
+
+<main class="profile-page">
+
+    <div class="container py-5">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-7">
+
+                <div class="mb-4">
+                    <h1 class="fw-bold">
+                        Mon profil
+                    </h1>
+
+                    <p class="text-secondary">
+                        Modifiez vos informations personnelles
+                        et les paramètres de votre compte.
+                    </p>
+                </div>
+
+
+                <!-- Informations personnelles -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body p-4">
+
+                        <h2 class="h5 fw-bold mb-4">
+                            Informations personnelles
+                        </h2>
+
+
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endif %}
+
+
+                        {% if success %}
+                            <div class="alert alert-success">
+                                {{ success }}
+                            </div>
+                        {% endif %}
+
+
+                        <form method="POST">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label
+                                        for="prenom"
+                                        class="form-label"
+                                    >
+                                        Prénom
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="prenom"
+                                        name="prenom"
+                                        value="{{ g.user.prenom }}"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label
+                                        for="nom"
+                                        class="form-label"
+                                    >
+                                        Nom
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="nom"
+                                        name="nom"
+                                        value="{{ g.user.nom }}"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mb-4">
+
+                                <label
+                                    for="email"
+                                    class="form-label"
+                                >
+                                    Adresse courriel
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    value="{{ g.user.email }}"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="text-end">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-dark px-4"
+                                >
+                                    Enregistrer les modifications
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Mot de passe -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <h2 class="h5 fw-bold mb-1">
+                            Mot de passe
+                        </h2>
+
+                        <p class="text-secondary mb-4">
+                            Modifiez le mot de passe utilisé pour
+                            vous connecter à votre compte.
+                        </p>
+
+
+                        {% if password_error %}
+                            <div class="alert alert-danger">
+                                {{ password_error }}
+                            </div>
+                        {% endif %}
+
+
+                        {% if password_success %}
+                            <div class="alert alert-success">
+                                {{ password_success }}
+                            </div>
+                        {% endif %}
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('profile.change_password') }}"
+                        >
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="current_password"
+                                    class="form-label"
+                                >
+                                    Mot de passe actuel
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="current_password"
+                                    name="current_password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="new_password"
+                                    class="form-label"
+                                >
+                                    Nouveau mot de passe
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="new_password"
+                                    name="new_password"
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <div class="form-text">
+                                    Minimum 8 caractères.
+                                </div>
+
+                            </div>
+
+
+                            <div class="mb-4">
+
+                                <label
+                                    for="confirm_password"
+                                    class="form-label"
+                                >
+                                    Confirmer le nouveau mot de passe
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="text-end">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-outline-dark px-4"
+                                >
+                                    Modifier le mot de passe
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+{% endblock %}

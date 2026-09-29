@@ -1,0 +1,118 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}
+Connexion | ParkShare
+{% endblock %}
+
+
+{% block content %}
+
+<main class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-heading">
+            <h1>Bienvenue sur ParkShare</h1>
+
+            <p>
+                Connectez-vous à votre compte pour accéder à
+                vos réservations et gérer vos annonces.
+            </p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="mb-3">
+                <label
+                    for="email"
+                    class="form-label"
+                >
+                    Courriel
+                </label>
+
+                <div class="auth-input">
+                    <span class="auth-input-icon">
+                        ✉
+                    </span>
+
+                    <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="votre@email.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+            </div>
+
+
+            <div class="mb-2">
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Mot de passe
+                </label>
+
+                <div class="auth-password">
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="Votre mot de passe"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-toggle="password"
+                        aria-label="Afficher le mot de passe"
+                    >
+                        ◉
+                    </button>
+                </div>
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-dark auth-primary-button"
+            >
+                Se connecter
+            </button>
+
+        </form>
+
+
+        <div class="auth-separator">
+            <span>ou</span>
+        </div>
+
+
+        <a
+            href="{{ url_for('auth.register') }}"
+            class="btn btn-outline-dark auth-secondary-button"
+        >
+            Créer un compte
+        </a>
+
+    </div>
+
+</main>
+
+<script
+    src="{{ url_for('static', filename='js/auth.js') }}"
+></script>
+
+{% endblock %}
