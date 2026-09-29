@@ -20,7 +20,7 @@ app.config['CHEMIN_VERS_AJOUTS'] = os.path.join(
     "stationnement",
 )
 
-
+@loginrequired
 @bp_stationnement.route('/ajouter', methods=["GET", "POST"])
 def ajouter_stationnement():
     """Ajouter une place de stationnement."""
@@ -96,7 +96,6 @@ def ajouter_stationnement():
         msg_emplacement = "Ce champ ne peut être vide"
         erreur = True
 
-
     fichier = request.files['image']
     if not fichier:
         message_image = "Assurez-vous de bien téléverser votre image"
@@ -130,6 +129,6 @@ def ajouter_stationnement():
     user_id = 1
 
     bd.ajouter_stationnement(adresse, prix, place, debut, fin,
-                       ville, emplacement, nom_image, user_id)
+                             ville, emplacement, nom_image, user_id)
     app.logger.info("stationnement ajouter avec succés")
     return redirect(url_for('index'), code=303)
