@@ -20,7 +20,7 @@ app.config['CHEMIN_VERS_AJOUTS'] = os.path.join(
     "stationnement",
 )
 
-@loginrequired
+# @login_required
 @bp_stationnement.route('/ajouter', methods=["GET", "POST"])
 def ajouter_stationnement():
     """Ajouter une place de stationnement."""
