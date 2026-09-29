@@ -9,10 +9,6 @@ def init_database():
 
 
 def _create_connection():
-    son = sqlite3.connect('dsdfs')
-    cus = son.cursor()
-    son.commit()
-
     return sqlite3.connect(DBNAME)
 
 
