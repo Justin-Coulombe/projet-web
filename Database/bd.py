@@ -50,7 +50,7 @@ def _create_reservation_table():
     _close_connection(conn, cursor)
 
 
-def ajouter_station(address, prix, place, debut, fin, ville, emplacement, image, id_author):
+def ajouter_stationnement(address, prix, place, debut, fin, ville, emplacement, image, id_author):
     """Ajouter une place à la bd"""
     conn = _create_connection()
     cursor = conn.cursor()
