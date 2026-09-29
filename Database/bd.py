@@ -13,7 +13,7 @@ def init_database():
     _create_admin_user()
     _create_empty_publication()
 
-def get_publications(params):
+def get_publications_with_city_date(params):
     conn = _create_connection()
     cursor = conn.cursor()
     command = 'SELECT * FROM  Publication WHERE city LIKE ? AND DATE(start) <= DATE(?) AND DATE(end) >= DATE(?)'
@@ -23,20 +23,37 @@ def get_publications(params):
 
     publications = []
     for item in results:
-        publications.append(publication(item[0],item[1],item[2],item[3],item[4],item[5],item[6],item[7],item[8],item[9],item[10]))
+        publications.append(publication(item[0],item[1],item[2],item[3],item[4],item[5],item[6],item[7],item[8],item[9]))
 
     return publications
 
-def get_publication_t():
+def get_all_publications():
     conn = _create_connection()
     cursor = conn.cursor()
-    command = 'SELECT * FROM  Publication WHERE ville LIKE ?'
-    cursor.execute(command, ('ville',))
-    res = cursor.fetchall()
+    command = 'SELECT * FROM  Publication WHERE city LIKE "%"'
+    cursor.execute(command)
+    results = cursor.fetchall()
     _close_connection(conn,cursor)
-    return res
 
+    publications = []
+    for item in results:
+        publications.append(publication(item[0],item[1],item[2],item[3],item[4],item[5],item[6],item[7],item[8],item[9]))
 
+    return publications
+
+def get_sample_publications_limit(limite):
+    conn = _create_connection()
+    cursor = conn.cursor()
+    command = 'SELECT * FROM  Publication ORDER BY RANDOM() LIMIT ?'
+    cursor.execute(command, (limite,))
+    results = cursor.fetchall()
+    _close_connection(conn,cursor)
+
+    publications = []
+    for item in results:
+        publications.append(publication(item[0],item[1],item[2],item[3],item[4],item[5],item[6],item[7],item[8],item[9]))
+
+    return publications
 
 
 def _create_connection():
@@ -67,7 +84,7 @@ def _create_admin_user():
 
 def _create_empty_publication():
     command = "INSERT INTO Publication"\
-    " VALUES (NULL, (SELECT id FROM User WHERE nom = 'admin'), 'address', 0 , '1970-01-01', '3000-01-01','ville','extérieur', NULL ,30,30)"
+    " VALUES (NULL, (SELECT id FROM User WHERE nom = 'admin'), 'address', 0 , '1970-01-01 00:00', '3000-01-01 00:00','ville','extérieur', NULL ,30)"
     conn = _create_connection()
     cursor = conn.cursor()
     cursor.execute(command)

@@ -12,8 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-    {% block script %}
-    {% endblock %}
+
 </head>
 
 <body>
@@ -32,7 +31,10 @@
                             <a class="nav-link active" aria-current="page" href="/">Accueil</a>
                         </li>
                         <li class="nav-item me-2">
-                            <a class="nav-link" href="/recherche">Rechercher</a>
+                            <a class="nav-link active" aria-current="page" href="/publications">Publications</a>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a class="nav-link" href="/publications/recherche">Rechercher</a>
                         </li>
                         <li class="nav-item me-2">
                             <a class="nav-link" href="#">comment ça marche ?</a>
@@ -49,7 +51,7 @@
             </div>
         </nav>
     </header>
-      <main class="container">
+    <main class="container">
         {% block centered_title%}
         {%endblock%}
         {% block recherche %}
@@ -57,15 +59,15 @@
             <form id="research" class="shadow-lg needs-validation" novalidate>
                 <div class="row gap-1">
                     <div class="col">
-                        <input type="text" placeholder="Ville" class="is-invalid form-control">
+                        <input type="text" placeholder="Ville" class="form-control">
                         <div class="invalid-feedback">Entrez une ville valide</div>
                     </div>
                     <div class="col">
-                        <input type="date" placeholder="date début" class="form-control">  
+                        <input type="datetime-local" placeholder="date début" class="form-control">  
                         <div class="invalid-feedback">Entrez une date valide</div>
                     </div>
                     <div class="col">
-                        <input type="date" placeholder="date fin" class="form-control">
+                        <input type="datetime-local" placeholder="date fin" class="form-control">
                         <div class="invalid-feedback">Entrez une date valide</div>
                     </div>
                     <div class="col-2">
