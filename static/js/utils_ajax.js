@@ -24,7 +24,6 @@ async function envoyerRequeteAjax(
     let body = null;
     if ((parametres !== null) && (Object.keys(parametres).length > 0)) {
         const paramStr = new URLSearchParams(parametres);
-        console.log(`ajax parametre: ${paramStr}`)
         if (methode.toUpperCase() == "GET") {
             urlCible = `${urlCible}?${paramStr}`;
         } else {

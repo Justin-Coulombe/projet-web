@@ -11,7 +11,6 @@ def init_database():
     _create_publication_table()
     _create_reservation_table()
     _create_admin_user()
-    _create_empty_publication()
 
 def get_publications_with_city_date(params):
     conn = _create_connection()
@@ -82,13 +81,6 @@ def _create_admin_user():
     cursor.execute(command)
     _close_connection(conn, cursor)
 
-def _create_empty_publication():
-    command = "INSERT INTO Publication"\
-    " VALUES (NULL, (SELECT id FROM User WHERE nom = 'admin'), 'address', 0 , '1970-01-01 00:00', '3000-01-01 00:00','ville','extérieur', NULL ,30)"
-    conn = _create_connection()
-    cursor = conn.cursor()
-    cursor.execute(command)
-    _close_connection(conn, cursor)
 
 
 def _create_publication_table():

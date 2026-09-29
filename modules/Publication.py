@@ -12,7 +12,6 @@ def index():
     """
     all_publications = bd.get_all_publications()
     context = {'publications': all_publications}
-    print(all_publications)
     return render_template('publications/index.jinja', context=context)
 
 

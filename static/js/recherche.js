@@ -21,9 +21,6 @@ function setFormOnLoad(){
         }
         fields[3].click()
     }
-    else{
-        console.log("Aucune requete de index")
-    }
 }
 
 function displayAsResult(items){
@@ -44,7 +41,6 @@ function displayAsResult(items){
 }
 
 function clearDisplay(){
-    console.log("nettoyage de la liste");
     result_display.innerHTML = ''
 }
 
@@ -53,15 +49,12 @@ function sortResults(items, filter){
     if (filter === "tous"){return items}
 
     let sorted = []
-    console.log(items)
     for(const item of items){
-        console.log(item)
         if(item['location'] === filter){
             
             sorted.push(item)
         }
     }
-    // console.log(sorted)
     return sorted
 }
     
@@ -69,7 +62,6 @@ async function formSubmitCatch(){
     let inputs_values = [research_form.elements[0].value, research_form.elements[1].value, research_form.elements[2].value]
     if(formInputValidation(inputs_values)){
         last_query_results = await fetchFromResearch(inputs_values)
-        console.log(last_query_results)
         displayAsResult(last_query_results)
     }
 }   
@@ -79,16 +71,13 @@ function filterClickCatch(self){
         filters_btn[i].classList.remove('active')
     }
     self.classList.add('active')
-    console.log(typeof self)
     let value = self.value
     displayAsResult(sortResults(last_query_results, value))
-    console.log(`le bouton ${self.innerHTML} a été cliqué`)
 }
     
 async function fetchFromResearch(query){
     let params = {'city':String(query[0]), 'start':query[1], 'end':query[2]}
     let publications = await envoyerRequeteAjax(fetch_URL, 'GET', params)
-    console.log(publications.length)
     return publications
 }
 
@@ -98,7 +87,6 @@ function formInputValidation(fields){
 
     let valid_inputs;
 
-    console.log(`all values : \n ${fields}`)
 
     if(CITY_REGEX.test(fields[0])){
         valid1 = true
@@ -124,7 +112,6 @@ function formInputValidation(fields){
     else{
         valid_start=true
         fields[1] = Date.parse(fields[1])
-        console.log(`field 1 values : \n ${fields[1]}`)
     }
 
     inputValidation(research_form.elements[1], valid_start)
@@ -139,7 +126,6 @@ function formInputValidation(fields){
     else{
         valid_end = true
         fields[2] = Date.parse(fields[2])
-        console.log(`field 2 values : \n ${fields[2]}`)
     }
 
     inputValidation(research_form.elements[2], valid_end)
@@ -211,7 +197,6 @@ function init(){
     })
 
     for(const btn of filters_btn){
-        // console.log(i)
         btn.addEventListener('click', () => {
             filterClickCatch(btn)
         })
