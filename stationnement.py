@@ -129,7 +129,7 @@ def ajouter_stationnement():
 
     user_id = 1
 
-    bd.ajouter_station(adresse, prix, place, debut, fin,
+    bd.ajouter_stationnement(adresse, prix, place, debut, fin,
                        ville, emplacement, nom_image, user_id)
     app.logger.info("stationnement ajouter avec succés")
     return redirect(url_for('index'), code=303)
