@@ -6,7 +6,6 @@ from click import command
 DBNAME = "Database/PARKSHARE.db"
 
 
-
 def init_database():
     _create_user_table()
     _create_publication_table()
@@ -38,12 +37,11 @@ def get_publication_t():
     return res
 
 
+
+
 def _create_connection():
-    son = sqlite3.connect('dsdfs')
-    cus = son.cursor()
-    son.commit()
-    
     return sqlite3.connect(DBNAME)
+
 
 def _close_connection(connection, curseur):
     connection.commit()
@@ -55,7 +53,7 @@ def _create_user_table():
     conn = _create_connection()
     cursor = conn.cursor()
     command = "CREATE TABLE IF NOT EXISTS User (id INTEGER PRIMARY KEY AUTOINCREMENT, " \
-    " nom TEXT NOT NULL, prenom TEXT NOT NULL, mdp TEXT NOT NULL)"
+        " nom TEXT NOT NULL, prenom TEXT NOT NULL, mdp TEXT NOT NULL)"
     cursor.execute(command)
     _close_connection(conn, cursor)
 
@@ -80,8 +78,8 @@ def _create_publication_table():
     conn = _create_connection()
     cursor = conn.cursor()
     command = "CREATE TABLE IF NOT EXISTS Publication (id INTEGER PRIMARY KEY AUTOINCREMENT, " \
-    "author INTEGER NOT NULL ,address TEXT NOT NULL, price DOUBLE NOT NULL, start DATE NOT NULL, end DATE NOT NULL, " \
-    "city TEXT NOT NULL, location TEXT, image TEXT, place_max INTEGER NOT NULL, place_open INTEGER NOT NULL,FOREIGN KEY(author) REFERENCES User(id))"
+        "author INTEGER NOT NULL ,address TEXT NOT NULL, price DOUBLE NOT NULL, start DATETIME NOT NULL, end DATETIME NOT NULL, " \
+        "city TEXT NOT NULL, location TEXT, image TEXT, open_place INTEGER NOT NULL,FOREIGN KEY(author) REFERENCES User(id))"
     cursor.execute(command)
     _close_connection(conn, cursor)
 
@@ -90,9 +88,17 @@ def _create_reservation_table():
     conn = _create_connection()
     cursor = conn.cursor()
     command = "CREATE TABLE IF NOT EXISTS Reservation (id INTEGER PRIMARY KEY AUTOINCREMENT," \
-    "publication INTEGER NOT NULL, debut DATETIME NOT NULL, fin DATETIME NOT NULL)"
+        "publication INTEGER NOT NULL, debut DATETIME NOT NULL, fin DATETIME NOT NULL)"
     cursor.execute(command)
     _close_connection(conn, cursor)
 
 
 
+def ajouter_stationnement(address, price, open_place, start, end, city, location, image, id_author):
+    """Ajouter une place à la bd"""
+    conn = _create_connection()
+    cursor = conn.cursor()
+    command = "INSERT INTO Publication (address,price,start,end,city,location,image,open_place,author) VALUES(?,?,?,?,?,?,?,?,?)"
+    cursor.execute(command, (address, price, open_place, start,
+                   end, city, location, image, id_author))
+    _close_connection(conn, cursor)
