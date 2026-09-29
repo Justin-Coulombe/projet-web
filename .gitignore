@@ -8,4 +8,4 @@ PARKSHARE.db
 node_modules/
 .DS_Store
 database/
-static/images/stationnement
+app/static/images/stationnement/
