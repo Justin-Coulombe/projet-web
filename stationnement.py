@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, abort, request, session, Flask
 from Database import bd
-import utilitaire
 import os
 import time
 import re
