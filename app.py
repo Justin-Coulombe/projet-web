@@ -18,18 +18,3 @@ def index():
     return render_template('index.jinja', Entete="Accueil",
                            message="PARKSHARE encore en cours de developememnt")
 
-
-@app.route('/ad')
-def deck():
-    """Affiche l'accueil"""
-    return render_template('ad.jinja')
-
-def verifier_image(id_image):
-    """Vérifie l'existence de l'image"""
-
-    chemin = Path(f"static/images/stationnement/{id_image}")
-
-    if chemin.exists():
-        return f"/images/stationnement/{id_image}"
-
-    return "/images/stationnement/image.png"
