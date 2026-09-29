@@ -50,10 +50,11 @@ def _create_reservation_table():
     _close_connection(conn, cursor)
 
 
-def ajouter_station(address, prix, place, debut, fin, ville, emplacement, image,id_author):
+def ajouter_station(address, prix, place, debut, fin, ville, emplacement, image, id_author):
     """Ajouter une place à la bd"""
     conn = _create_connection()
     cursor = conn.cursor()
     command = "INSERT INTO Publication (address,prix,debut,fin,ville,emplacement,image,place,author) VALUES(?,?,?,?,?,?,?,?,?)"
-    cursor.execute(command, (address, prix, place,debut, fin, ville, emplacement, image,id_author))
+    cursor.execute(command, (address, prix, place, debut,
+                   fin, ville, emplacement, image, id_author))
     _close_connection(conn, cursor)
