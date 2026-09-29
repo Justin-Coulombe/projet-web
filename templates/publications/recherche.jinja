@@ -1,0 +1,28 @@
+{% extends '_modele.jinja' %}
+
+{%block script%}
+<script src="{{url_for('static', filename='js/recherche.js')}}"></script>
+{%endblock%}
+
+{%block centered_title %}
+<div class="mx-auto p-2">
+  <h1>RECHERCHE</h1>
+</div>
+{%endblock%}
+
+{%block contenu %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <p id="nb_results" class="fs-4"></p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><button value="tous" class="btn-filter btn btn-light btn-outline-dark" type="button">Tous</button></li>
+            <li class="list-inline-item"><button value="intérieur" class="btn-filter btn btn-light btn-outline-dark" type="button">intérieur</button></li>
+            <li class="list-inline-item"><button value="extérieur" class="btn-filter btn btn-light btn-outline-dark" type="button">extérieur</button></li>
+            <li class="list-inline-item"><button value="couvert" class="btn-filter btn btn-light btn-outline-dark" type="button">couvert</button></li>
+        </ul>
+    </div>
+
+    <ul id="display" class="list-group">
+    </ul>
+</div>
+{%endblock%}
