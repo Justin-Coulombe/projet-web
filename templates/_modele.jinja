@@ -67,7 +67,7 @@
                         <div class="invalid-feedback">Entrez une date valide</div>
                     </div>
                     <div class="col-2">
-                        <button type="submit" class="btn btn-dark">recherche</button>
+                        <button id="submit_btn" type="submit" class="btn btn-dark">recherche</button>
                     </div>
                 </div>
             </form>
@@ -83,5 +83,6 @@
     </footer>
 </body>
 {%block script%}
+<script src="{{url_for('static', filename='js/base.js')}}"></script>
 {%endblock%}
 </html>

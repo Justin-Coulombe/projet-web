@@ -11,7 +11,20 @@ let last_query_results = []
 let valid_start = false;
 let valid_end = false;
 
-
+function setFormOnLoad(){
+    let strQuery = localStorage.getItem('query')
+    if(strQuery){
+        let fields = research_form.elements
+        let query = JSON.parse(strQuery)
+        for(let i = 0; i < fields.length - 1; i++){
+            fields[i].value = query[i]
+        }
+        fields[3].click()
+    }
+    else{
+        console.log("Aucune requete de index")
+    }
+}
 
 function displayAsResult(items){
     clearDisplay()
@@ -189,5 +202,6 @@ function init(){
         })
     }
 
+    setFormOnLoad()
 }
 window.addEventListener('load', init())
