@@ -84,7 +84,6 @@ def login():
         password = request.form.get("password", "")
 
         user = get_user_by_email(email)
-
         if user is None or not check_password_hash(
             user["mdp"],
             password

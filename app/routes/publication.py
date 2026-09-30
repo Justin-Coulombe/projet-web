@@ -29,7 +29,6 @@ def research():
     """
     Affiche la page de recherche des publications.
     """
-
     return render_template(
         "publications/recherche.jinja"
     )

@@ -1,7 +1,7 @@
 
 "use strict";
 const research_form = document.getElementById('research')
-const fetch_URL = "/API/publications/search"
+const fetch_URL = "/api/publications/search"
 const result_display = document.getElementById('display')
 const CITY_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ\s\-'.]{2,85}$/;
 const filters_btn = document.querySelectorAll('.btn-filter')
@@ -13,6 +13,7 @@ let valid_end = false;
 
 function setFormOnLoad(){
     let strQuery = localStorage.getItem('query')
+    localStorage.removeItem('query')
     if(strQuery){
         let fields = research_form.elements
         let query = JSON.parse(strQuery)
@@ -104,28 +105,27 @@ function formInputValidation(fields){
     
     if(isNullOrEmpty(fields[1])){
         valid_start = true
-        fields[1] = Date.parse("1970-01-01T00:00")
+        fields[1] = "1970-01-01T00:00"
     }
     else if(!isNullOrEmpty(fields[2]) && Date.parse(fields[1]) > Date.parse(fields[2]) ){
         valid_start = false
     }
     else{
         valid_start=true
-        fields[1] = Date.parse(fields[1])
+        fields[1]
     }
 
     inputValidation(research_form.elements[1], valid_start)
 
     if(isNullOrEmpty(fields[2])){
         valid_end = true
-        fields[2] = Date.parse("3000-01-01T00:00")
+        fields[2] = "3000-01-01T00:00"
     }
     else if(Date.parse(fields[2]) < Date.parse(fields[1]) ){
         valid_end = false
     }
     else{
         valid_end = true
-        fields[2] = Date.parse(fields[2])
     }
 
     inputValidation(research_form.elements[2], valid_end)
@@ -147,7 +147,7 @@ function createListItem(item){
     container_row_div.classList.add('row', 'gap-2');
 
     let item_img = document.createElement('img');
-    item_img.src = item['img'] === null ? ' /img/placeholder.jpg': item['img'];
+    item_img.src = item['img'] === null ? ' /static/img/placeholder.jpg': item['img'];
     item_img.classList.add('col-2');    
 
     let item_info_container = document.createElement('div');

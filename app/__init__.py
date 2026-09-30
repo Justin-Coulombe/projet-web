@@ -48,7 +48,7 @@ def create_app():
 
     @app.route("/")
     def index():
-        publications = get_sample_publications_limit(4)
+        publications = get_sample_publications_limit(5)
 
         context = {
             "publications": publications
