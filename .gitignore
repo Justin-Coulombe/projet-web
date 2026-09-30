@@ -9,3 +9,6 @@ node_modules/
 .DS_Store
 database/
 app/static/images/stationnement/
+*.pyc
+app/static/css/main.css
+app/static/css/main.css.map
