@@ -37,7 +37,7 @@ function initialisation() {
     const strDebut = maintenant.toISOString().slice(0, 16);
     dateDebut.value = strDebut;
     dateDebut.min = strDebut;
-    dateDebut.readOnly = true;
+    // dateDebut.readOnly = true;
 
     const fin = new Date();
     fin.setMinutes(fin.getMinutes() + 30);

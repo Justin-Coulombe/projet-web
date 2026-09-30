@@ -15,19 +15,13 @@ def search_publication():
     args = request.args
 
     city = args.get("city", "%")
-
     if city == "empt":
         city = "%"
 
-    start_date = datetime.fromtimestamp(
-        float(args.get("start", "0")) / 1000,
-        timezone.utc
-    ).strftime("%Y-%m-%d %H:%M")
 
-    end_date = datetime.fromtimestamp(
-        float(args.get("end", "32503680000000")) / 1000,
-        timezone.utc
-    ).strftime("%Y-%m-%d %H:%M")
+    start_date = convert_time_string(args.get("start", "1970-01-01 00:00"))
+
+    end_date = convert_time_string(args.get("end", "3000-01-01 00:00"))
 
     params = {
         "city": city,
@@ -35,7 +29,9 @@ def search_publication():
         "end": end_date
     }
 
+
     query_result = get_publications_with_city_date(params)
+
 
     serialized = []
 
@@ -43,3 +39,6 @@ def search_publication():
         serialized.append(item.to_dict())
 
     return jsonify(serialized)
+
+def convert_time_string(string):
+    return string.replace('T', ' ')

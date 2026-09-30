@@ -93,8 +93,8 @@ def get_publications_with_city_date(params):
             placedispo
         FROM Publication
         WHERE ville LIKE ?
-          AND DATE(debut) <= DATE(?)
-          AND DATE(fin) >= DATE(?)
+          AND DATE(debut) >= DATE(?)
+          AND DATE(fin) <= DATE(?)
     """
 
     cursor.execute(
@@ -175,7 +175,6 @@ def get_all_publications():
                 item[9]
             )
         )
-
     return publications
 
 

@@ -45,10 +45,16 @@
                         </li>
                     </ul>
                 </div>
+                {% if not session['user_id']%}
                 <div class=" d-flex me-5">
-                    <button class="btn btn-outline-dark me-2" type="button">Se connecter</button>
-                    <button class="btn btn-dark me-2" type="button">S'inscrire</button>
+                    <a href="/auth/login" class="btn btn-outline-dark me-2">Se connecter</a>
+                    <a href="/auth/register" class="btn btn-dark me-2">S'inscrire</a>
                 </div>
+                {% else %}
+                <div class=" d-flex me-5">
+                    <a href="/auth/logout" class="btn btn-dark me-2">Déconnexion</a>
+                </div>
+                {%endif%}
             </div>
         </nav>
     </header>
