@@ -1,0 +1,78 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Build CSS
+        run: |
+          npm ci
+          npm run build:css
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload application
+        run: |
+          rsync -az --delete \
+            --exclude "/.git/" \
+            --exclude "/.github/" \
+            --exclude "/.venv/" \
+            --exclude "/node_modules/" \
+            --exclude "/.env" \
+            --exclude "/database/" \
+            --exclude "/app/static/images/stationnement/" \
+            ./ \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/parkshare/
+
+      - name: Install dependencies and restart server
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            set -e
+
+            cd /var/www/parkshare
+
+            source .venv/bin/activate
+
+            pip install -r requirements.txt
+
+            mkdir -p database
+            mkdir -p app/static/images/stationnement
+
+            sudo systemctl restart parkshare
+
+            sleep 3
+
+            curl --fail http://127.0.0.1:8000/ > /dev/null
+
+            echo "Deployment successful"
+          EOF
