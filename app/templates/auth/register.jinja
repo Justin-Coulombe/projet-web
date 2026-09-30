@@ -1,0 +1,195 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}
+Créer un compte | ParkShare
+{% endblock %}
+
+
+{% block content %}
+
+<main class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-heading">
+            <h1>Créer un compte</h1>
+
+            <p>
+                Inscrivez-vous pour publier votre stationnement
+                ou réserver une place sur ParkShare.
+            </p>
+        </div>
+
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+
+
+        <form method="POST">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label
+                        for="prenom"
+                        class="form-label"
+                    >
+                        Prénom
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="prenom"
+                        name="prenom"
+                        placeholder="Justin"
+                        autocomplete="given-name"
+                        required
+                    >
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+                    <label
+                        for="nom"
+                        class="form-label"
+                    >
+                        Nom
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="nom"
+                        name="nom"
+                        placeholder="Coulombe"
+                        autocomplete="family-name"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+                <label
+                    for="email"
+                    class="form-label"
+                >
+                    Courriel
+                </label>
+
+                <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="votre@email.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+
+            <div class="mb-3">
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Mot de passe
+                </label>
+
+                <div class="auth-password">
+
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 8 caractères"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-toggle="password"
+                        aria-label="Afficher le mot de passe"
+                    >
+                        ◉
+                    </button>
+
+                </div>
+            </div>
+
+
+            <div class="mb-4">
+                <label
+                    for="password_confirm"
+                    class="form-label"
+                >
+                    Confirmer le mot de passe
+                </label>
+
+                <div class="auth-password">
+
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password_confirm"
+                        name="password_confirm"
+                        placeholder="Confirmez votre mot de passe"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-toggle="password_confirm"
+                        aria-label="Afficher le mot de passe"
+                    >
+                        ◉
+                    </button>
+
+                </div>
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-dark auth-primary-button"
+            >
+                Créer mon compte
+            </button>
+
+        </form>
+
+
+        <div class="auth-separator">
+            <span>ou</span>
+        </div>
+
+
+        <a
+            href="{{ url_for('auth.login') }}"
+            class="btn btn-outline-dark auth-secondary-button"
+        >
+            J'ai déjà un compte
+        </a>
+
+    </div>
+
+</main>
+
+<script
+    src="{{ url_for('static', filename='js/auth.js') }}"
+></script>
+
+{% endblock %}

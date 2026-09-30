@@ -3,4 +3,9 @@ __pycache__/
 __pycache__
 __.vscode__
 PARKSHARE.db
-static/images/stationnement
+.env
+.venv/
+node_modules/
+.DS_Store
+database/
+app/static/images/stationnement/
