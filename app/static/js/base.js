@@ -1,4 +1,5 @@
 const URLbase = "http://127.0.0.1:5000/"
+// const URLbase = "https://justincoulombe.ovh"
 const research_form = document.getElementById('research')
 const submitBtn = document.getElementById('submit_btn')
 submitBtn.classList.add()
