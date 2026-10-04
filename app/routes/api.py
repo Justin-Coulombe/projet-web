@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify
 
 from app.database.queries.publications import (
-    get_publications_with_city_date
+    get_publications_with_city_date_location_location
 )
 
 
@@ -30,7 +30,7 @@ def search_publication():
     }
 
 
-    query_result = get_publications_with_city_date(params)
+    query_result = get_publications_with_city_date_location_location(params)
 
 
     serialized = []
@@ -40,5 +40,3 @@ def search_publication():
 
     return jsonify(serialized)
 
-def convert_time_string(string):
-    return string.replace('T', ' ')

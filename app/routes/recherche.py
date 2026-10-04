@@ -26,3 +26,4 @@ def index():
         "Recherche/index.jinja",
         element="Hello GET"
     )
+

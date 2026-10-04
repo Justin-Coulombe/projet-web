@@ -11,18 +11,18 @@ let last_query_results = []
 let valid_start = false;
 let valid_end = false;
 
-function setFormOnLoad(){
-    let strQuery = localStorage.getItem('query')
-    localStorage.removeItem('query')
-    if(strQuery){
-        let fields = research_form.elements
-        let query = JSON.parse(strQuery)
-        for(let i = 0; i < fields.length - 1; i++){
-            fields[i].value = query[i]
-        }
-        fields[3].click()
-    }
-}
+// function setFormOnLoad(){
+//     let strQuery = localStorage.getItem('query')
+//     localStorage.removeItem('query')
+//     if(strQuery){
+//         let fields = research_form.elements
+//         let query = JSON.parse(strQuery)
+//         for(let i = 0; i < fields.length - 1; i++){
+//             fields[i].value = query[i]
+//         }
+//         fields[3].click()
+//     }
+// }
 
 function displayAsResult(items){
     clearDisplay()
@@ -59,13 +59,13 @@ function sortResults(items, filter){
     return sorted
 }
     
-async function formSubmitCatch(){
-    let inputs_values = [research_form.elements[0].value, research_form.elements[1].value, research_form.elements[2].value]
-    if(formInputValidation(inputs_values)){
-        last_query_results = await fetchFromResearch(inputs_values)
-        displayAsResult(last_query_results)
-    }
-}   
+// async function formSubmitCatch(){
+//     let inputs_values = [research_form.elements[0].value, research_form.elements[1].value, research_form.elements[2].value]
+//     if(formInputValidation(inputs_values)){
+//         last_query_results = await fetchFromResearch(inputs_values)
+//         displayAsResult(last_query_results)
+//     }
+// }   
 
 function filterClickCatch(self){
     for(let  i = 0 ; i <filters_btn.length; i++){
@@ -76,65 +76,62 @@ function filterClickCatch(self){
     displayAsResult(sortResults(last_query_results, value))
 }
     
-async function fetchFromResearch(query){
-    let params = {'city':String(query[0]), 'start':query[1], 'end':query[2]}
-    let publications = await envoyerRequeteAjax(fetch_URL, 'GET', params)
-    return publications
-}
+// async function fetchFromResearch(query){
+//     let params = {'city':String(query[0]), 'start':query[1], 'end':query[2]}
+//     let publications = await envoyerRequeteAjax(fetch_URL, 'GET', params)
+//     return publications
+// }
 
-function formInputValidation(fields){
-    let valid1 = false;
-    let one_input_filled = (!isNullOrEmpty(fields[0]) | !isNullOrEmpty(fields[1]) | !isNullOrEmpty(fields[2]));
+// function formInputValidation(fields){
+//     let valid1 = false;
+//     let one_input_filled = (!isNullOrEmpty(fields[0]) | !isNullOrEmpty(fields[1]) | !isNullOrEmpty(fields[2]));
 
-    let valid_inputs;
+//     let valid_inputs;
 
 
-    if(CITY_REGEX.test(fields[0])){
-        valid1 = true
-    }
-    else if(isNullOrEmpty(fields[0])){
-        valid1 = true
-        fields[0] = 'empt'
-    }
-    else{
-        valid1=false
-    }
+//     if(CITY_REGEX.test(fields[0])){
+//         valid1 = true
+//     }
+//     else if(isNullOrEmpty(fields[0])){
+//         valid1 = true
+//         fields[0] = 'empt'
+//     }
+//     else{
+//         valid1=false
+//     }
 
-    inputValidation(research_form.elements[0], valid1)
+//     inputValidation(research_form.elements[0], valid1)
 
     
-    if(isNullOrEmpty(fields[1])){
-        valid_start = true
-        fields[1] = "1970-01-01T00:00"
-    }
-    else if(!isNullOrEmpty(fields[2]) && Date.parse(fields[1]) > Date.parse(fields[2]) ){
-        valid_start = false
-    }
-    else{
-        valid_start=true
-        fields[1]
-    }
+//     if(isNullOrEmpty(fields[1])){
+//         valid_start = true
+//         fields[1] = "1970-01-01T00:00"
+//     }
+//     else if(!isNullOrEmpty(fields[2]) && Date.parse(fields[1]) > Date.parse(fields[2]) ){
+//         valid_start = false
+//     }
+//     else{
+//         valid_start=true
+//         fields[1]
+//     }
 
-    inputValidation(research_form.elements[1], valid_start)
+//     inputValidation(research_form.elements[1], valid_start)
 
-    if(isNullOrEmpty(fields[2])){
-        valid_end = true
-        fields[2] = "3000-01-01T00:00"
-    }
-    else if(Date.parse(fields[2]) < Date.parse(fields[1]) ){
-        valid_end = false
-    }
-    else{
-        valid_end = true
-    }
+//     if(isNullOrEmpty(fields[2])){
+//         valid_end = true
+//         fields[2] = "3000-01-01T00:00"
+//     }
+//     else if(Date.parse(fields[2]) < Date.parse(fields[1]) ){
+//         valid_end = false
+//     }
+//     else{
+//         valid_end = true
+//     }
 
-    inputValidation(research_form.elements[2], valid_end)
-
-    valid_inputs = (valid1 & valid_start & valid_end)
-
-
-    return (one_input_filled & valid_inputs)
-}
+//     inputValidation(research_form.elements[2], valid_end)
+//     valid_inputs = (valid1 & valid_start & valid_end)
+//     return (one_input_filled & valid_inputs)
+// }
 
 function createListItem(item){
     let item_container = document.createElement('li');
@@ -173,14 +170,14 @@ function createListItem(item){
     return item_container
 }
 
-function inputValidation(input, isValide){
-    if(isValide){
-        input.classList.remove('is-invalid')
-    }
-    else{
-        input.classList.add('is-invalid')
-    }
-}
+// function inputValidation(input, isValide){
+//     if(isValide){
+//         input.classList.remove('is-invalid')
+//     }
+//     else{
+//         input.classList.add('is-invalid')
+//     }
+// }
 
 function isNullOrEmpty(element){
     let str = String(element)
@@ -191,10 +188,10 @@ function isNullOrEmpty(element){
 
 function init(){
     console.clear();
-    research_form.addEventListener('submit', function(event){
-        event.preventDefault();
-        formSubmitCatch();
-    })
+    // research_form.addEventListener('submit', function(event){
+    //     event.preventDefault();
+    //     formSubmitCatch();
+    // })
 
     for(const btn of filters_btn){
         btn.addEventListener('click', () => {
@@ -202,6 +199,6 @@ function init(){
         })
     }
 
-    setFormOnLoad()
+    // setFormOnLoad()
 }
 window.addEventListener('load', init())

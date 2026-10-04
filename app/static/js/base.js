@@ -21,5 +21,5 @@ function isNullOrEmpty(element){
 }
 
 window.addEventListener('load', function(){
-    research_form.addEventListener('submit', function(event){event.preventDefault(); formSubmitCatch()})
+    // research_form.addEventListener('submit', function(event){formSubmitCatch(); event.preventDefault()})
 })

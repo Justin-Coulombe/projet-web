@@ -75,7 +75,7 @@ def ajouter_stationnement(
 
     close_connection(conn, cursor)
 
-def get_publications_with_city_date(params):
+def get_publications_with_city_date_location_location(params):
     conn = create_connection()
     cursor = conn.cursor()
 
@@ -95,6 +95,7 @@ def get_publications_with_city_date(params):
         WHERE ville LIKE ?
           AND DATE(debut) >= DATE(?)
           AND DATE(fin) <= DATE(?)
+          AND emplacement LIKE ?
     """
 
     cursor.execute(
@@ -102,7 +103,8 @@ def get_publications_with_city_date(params):
         (
             params.get("city"),
             params.get("start"),
-            params.get("end")
+            params.get("end"),
+            params.get("filter"),
         )
     )
 
@@ -128,7 +130,6 @@ def get_publications_with_city_date(params):
                 item[9]
             )
         )
-
     return publications
 
 
