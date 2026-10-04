@@ -2,9 +2,11 @@
 from datetime import datetime, timezone
 from flask import Blueprint, render_template, request
 from app.database.queries.publications import get_all_publications, get_publications_with_city_date_location_location
+import re
 
 PATTERN = r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}"
 TIME_PATTERN = str("%Y-%m-%d %H:%M")
+CITY_PATTERN = r"%|[^\W\d_]+(?:[ '-][^\W\d_]+)*"
 
 Bp_publication = Blueprint("publications", __name__)
 
@@ -34,7 +36,8 @@ def research():
     """
     context = {}
     valid_filter = False
-    valid_time = True
+    valid_time = False
+    valid_city = False
 
     filters = ["Tous", "Intérieur", "Extérieur", "%"]
 
@@ -42,6 +45,11 @@ def research():
     city = request.args.get('city', "%")
     if city == "":
         city = "%"
+    
+    valid_city = re.fullmatch(CITY_PATTERN, city.strip())
+    if not valid_city:
+        context['city_message'] = "Entrez un nom valide"
+        context['valid_city'] = not valid_city
 
     start = request.args.get('start', type=str, default="1970-01-01T00:00")
     if start == "":
@@ -62,7 +70,10 @@ def research():
     valid_filter = filter in filters
     valid_time = validate_date_inputs(start, end)
 
-    print(f"query validation info : \nfilter {valid_filter} \ntimes inputs {valid_time}")
+    if not valid_time:
+        message_time = "La date de fin doit être plus grand que la date de début"
+        context["valid_time"] = not valid_time
+        context["time_message"] = message_time
 
     if(valid_time, valid_filter):
         params = {"city": city, "start":start, "end":end, "filter":filter}
@@ -71,7 +82,6 @@ def research():
 
         for pub in raw:
             publications.append(pub.to_dict())
-
         context["publications"] = publications
 
     

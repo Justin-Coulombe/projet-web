@@ -65,16 +65,16 @@
             <form id="research" action="/publications/recherche" method="get" class="shadow-lg needs-validation" novalidate>
                 <div class="row gap-1">
                     <div class="col">
-                        <input type="text" name="city" placeholder="Ville" class="form-control">
-                        <div class="invalid-feedback">Entrez une ville valide</div>
+                        <input type="text" name="city" placeholder="Ville" class="form-control {% if context.valid_city %} is-invalid {%endif%}">
+                        <div class="invalid-feedback">{{context.city_message}}</div>
                     </div>
                     <div class="col">
                         <input type="datetime-local" name="start" placeholder="date début" class="form-control">  
                         <div class="invalid-feedback">Entrez une date valide</div>
                     </div>
                     <div class="col">
-                        <input type="datetime-local" name="end" placeholder="date fin" class="form-control">
-                        <div class="invalid-feedback">Entrez une date valide</div>
+                        <input type="datetime-local" name="end" placeholder="date fin" class="form-control {% if context.valid_time %} is-invalid {%endif%}">
+                        <div class="invalid-feedback">{{context.time_message}}</div>
                     </div>
                     <div class="col">
                         <select class="form-select" name="filter">
