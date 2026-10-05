@@ -1,28 +1,73 @@
 {% extends '_modele.jinja' %}
 
+{% block title %}
+Recherche | ParkShare
+{% endblock %}
+
 {%block script%}
 <script src="{{url_for('static', filename='js/recherche.js')}}"></script>
 {%endblock%}
 
 {%block centered_title %}
 <div class="mx-auto p-2" style="width: 300px;">
-  <h1>RECHERCHE</h1>
+    <h1>RECHERCHE</h1>
 </div>
 {%endblock%}
 
 {%block contenu %}
 <div class="container">
     <div class="d-flex justify-content-between align-items-center">
+        <form id="research" class="bg-white rounded-3 p-1 mx-auto shadow needs-validation" style="max-width: 800px;"
+            novalidate>
+            <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group border-end">
+                        <span class="input-group-text bg-white border-0"><i class="bi bi-geo-alt"></i></span>
+                        <select id="ville" name="ville" class="form-select {{classe_ville}} border-0 ">
+                            <option selected value="">Choisissez la ville</option>
+                            <option {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
+                            <option {% if ville=="Québec" %}selected{% endif %}>Québec</option>
+                            <option {% if ville=="Laval" %}selected{% endif %}>Laval</option>
+                            <option {% if ville=="Gatineau" %}selected{% endif %}>Gatineau</option>
+                            <option {% if ville=="Longueuil" %}selected{% endif %}>Longueuil</option>
+                            <option {% if ville=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
+                            <option {% if ville=="Lévis" %}selected{% endif %}>Lévis</option>
+                            <option {% if ville=="Saguenay" %}selected{% endif %}>Saguenay</option>
+                            <option {% if ville=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières</option>
+                            <option {% if ville=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
+                            <option {% if ville=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>
+                                Saint-Jean-sur-Richelieu</option>
+                            <option {% if ville=="Brossard" %}selected{% endif %}>Brossard</option>
+                            <option {% if ville=="Repentigny" %}selected{% endif %}>Repentigny</option>
+                            <option {% if ville=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
+                            <option {% if ville=="Drummondville" %}selected{% endif %}>Drummondville</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 broder border-end">
+                    <input type="datetime-local" class="form-control border-0" aria-label="Date de début">
+                    <div class="invalid-feedback">Entrez une date valide</div>
+                </div>
+                <div class="col-md-3">
+                    <input type="datetime-local" class="form-control border-0" aria-label="Date de fin">
+                    <div class="invalid-feedback">Entrez une date valide</div>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button id="submit_btn" type="submit" class="bi bi-search btn btn-dark"> Rechercher</button>
+                </div>
+            </div>
+        </form>
         <p id="nb_results" class="fs-4"></p>
         <ul class="list-inline">
-            <li class="list-inline-item"><button value="tous" class="btn-filter btn btn-light btn-outline-dark" type="button">Tous</button></li>
-            <li class="list-inline-item"><button value="Intérieur" class="btn-filter btn btn-light btn-outline-dark" type="button">Intérieur</button></li>
-            <li class="list-inline-item"><button value="Extérieur" class="btn-filter btn btn-light btn-outline-dark" type="button">Extérieur</button></li>
+            <li class="list-inline-item"><button value="tous" class="btn-filter btn btn-light btn-outline-dark"
+                    type="button">Tous</button></li>
+            <li class="list-inline-item"><button value="Intérieur" class="btn-filter btn btn-light btn-outline-dark"
+                    type="button">Intérieur</button></li>
+            <li class="list-inline-item"><button value="Extérieur" class="btn-filter btn btn-light btn-outline-dark"
+                    type="button">Extérieur</button></li>
         </ul>
     </div>
-
     <ul id="display" class="list-group">
-
     </ul>
 </div>
 {%endblock%}
