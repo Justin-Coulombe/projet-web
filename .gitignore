@@ -12,5 +12,3 @@ app/static/img/stationnement/
 *.pyc
 app/static/css/main.css
 app/static/css/main.css.map
-package-lock.json
-package.json
