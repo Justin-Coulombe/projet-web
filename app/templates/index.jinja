@@ -1,10 +1,53 @@
 {% extends "_modele.jinja" %}
 
 {%block centered_title %}
-<div class="mx-auto p-2" style="width: 350px;">
-  <h1>Bienvenue sur <b>PARKSHARE</b> </h1>
-</div>
+    <div class="hero">
+        <h1 class="display-5 fw-bold mb-3">Trouvez une place de stationnement,<br>près de chez vous.</h1>
+        <p class="mb-4">Louez des espaces de stationnement privés, simplement et en toute confiance.</p>
+        <form id="research" class="bg-white rounded-3 p-1 mx-auto shadow needs-validation" style="max-width: 800px;"
+            novalidate>
+            <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group border-end">
+                        <span class="input-group-text bg-white border-0"><i class="bi bi-geo-alt"></i></span>
+                        <select id="ville" name="ville" class="form-select {{classe_ville}} border-0 ">
+                            <option selected value="">Choisissez la ville</option>
+                            <option {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
+                            <option {% if ville=="Québec" %}selected{% endif %}>Québec</option>
+                            <option {% if ville=="Laval" %}selected{% endif %}>Laval</option>
+                            <option {% if ville=="Gatineau" %}selected{% endif %}>Gatineau</option>
+                            <option {% if ville=="Longueuil" %}selected{% endif %}>Longueuil</option>
+                            <option {% if ville=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
+                            <option {% if ville=="Lévis" %}selected{% endif %}>Lévis</option>
+                            <option {% if ville=="Saguenay" %}selected{% endif %}>Saguenay</option>
+                            <option {% if ville=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières</option>
+                            <option {% if ville=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
+                            <option {% if ville=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>
+                                Saint-Jean-sur-Richelieu</option>
+                            <option {% if ville=="Brossard" %}selected{% endif %}>Brossard</option>
+                            <option {% if ville=="Repentigny" %}selected{% endif %}>Repentigny</option>
+                            <option {% if ville=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
+                            <option {% if ville=="Drummondville" %}selected{% endif %}>Drummondville</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 broder border-end">
+                    <input type="datetime-local" class="form-control border-0" aria-label="Date de début">
+                    <div class="invalid-feedback">Entrez une date valide</div>
+                </div>
+                <div class="col-md-3">
+                    <input type="datetime-local" class="form-control border-0" aria-label="Date de fin">
+                    <div class="invalid-feedback">Entrez une date valide</div>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button id="submit_btn" type="submit" class="bi bi-search btn btn-dark"> Rechercher</button>
+                </div>
+            </div>
+        </form>
+    </div>
 {%endblock%}
+{% block recherche %}
+{% endblock %}
 
 {% block contenu %}
 <div class="container">
@@ -18,7 +61,9 @@
     <div class="row gap-2">
         {% for item in context.publications%}
         <div class="card col-2">
-            <img class="card-img-top" src="{% if item.image %}  {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}" alt="photo de la place">
+            <img class="card-img-top"
+                src="{% if item.image %}  {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
+                alt="photo de la place">
             <div class="card-body">
                 <p class="card-text">
                     <b>{{item.price}}$/h</b><br>
@@ -29,4 +74,32 @@
         {%endfor%}
     </div>
 </div>
+{% endblock %}
+
+{%block section_how %}
+<section id="how" class="bg-light py-5 text-center">
+    <div>
+        <h2 class="fw-bold mb-5">Comment ça marche ?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h2 class="bi bi-1-circle-fill"></h2>
+                <h3 class="h6 fw-bold">Recherchez</h3>
+                <p class="small text-muted mx-auto" style="max-width:230px">Trouvez une place selon vos besoins
+                    et vos critères.</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="bi bi-2-circle-fill"></h2>
+                <h3 class="h6 fw-bold">Réservez</h3>
+                <p class="small text-muted mx-auto" style="max-width:230px">Choisissez une période et confirmez
+                    votre réservation.</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="bi bi-3-circle-fill"></h2>
+                <h3 class="h6 fw-bold">Stationnez</h3>
+                <p class="small text-muted mx-auto" style="max-width:230px">Profitez de votre place en toute
+                    tranquillité.</p>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
