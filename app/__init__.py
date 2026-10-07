@@ -48,7 +48,11 @@ def create_app():
 
     @app.route("/")
     def index():
-        publications = get_sample_publications_limit(5)
+        raw = get_sample_publications_limit(5)
+        publications = []
+        
+        for pub in raw:
+            publications.append(pub.to_dict())
 
         context = {
             "publications": publications
