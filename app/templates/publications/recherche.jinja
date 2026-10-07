@@ -1,17 +1,32 @@
 {% extends '_modele.jinja' %}
 
+{% block title %}
+Recherche | ParkShare
+{% endblock %}
+
 {%block script%}
 <script src="{{url_for('static', filename='js/recherche.js')}}"></script>
 {%endblock%}
 
 {%block centered_title %}
 <div class="mx-auto p-2" style="width: 300px;">
-  <h1>RECHERCHE</h1>
+    <h1>RECHERCHE</h1>
 </div>
 {%endblock%}
 
 {%block contenu %}
 <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <p id="nb_results" class="fs-4"></p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><button value="tous" class="btn-filter btn btn-light btn-outline-dark"
+                    type="button">Tous</button></li>
+            <li class="list-inline-item"><button value="Intérieur" class="btn-filter btn btn-light btn-outline-dark"
+                    type="button">Intérieur</button></li>
+            <li class="list-inline-item"><button value="Extérieur" class="btn-filter btn btn-light btn-outline-dark"
+                    type="button">Extérieur</button></li>
+        </ul>
+    </div>
     <ul id="display" class="list-group">
         {%for item in context.publications%}
         <li class="list-group-item d-flex justify-content-between align-items-center">

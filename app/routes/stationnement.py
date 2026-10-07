@@ -129,7 +129,7 @@ def ajouter_stationnement():
 
     chemin_images = os.path.join(
         current_app.static_folder,
-        "images",
+        "img",
         "stationnement"
     )
 

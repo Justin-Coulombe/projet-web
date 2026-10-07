@@ -8,7 +8,7 @@ PARKSHARE.db
 node_modules/
 .DS_Store
 database/
-app/static/images/stationnement/
+app/static/img/stationnement/
 *.pyc
 app/static/css/main.css
 app/static/css/main.css.map
