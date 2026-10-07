@@ -12,12 +12,13 @@ Publications | ParkShare
 
 {%block contenu %}
 <ul class="list-inline">
+    {% set path = "/static/img/stationnement/" %}
     {% for item in context.publications %}
-    <li class="list-inline-item m-1 col-5">
+    <li class="list-inline-item m-1 col-3">
         <a href="#" class="link-underline link-underline-opacity-0">
             <div class="card ">
                 <img class="card-img-top"
-                    src="{% if item.image %}  {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
+                    src="{% if item.img %} {{path~item.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
                     alt="photo de la place">
                 <div class="card-body">
                     <p class="card-text">

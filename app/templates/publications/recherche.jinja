@@ -18,29 +18,21 @@ Recherche | ParkShare
 <div class="container">
     <div class="d-flex justify-content-between align-items-center">
         <p id="nb_results" class="fs-4"></p>
-        <ul class="list-inline">
-            <li class="list-inline-item"><button value="tous" class="btn-filter btn btn-light btn-outline-dark"
-                    type="button">Tous</button></li>
-            <li class="list-inline-item"><button value="Intérieur" class="btn-filter btn btn-light btn-outline-dark"
-                    type="button">Intérieur</button></li>
-            <li class="list-inline-item"><button value="Extérieur" class="btn-filter btn btn-light btn-outline-dark"
-                    type="button">Extérieur</button></li>
-        </ul>
     </div>
     <ul id="display" class="list-group">
         {%for item in context.publications%}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="container">
-                {% set path = "/static/images/stationnement/" %}
+                {% set path = "/static/img/stationnement/" %}
                 <div class="row gap-2">
-                    <img class="col-3" src="{%if item.img == None%} /static/img/placeholder.jpg {%else%} {{path~item.img}}  {%endif%}" alt="phot de l'annonce">
+                    <img class="col-3" src="{%if item.img == None%} /static/img/placeholder.jpg {%else%} {{path~item.img}}  {%endif%}" alt="photo de l'annonce">
                     <div class="col">
-                        <p>{{item.address}}</p>
+                        <p class="fs-5">{{item.address}}, {{item.city}}</p>
                         <span class="badge rounded-3 bg-dark">{{item.location}}</span>
                     </div>
                 </div>
             </div>
-            <span>{{item.price}}$/h</span>
+            <span><b>{{item.price}}$</b>/h</span>
         </li>
         {% endfor%}
     </ul>

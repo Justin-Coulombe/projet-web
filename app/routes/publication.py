@@ -16,12 +16,17 @@ def index():
     """
     Affiche une page pour afficher toutes les publications sur le site.
     """
+    raw = get_all_publications()
 
-    all_publications = get_all_publications()
+    all_publications = []
+
+    for pub in raw:
+        all_publications.append(pub.to_dict())
 
     context = {
         "publications": all_publications
     }
+
 
     return render_template(
         "publications/index.jinja",
@@ -42,7 +47,7 @@ def research():
     filters = ["Tous", "Intérieur", "Extérieur", "%"]
 
     # get les paramètres de recherche s'il y en a
-    city = request.args.get('city', "%")
+    city = request.args.get('ville', "%")
     if city == "":
         city = "%"
     
@@ -51,12 +56,12 @@ def research():
         context['city_message'] = "Entrez un nom valide"
         context['valid_city'] = not valid_city
 
-    start = request.args.get('start', type=str, default="1970-01-01T00:00")
+    start = request.args.get('debut', type=str, default="1970-01-01T00:00")
     if start == "":
         start = "1970-01-01 00:00"
     start = convert_time_string(start)
 
-    end = request.args.get('end', type=str, default="3000-01-01T00:00")
+    end = request.args.get('fin', type=str, default="3000-01-01T00:00")
     if end == "":
         end = "3000-01-01 00:00"
     end = convert_time_string(end)
@@ -70,10 +75,12 @@ def research():
     valid_filter = filter in filters
     valid_time = validate_date_inputs(start, end)
 
+    print(f"valid time {valid_time}")
     if not valid_time:
-        message_time = "La date de fin doit être plus grand que la date de début"
-        context["valid_time"] = not valid_time
+        message_time = "La date ne doit pas être antérieur"
         context["time_message"] = message_time
+
+    context["valid_time"] = valid_time
 
     if(valid_time, valid_filter):
         params = {"city": city, "start":start, "end":end, "filter":filter}
@@ -98,6 +105,8 @@ def validate_date_inputs(start, end):
 
     start_stamp = start_time.timestamp()
     end_stamp = end_time.timestamp()
+
+    print(f"les dates par defaut : \n{start_stamp}\n{end_stamp}")
 
     if start_stamp > end_stamp:
         return False

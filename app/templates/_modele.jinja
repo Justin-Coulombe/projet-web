@@ -63,10 +63,10 @@
             {%block centered_title %}
             {% endblock %}
             {% block recherche %}
-            <form id="research" class="bg-white rounded-3 p-1 mx-auto shadow needs-validation" style="max-width: 800px;"
-                novalidate>
+            <form action="/publications/recherche" method="get" id="research"
+                class="bg-white rounded-3 p-1 mx-auto shadow needs-validation" style="max-width: 1100px;" novalidate>
                 <div class="row g-2 align-items-center">
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="input-group border-end">
                             <span class="input-group-text bg-white border-0"><i class="bi bi-geo-alt"></i></span>
                             <select id="ville" name="ville" class="form-select {{classe_ville}} border-0 ">
@@ -91,12 +91,19 @@
                         </div>
                     </div>
                     <div class="col-md-3 broder border-end">
-                        <input type="datetime-local" class="form-control border-0" aria-label="Date de début">
-                        <div class="invalid-feedback">Entrez une date valide</div>
+                        <input name="debut" type="datetime-local" class="form-control border-0"
+                            aria-label="Date de début">
                     </div>
                     <div class="col-md-3">
-                        <input type="datetime-local" class="form-control border-0" aria-label="Date de fin">
-                        <div class="invalid-feedback">Entrez une date valide</div>
+                        <input name="fin" type="datetime-local" class="form-control border-0 {%if not context.valid_time %} is-invalid{%endif%}" aria-label="Date de fin">
+                        <div class="invalid-feedback">{{context.time_message}}</div>
+                    </div>
+                    <div class="col-md-2 border-0">
+                        <select class="form-select" name="filter">
+                            <option selected value="Tous">Tous</option>
+                            <option value="Intérieur">Intérieur</option>
+                            <option value="Extérieur">Extérieur</option>
+                        </select>
                     </div>
                     <div class="col-md-2 d-grid">
                         <button id="submit_btn" type="submit" class="bi bi-search btn btn-dark"> Rechercher</button>
