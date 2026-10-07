@@ -62,13 +62,13 @@ def research():
 
     start = request.args.get('debut', type=str, default="1970-01-01T00:00")
     if start == "":
-        start = "1970-01-01 00:00"
+        start = "1970-01-01T00:00"
     valid_params = re.fullmatch(PATTERN, start)
     start = convert_time_string(start)
 
     end = request.args.get('fin', type=str, default="3000-01-01T00:00")
     if end == "":
-        end = "3000-01-01 00:00"
+        end = "3000-01-01T00:00"
     valid_params = re.fullmatch(PATTERN, end)
     end = convert_time_string(end)
     
