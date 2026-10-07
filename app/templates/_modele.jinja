@@ -95,7 +95,7 @@
                             aria-label="Date de début">
                     </div>
                     <div class="col-md-3">
-                        <input name="fin" type="datetime-local" class="form-control border-0 {%if not context.valid_time %} is-invalid{%endif%}" aria-label="Date de fin">
+                        <input name="fin" type="datetime-local" class="form-control border-0 {%if not context.valid_time %} is-invalid {%endif%}" aria-label="Date de fin">
                         <div class="invalid-feedback">{{context.time_message}}</div>
                     </div>
                     <div class="col-md-2 border-0">

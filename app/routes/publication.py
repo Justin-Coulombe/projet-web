@@ -24,7 +24,8 @@ def index():
         all_publications.append(pub.to_dict())
 
     context = {
-        "publications": all_publications
+        "publications": all_publications,
+        "valid_time": True
     }
 
 
