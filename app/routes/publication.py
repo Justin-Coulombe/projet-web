@@ -78,21 +78,20 @@ def research():
     if filter == "" or filter == "Tous":
         filter = "%"
 
-    valid_filter = filter in filters
-    
+    valid_filter = filter in filters    
+
+    if not valid_params:
+        message = "Paramètres invalide"
+        valid_time = True
+    else:
+        valid_time = validate_date_inputs(start, end)
 
     print(f"valid time {valid_time}")
     if not valid_time:
         message_time = "La date ne doit pas être antérieur"
         context["time_message"] = message_time
-        valid_time = True
-    else:
-        valid_time = validate_date_inputs(start, end)
 
     context["valid_time"] = valid_time
-
-    if not valid_params:
-        message = "Paramètres invalide"
 
     context["message"] = message
 
