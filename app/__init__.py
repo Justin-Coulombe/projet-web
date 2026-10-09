@@ -9,6 +9,7 @@ from app.routes.profile import bp_profile
 from app.routes.stationnement import bp_stationnement
 from app.routes.api import Bp_api
 from app.routes.publication import Bp_publication
+from app.routes.detail import bp_detail
 from app.database.queries.publications import get_sample_publications_limit
 
 load_dotenv()
@@ -50,7 +51,7 @@ def create_app():
     def index():
         raw = get_sample_publications_limit(5)
         publications = []
-        
+
         for pub in raw:
             publications.append(pub.to_dict())
 
@@ -63,25 +64,29 @@ def create_app():
             Entete="Accueil",
             message="PARKSHARE encore en cours de développement",
             context=context
+        )
+
+    app.register_blueprint(
+        bp_profile,
+        url_prefix="/profile"
     )
 
     app.register_blueprint(
-    bp_profile,
-    url_prefix="/profile"
+        bp_stationnement,
+        url_prefix="/stationnement"
     )
 
     app.register_blueprint(
-    bp_stationnement,
-    url_prefix="/stationnement"
+        Bp_api,
+        url_prefix="/api"
+    )
+    app.register_blueprint(
+        Bp_publication,
+        url_prefix="/publications"
     )
 
     app.register_blueprint(
-    Bp_api,
-    url_prefix="/api"
-    )
-    app.register_blueprint(
-    Bp_publication,
-    url_prefix="/publications"
-    )
+        bp_detail,
+        url_prefix="/profile")
 
     return app

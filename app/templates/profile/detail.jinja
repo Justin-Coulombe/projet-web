@@ -1,0 +1,121 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}
+Mon profil | ParkShare
+{% endblock %}
+
+{% block recherche%}
+{% endblock %}
+
+{% block contenu %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <i class="d-flex justify-content-center bi bi-person-circle " style="font-size: 100px;"></i>
+                    <h4 class="card-title d-flex justify-content-center">{{g.user.nom}} {{g.user.prenom}}</h4>
+                    <p class="card-subtitle fg-3 fw-bold">Nom</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{g.user.nom}}</p>
+                    <p class="card-subtitle fg-3 fw-bold">Prenom</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{g.user.prenom}}</p>
+                    <p class="card-subtitle fg-3 fw-bold">Courriel</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{g.user.email}}</p>
+                    <div class="d-grid gap-2 mt-2">
+                        <a href="#" class=" bi bi-pencil-square btn btn-outline-dark"> Modifier mon profil</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-2 mt-2 text-center">
+                <div class="col-md-6">
+                    <div class="card card-body">
+                        <p class="card-subtitle fg-3 fw-bold">{{lst_pubications|length}}</p>
+                        <p class="card-subtitle fg-3 opacity-75">Annonce(s)</p>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-body">
+                        <p class="card-subtitle fg-3 fw-bold">{{lst_reversations|length}}</p>
+                        <p class="card-subtitle fg-3 opacity-75">Réservation(s)</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <h4>Mes annonces</h4>
+            {% if not lst_pubications %}
+            <p>Vous avez aucune annonce pour le moment...</p>
+            <a class="btn btn-sm bi bi-plus-circle" href="/stationnement/ajouter"> Ajouter un stationnement</a>
+            {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Adresse</th>
+                        <th scope="col">Ville</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Nombre de place</th>
+                        <th scope="col">Emplacement</th>
+                        <th scope="col">Disponibilité</th>
+                        <th scope="col"></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    {% for publication in lst_pubications %}
+                    <tr>
+                        <td>{{ publication.address }}</td>
+                        <td>{{ publication.city }}</td>
+                        <td>{{ publication.price }} $/heure</td>
+                        <td>{{ publication.open_place }}</td>
+                        <td><span class="badge rounded-1 bg-dark" >{{ publication.location }}</span></td>
+                        {% if publication.use %}
+                        <td><span class="badge rounded-3 bg-success">Disponible</span></td>
+                        {%else%}
+                        <td><span class="badge rounded-3 bg-danger">réservé</span></td>
+                        {% endif %}
+                        <td>
+                            <a href="#" class="bi bi-pencil-square btn btn-outline-primary btn-sm">
+                                Modifier
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+
+            <div class="mt-4">
+                <h4>Mes réservations</h4>
+                {% if not lst_reversations %}
+                <p>Vous avez aucune réservation pour le moment...</p>
+                <a class="btn btn-sm bi bi-plus-circle" href="#"> réservé une place de stationnement</a>
+                {% else %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Adresse</th>
+                            <th scope="col">Ville</th>
+                            <th scope="col">date de début</th>
+                            <th scope="col">Date de fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in lst_reversations %}
+                        <tr>
+                            <td>{{ reservation.post.address }}</td>
+                            <td>{{ reservation.post.city }}</td>
+                            <td>{{ reservation.start }}</td>
+                            <td> {{ reservation.end }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

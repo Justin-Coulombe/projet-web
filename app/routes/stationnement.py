@@ -156,6 +156,7 @@ def ajouter_stationnement():
         adresse,
         prix,
         place,
+        place,
         debut,
         fin,
         ville,
