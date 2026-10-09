@@ -42,15 +42,16 @@
                             <a class="nav-link" href="#how">Comment ça marche ?</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/stationnement/ajouter">À propos</a>
+                            <a class="nav-link" href="/stationnement/ajouter"> Ajouter un stationnement</a>
                         </li>
                     </ul>
                     <div class="d-flex gap-2">
                         {% if not session['user_id']%}
-                        <a href="/auth/login" class="btn btn-outline-secondary btn-sm">Se connecter</a>
-                        <a href="/auth/register" class="btn btn-dark btn-sm">S'inscrire</a>
+                        <a href="/auth/login" class="btn btn-outline-secondary">Se connecter</a>
+                        <a href="/auth/register" class="btn btn-dark">S'inscrire</a>
                         {% else %}
-                        <a href="/auth/logout" class="btn btn-dark btn-sm">Déconnexion</a>
+                        <a href="/profile/detail" class="btn bi bi-person-circle" > {{g.user.nom}} {{g.user.prenom}}</a></a>
+                        <a href="/auth/logout" class="btn btn-outline-dark">Déconnexion</a>
                         {%endif%}
                     </div>
                 </div>
@@ -58,7 +59,7 @@
         </nav>
     </header>
 
-    <main>
+    <main class="container-fluid">
         <section class="text-center">
             {%block centered_title %}
             {% endblock %}
