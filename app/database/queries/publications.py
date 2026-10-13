@@ -296,23 +296,49 @@ def get_publications_by_user(user_id):
     return publications
 
 
-def update_publications(publication_id):
-
+def get_publications_by_id(publication_id):
     conn = create_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
+    command = """
+            SELECT
+               id,
+                author,
+                address,
+                prix,
+                debut,
+                fin,
+                ville,
+                emplacement,
+                image,
+                placetotal,
+                placeactuel,
+                disponibilite
+            from
+            publication
+            WHERE
+            id = ?
         """
-     UPDATE Publication
-     SET placeactuel = placeactuel - 1,
-        disponibilite = CASE
-            WHEN placeactuel - 1 > 0 THEN TRUE
-            ELSE FALSE
-        END
-       WHERE id = ?
-       AND placeactuel > 0
 
-     """,
-     (publication_id)
+    cursor.execute(command, (publication_id,))
 
+    publications = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    resultat = publication(
+        publications[0],
+        publications[1],
+        publications[2],
+        publications[3],
+        publications[4],
+        publications[5],
+        publications[6],
+        publications[7],
+        publications[8],
+        publications[9],
+        publications[10],
+        publications[11]
     )
+    return resultat

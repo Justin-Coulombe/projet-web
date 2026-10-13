@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, current_app
 from app.database.queries.publications import ajouter_stationnement as db_ajouter_stationnement
+from app.database.queries.publications import get_publications_by_id
 from app.routes.auth import login_required
 
 import os
@@ -171,3 +172,22 @@ def ajouter_stationnement():
         url_for('index'),
         code=303
     )
+
+@bp_stationnement.route('/edit/<int:publication_id>')
+@login_required
+def edit(publication_id):
+    """Permet au créateur d'un stationnement de le modifier"""
+
+    publication = get_publications_by_id(publication_id)
+
+
+    if publication_id:
+        print("L'ID est manquant")
+
+    if publication.author_id != session['user_id']:
+        return redirect(url_for('index'), code=303)
+
+
+
+
+    return render_template('stationnement/edit.jinja',publication=publication,)
