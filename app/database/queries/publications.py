@@ -342,3 +342,52 @@ def get_publications_by_id(publication_id):
         publications[11]
     )
     return resultat
+
+
+def update_publication(
+        publication_id,
+        address,
+        prix,
+        placetotal,
+        placeactuel,
+        debut,
+        fin,
+        ville,
+        emplacement):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+       UPDATE publication
+       SET address = ?,
+       prix = ?,
+       placetotal = ?,
+       placeactuel = ?,
+       debut = ?,
+       fin = ?,
+       ville = ?,
+       emplacement = ?
+       WHERE id = ?
+        """,
+        (address, prix, placetotal, placeactuel, debut,
+         fin, ville, emplacement, publication_id)
+    )
+
+    close_connection(conn, cursor)
+
+
+def update_image(publication_id,img):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+          UPDATE publication
+          SET image = ?
+          WHERE id = ?
+            """,
+        (img,publication_id)
+    )
+
+    close_connection(conn, cursor)

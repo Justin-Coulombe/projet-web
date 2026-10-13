@@ -54,7 +54,7 @@ Mon profil | ParkShare
                         {% endif %}
 
 
-                        <form method="POST">
+                        <form method="POST" novalidate>
 
                             <div class="row">
 
@@ -140,9 +140,6 @@ Mon profil | ParkShare
 
                 </div>
 
-
-                <!-- Mot de passe -->
-
                 <div class="card border-0 shadow-sm">
 
                     <div class="card-body p-4">
@@ -174,6 +171,7 @@ Mon profil | ParkShare
                         <form
                             method="POST"
                             action="{{ url_for('profile.change_password') }}"
+                            novalidate
                         >
 
                             <div class="mb-3">
