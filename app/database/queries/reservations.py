@@ -30,6 +30,25 @@ def add_Reservation(user_id, debut, fin, publication_id):
     cursor = conn.cursor()
 
     command = """
+        SELECT placeactuel, disponibilite
+        FROM Publication
+        WHERE id = ?
+    """
+
+    cursor.execute(command, (publication_id,))
+    result1 = cursor.fetchone()
+
+    if result1 is None:
+        close_connection(conn, cursor)
+        return False
+
+    placeactuel, disponibilite = result1
+
+    if not disponibilite or placeactuel <= 0:
+        close_connection(conn, cursor)
+        return False
+
+    command = """
         INSERT INTO Reservation (
             client,
             publication,
@@ -40,10 +59,30 @@ def add_Reservation(user_id, debut, fin, publication_id):
     """
 
     cursor.execute(
-        command, (user_id, debut, fin, publication_id)
+        command,
+        (user_id, publication_id, debut, fin)
+    )
+
+    n_placeactuel = placeactuel - 1
+
+    command = """
+        UPDATE Publication
+        SET placeactuel = ?,
+            disponibilite = ?
+        WHERE id = ?
+    """
+
+    cursor.execute(
+        command,
+        (
+            n_placeactuel,
+            1 if n_placeactuel > 0 else 0,
+            publication_id
+        )
     )
 
     close_connection(conn, cursor)
+    return True
 
 
 def get_reservation_by_user(user_id):

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, current_app
 from app.database.queries.publications import ajouter_stationnement as db_ajouter_stationnement
-from app.database.queries.publications import get_publications_by_id, update_publication, update_image
+from app.database.queries.publications import get_publications_by_id, update_publication, update_image, delete_publication
 from app.routes.auth import login_required
 
 import os
@@ -314,8 +314,6 @@ def change_img(publication_id):
     if erreur:
         return render_template(
             'stationnement/edit.jinja',
-            # message_image=message_image,
-            # classe_image=classe_image,
             publication=publication,
             error="Assurez-vous de bien téléverser votre image"
         )
@@ -351,3 +349,21 @@ def change_img(publication_id):
     update_image(publication_id, nom_image)
 
     return redirect(url_for('stationnement.edit', publication_id=publication_id, img_success="Image changer avec succès."), code=303)
+
+
+@bp_stationnement.route("/supprimer/<int:publication_id>")
+@login_required
+def delete(publication_id):
+    """Permet au créateur d'un stationnement de le modifier"""
+
+    publication = get_publications_by_id(publication_id)
+
+    if publication is None:
+        return redirect(url_for('index'), code=303)
+
+    if publication.author_id != session['user_id']:
+        return redirect(url_for('index'), code=303)
+
+    delete_publication(publication_id, session['user_id'])
+
+    return redirect(url_for('detail.detail_profil'), code=303)

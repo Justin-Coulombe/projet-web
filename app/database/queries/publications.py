@@ -17,8 +17,8 @@ def create_publication_table():
             ville TEXT NOT NULL,
             emplacement TEXT,
             image TEXT,
-            placetotal INTEGER NOT NULL,
-            placeactuel INTEGER NOT NULL,
+            placetotal INTEGER NOT NULL CHECK (placetotal > 0),
+            placeactuel INTEGER NOT NULL CHECK (placeactuel >= 0),
             disponibilite BOOLEAN NOT NULL DEFAULT TRUE,
             FOREIGN KEY (author) REFERENCES User(id)
         )
@@ -54,9 +54,10 @@ def ajouter_stationnement(
             emplacement,
             image,
             placetotal,
-            placeactuel
+            placeactuel,
+            disponibilite
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     cursor.execute(
@@ -71,7 +72,8 @@ def ajouter_stationnement(
             emplacement,
             image,
             placetotal,
-            placeactuel
+            placeactuel,
+            1
         )
     )
 
@@ -327,6 +329,9 @@ def get_publications_by_id(publication_id):
     cursor.close()
     conn.close()
 
+    if publications is None:
+        return None
+
     resultat = publication(
         publications[0],
         publications[1],
@@ -377,7 +382,7 @@ def update_publication(
     close_connection(conn, cursor)
 
 
-def update_image(publication_id,img):
+def update_image(publication_id, img):
     conn = create_connection()
     cursor = conn.cursor()
 
@@ -387,7 +392,21 @@ def update_image(publication_id,img):
           SET image = ?
           WHERE id = ?
             """,
-        (img,publication_id)
+        (img, publication_id)
     )
 
+    close_connection(conn, cursor)
+
+
+def delete_publication(publication_id, user_id):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM Publication
+        WHERE id = ? AND author = ?
+                """,
+        (publication_id, user_id)
+    )
     close_connection(conn, cursor)
