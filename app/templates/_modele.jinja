@@ -42,15 +42,17 @@
                             <a class="nav-link" href="#how">Comment ça marche ?</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/stationnement/ajouter">À propos</a>
+                            <a class="nav-link" href="/stationnement/ajouter"> Ajouter un stationnement</a>
                         </li>
                     </ul>
                     <div class="d-flex gap-2">
                         {% if not session['user_id']%}
-                        <a href="/auth/login" class="btn btn-outline-secondary btn-sm">Se connecter</a>
-                        <a href="/auth/register" class="btn btn-dark btn-sm">S'inscrire</a>
+                        <a href="/auth/login" class="btn btn-outline-secondary">Se connecter</a>
+                        <a href="/auth/register" class="btn btn-dark">S'inscrire</a>
                         {% else %}
-                        <a href="/auth/logout" class="btn btn-dark btn-sm">Déconnexion</a>
+                        <a href="/profile/detail" class="btn bi bi-person-circle"> {{g.user.nom}}
+                            {{g.user.prenom}}</a></a>
+                        <a href="/auth/logout" class="btn btn-outline-dark">Déconnexion</a>
                         {%endif%}
                     </div>
                 </div>
@@ -58,8 +60,8 @@
         </nav>
     </header>
 
-    <main>
-        <section class="text-center">
+    <main class="container-fluid">
+        <section class="text-center bg-light">
             {%block centered_title %}
             {% endblock %}
             {% block recherche %}
@@ -95,7 +97,9 @@
                             aria-label="Date de début">
                     </div>
                     <div class="col-md-3">
-                        <input name="fin" type="datetime-local" class="form-control border-0 {%if not context.valid_time %} is-invalid {%endif%}" aria-label="Date de fin">
+                        <input name="fin" type="datetime-local"
+                            class="form-control border-0 {%if not context.valid_time %} is-invalid {%endif%}"
+                            aria-label="Date de fin">
                         <div class="invalid-feedback">{{context.time_message}}</div>
                     </div>
                     <div class="col-md-2 border-0">
