@@ -1,0 +1,77 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}
+stationnement | ParkShare
+{% endblock %}
+
+{% block recherche%}
+{% endblock %}
+{% set path = "/static/img/stationnement/" %}
+
+{% block contenu%}
+
+<div class="d-flex align-items-center justify-content-between mb-4 mt-3">
+    <h2 class=" fw-bold"> Détails de l’annonce</h2>
+    {%if publication.author_id == session['user_id']%}
+    <a href="/stationnement/edit/{{publication.id}}" class="btn btn-dark">Modifier l'annonce</a>
+    {% endif %}
+</div>
+<div class="mb-3">
+    <img src="{% if publication.img %} {{path~publication.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
+        class="card-img-top img-fluid" alt="image de l'annonce"
+        style="max-height: 300px; width: 100%; object-fit: cover;">
+</div>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Adresse stationnement</span>
+                {{publication.address}}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Prix ($/heure)</span>
+                {{publication.price}}
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Place Disponible</span>
+                {{ publication.place_use}} sur {{publication.open_place}}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Emplacement</span>
+                {{publication.location}}
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Ville</span>
+                {{publication.city}}
+            </div>
+            <div class="col-6 d-flex flex-column fw-bold">
+                <span class="fw-lighter">Province</span>
+                Québec
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Disponible du (date et heure)</span>
+                {{publication.start}}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Jusqu'au (date et heure)</span>
+                {{publication.end}}
+            </div>
+        </div>
+    </li>
+</ul>
+<div class="mt-1 d-flex justify-content-end">
+    <a href="#" class="btn btn-dark">Réserver la place</a>
+</div>
+{% endblock %}

@@ -366,4 +366,20 @@ def delete(publication_id):
 
     delete_publication(publication_id, session['user_id'])
 
-    return redirect(url_for('detail.detail_profil'), code=303)
+    return redirect(url_for('detail.detail_profil', success="Annonces supprimée avec succés"), code=303)
+
+
+@bp_stationnement.route('/detail/<int:publication_id>')
+def detail(publication_id):
+    """Permet de voir les detail d'une publication"""
+
+    publication = get_publications_by_id(publication_id)
+
+    if publication is None:
+        return redirect(url_for('index'), code=303)
+
+
+    if not publication_id:
+        print("L'ID est manquant")
+
+    return render_template('stationnement/detail.jinja', publication=publication)
