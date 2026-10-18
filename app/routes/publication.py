@@ -41,7 +41,10 @@ def research():
     """
     Affiche la page de recherche des publications.
     """
-    context = {}
+    context = {
+        "publications": [],
+        "publications_carte": []
+    }
     valid_filter = False
     valid_time = False
     valid_city = False
@@ -95,14 +98,67 @@ def research():
 
     context["message"] = message
 
-    if(valid_time, valid_filter, valid_params):
+    if valid_time and valid_filter and valid_params and valid_city:
         params = {"city": city, "start":start, "end":end, "filter":filter}
         raw = get_publications_with_city_date_location_location(params)
         publications = []
 
-        for pub in raw:
-            publications.append(pub.to_dict())
-        context["publications"] = publications
+
+
+    publications = []
+
+    for objet in raw:
+        pub = objet.to_dict()
+
+        # Ajouter explicitement les coordonnées GPS
+        pub["latitude"] = getattr(objet, "latitude", None)
+        pub["longitude"] = getattr(objet, "longitude", None)
+
+        publications.append(pub)
+
+    context["publications"] = publications
+
+    # Garder uniquement les publications géolocalisées
+    context["publications_carte"] = [
+        {
+            "id": pub["id"],
+            "address": pub["address"],
+            "city": pub["city"],
+            "price": pub["price"],
+            "latitude": pub["latitude"],
+            "longitude": pub["longitude"]
+        }
+        for pub in publications
+        if pub["latitude"] is not None
+        and pub["longitude"] is not None
+    ]
+
+    print("DEBUG PUBLICATIONS :", publications)
+    print("DEBUG CARTE :", context["publications_carte"])
+
+
+    context["publications"] = publications
+
+    # -_-_-_-_-_-_-_-_-_-_-_-_-_-_
+    if publications:
+        print("DEBUG PUBLICATION :", publications[0])
+    # -_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+    # Données minimales à envoyer à Leaflet.
+    context["publications_carte"] = [
+        {
+            "id": pub["id"],
+            "address": pub["address"],
+            "city": pub["city"],
+            "price": pub["price"],
+            "latitude": pub["latitude"],
+            "longitude": pub["longitude"]
+        }
+        for pub in publications
+        if pub["latitude"] is not None
+        and pub["longitude"] is not None
+    ]
+
 
 
     

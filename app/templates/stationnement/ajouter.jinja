@@ -1,8 +1,14 @@
 {% extends "_modele.jinja" %}
+{% block extra_head %}
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
 
 {% block script %}
 <script defer src="/static/js/validation.js"></script>
 <script src="/static/js/base.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/geocoding.js') }}"></script>
 {% endblock %}
 
 {% block recherche%}
@@ -25,6 +31,57 @@
                     placeholder="133 boulevard de l'entente" value="{{adresse}}">
                 <div class="invalid-feedback">{{msg_adresse}}</div>
             </div>
+
+<div class="col-12">
+
+    <label class="form-label fw-bold">
+        Vérification de l'adresse
+    </label>
+
+    <div>
+        <button
+            type="button"
+            id="verifier-adresse"
+            class="btn btn-outline-primary">
+            <i class="bi bi-geo-alt"></i>
+            Vérifier l'adresse
+        </button>
+    </div>
+
+    <p id="geocode-status"
+       class="small mt-2"
+       role="status"
+       aria-live="polite"></p>
+
+    <input
+        type="hidden"
+        id="geocode-token"
+        name="geocode_token">
+
+    {% if msg_position %}
+    <p class="text-danger small">
+        {{ msg_position }}
+    </p>
+    {% endif %}
+
+    <div id="geocode-preview" hidden>
+        <div class="alert alert-success">
+            <strong>Adresse trouvée !</strong>
+            <div id="adresse-reconnue"></div>
+            <small>
+                Vérifiez que le repère correspond
+                à votre stationnement.
+            </small>
+        </div>
+
+        <div id="geocode-map"
+             style="height: 300px; width: 100%;"
+             class="rounded border">
+        </div>
+    </div>
+
+</div>
+
 
             <div class="col-md-6">
                 <label for="ville" class="form-label fw-bold">Ville</label>

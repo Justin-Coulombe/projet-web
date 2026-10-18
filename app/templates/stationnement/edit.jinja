@@ -1,5 +1,8 @@
 {% extends "_modele.jinja" %}
-
+{% block extra_head %}
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
 {% block title %}
 stationnement | ParkShare
 {% endblock %}
@@ -7,12 +10,15 @@ stationnement | ParkShare
 {% block script %}
 <script defer src="/static/js/validation.js"></script>
 <script src="/static/js/base.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/geocoding.js') }}"></script>
 {% endblock %}
 
 {% block recherche%}
 {% endblock %}
 
 {% block contenu %}
+{% set ville_actuelle = ville if ville is defined else publication.city %}
 {% set path = "/static/img/stationnement/" %}
 
 <div class="d-flex align-items-center justify-content-between mt-2">
@@ -40,31 +46,82 @@ stationnement | ParkShare
             <div class="col-md-12">
                 <label for="adresse" class="form-label fw-bold">Adresse stationnement</label>
                 <input type="text" name="adresse" class="form-control {{classe_adresse}}" id="adresse"
-                    placeholder="133 boulevard de l'entente" value=" {{ publication.address }}">
+                    placeholder="133 boulevard de l'entente" value="{{ adresse if adresse is defined else publication.address }}">
                 <div class="invalid-feedback">{{msg_adresse}}</div>
+
+<div class="col-12">
+
+    <label class="form-label fw-bold">
+        Vérification de l'adresse
+    </label>
+
+    <div>
+        <button
+            type="button"
+            id="verifier-adresse"
+            class="btn btn-outline-primary">
+            <i class="bi bi-geo-alt"></i>
+            Vérifier l'adresse
+        </button>
+    </div>
+
+    <p id="geocode-status"
+       class="small mt-2"
+       role="status"
+       aria-live="polite"></p>
+
+    <input
+        type="hidden"
+        id="geocode-token"
+        name="geocode_token">
+
+    {% if msg_position %}
+    <p class="text-danger small">
+        {{ msg_position }}
+    </p>
+    {% endif %}
+
+    <div id="geocode-preview" hidden>
+        <div class="alert alert-success">
+            <strong>Adresse trouvée !</strong>
+            <div id="adresse-reconnue"></div>
+            <small>
+                Vérifiez que le repère correspond
+                à votre stationnement.
+            </small>
+        </div>
+
+        <div id="geocode-map"
+             style="height: 300px; width: 100%;"
+             class="rounded border">
+        </div>
+    </div>
+
+</div>
+
             </div>
             <div class="col-md-6">
                 <label for="ville" class="form-label fw-bold">Ville</label>
                 <select id="ville" name="ville" class="form-select {{classe_ville}}">
                     <option selected value="">Choisissez la ville</option>
-                    <option {% if publication.city=="Montréal" %}selected{% endif %}>Montréal</option>
-                    <option {% if publication.city=="Québec" %}selected{% endif %}>Québec</option>
-                    <option {% if publication.city=="Laval" %}selected{% endif %}>Laval</option>
-                    <option {% if publication.city=="Gatineau" %}selected{% endif %}>Gatineau</option>
-                    <option {% if publication.city=="Longueuil" %}selected{% endif %}>Longueuil</option>
-                    <option {% if publication.city=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
-                    <option {% if publication.city=="Lévis" %}selected{% endif %}>Lévis</option>
-                    <option {% if publication.city=="Saguenay" %}selected{% endif %}>Saguenay</option>
-                    <option {% if publication.city=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières
+                    <option {% if ville_actuelle=="Montréal" %}selected{% endif %}>Montréal</option>
+                    <option {% if ville_actuelle=="Québec" %}selected{% endif %}>Québec</option>
+                    <option {% if ville_actuelle=="Laval" %}selected{% endif %}>Laval</option>
+                    <option {% if ville_actuelle=="Gatineau" %}selected{% endif %}>Gatineau</option>
+                    <option {% if ville_actuelle=="Longueuil" %}selected{% endif %}>Longueuil</option>
+                    <option {% if ville_actuelle=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
+                    <option {% if ville_actuelle=="Lévis" %}selected{% endif %}>Lévis</option>
+                    <option {% if ville_actuelle=="Saguenay" %}selected{% endif %}>Saguenay</option>
+                    <option {% if ville_actuelle=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières
                     </option>
-                    <option {% if publication.city=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
-                    <option {% if publication.city=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>
+                    <option {% if ville_actuelle=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
+                    <option {% if ville_actuelle=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>
                         Saint-Jean-sur-Richelieu
                     </option>
-                    <option {% if publication.city=="Brossard" %}selected{% endif %}>Brossard</option>
-                    <option {% if publication.city=="Repentigny" %}selected{% endif %}>Repentigny</option>
-                    <option {% if publication.city=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
-                    <option {% if publication.city=="Drummondville" %}selected{% endif %}>Drummondville</option>
+                    <option {% if ville_actuelle=="Brossard" %}selected{% endif %}>Brossard</option>
+                    <option {% if ville_actuelle=="Repentigny" %}selected{% endif %}>Repentigny</option>
+                    <option {% if ville_actuelle=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
+                    <option {% if ville_actuelle=="Drummondville" %}selected{% endif %}>Drummondville</option>
                 </select>
                 <div class="invalid-feedback">{{msg_ville}}</div>
             </div>

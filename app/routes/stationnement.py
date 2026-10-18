@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, request, sessio
 from app.database.queries.publications import ajouter_stationnement as db_ajouter_stationnement
 from app.database.queries.publications import get_publications_by_id, update_publication, update_image, delete_publication
 from app.routes.auth import login_required
+from app.services.geocoding import valider_jeton
+from app.database.queries.publications import get_publication_coordinates
 
 import os
 import time
@@ -99,6 +101,24 @@ def ajouter_stationnement():
         classe_image = "is-invalid"
         erreur = True
 
+        # Vérifier que l'adresse a réellement été géolocalisée.
+    jeton = request.form.get("geocode_token", "")
+
+    position = valider_jeton(
+        jeton,
+        adresse,
+        ville
+    )
+
+    msg_position = ""
+
+    if position is None:
+        erreur = True
+        msg_position = (
+            "Vous devez vérifier votre adresse avant "
+            "de publier le stationnement."
+        )
+
     if erreur:
         return render_template(
             'stationnement/ajouter.jinja',
@@ -124,7 +144,8 @@ def ajouter_stationnement():
             classe_emplacement=classe_emplacement,
             msg_emplacement=msg_emplacement,
             message_image=message_image,
-            classe_image=classe_image
+            classe_image=classe_image,
+            msg_position=msg_position
         )
 
     chemin_images = os.path.join(
@@ -152,6 +173,7 @@ def ajouter_stationnement():
 
     user_id = session["user_id"]
 
+
     db_ajouter_stationnement(
         adresse,
         prix,
@@ -162,8 +184,11 @@ def ajouter_stationnement():
         ville,
         emplacement,
         nom_image,
-        user_id
+        user_id,
+        position["latitude"],
+        position["longitude"]
     )
+
 
     current_logger.info("Stationnement ajouté avec succès")
 
@@ -259,12 +284,45 @@ def edit(publication_id):
         msg_emplacement = "Ce champ ne peut être vide"
         erreur = True
 
+
+    adresse_modifiee = (
+        (adresse or "").strip() != publication.address.strip()
+        or (ville or "").strip() != publication.city.strip()
+    )
+
+    ancienne_position = get_publication_coordinates(publication_id)
+
+    position_manquante = (
+        ancienne_position is None
+        or ancienne_position[0] is None
+        or ancienne_position[1] is None
+    )
+
+    position = None
+    msg_position = ""
+
+    if adresse_modifiee or position_manquante:
+        position = valider_jeton(
+            request.form.get("geocode_token", ""),
+            adresse,
+            ville
+        )
+
+        if position is None:
+            erreur = True
+            msg_position = (
+                "Vérifiez la nouvelle adresse avant "
+                "d'enregistrer les modifications."
+            )
+
+
     if erreur:
         return render_template(
             'stationnement/edit.jinja',
             publication=publication,
             adresse=adresse,
             classe_adresse=classe_adresse,
+            msg_position=msg_position,
             msg_adresse=msg_adresse,
             prix=prix,
             classe_prix=classe_prix,
@@ -286,8 +344,19 @@ def edit(publication_id):
             msg_emplacement=msg_emplacement
         )
 
-    update_publication(publication_id, adresse, prix, place,
-                       place, debut, fin, ville, emplacement)
+    update_publication(
+        publication_id,
+        adresse,
+        prix,
+        place,
+        place,
+        debut,
+        fin,
+        ville,
+        emplacement,
+        latitude=position["latitude"] if position else None,
+        longitude=position["longitude"] if position else None
+    )
     return redirect(url_for('stationnement.edit', publication_id=publication_id, success="Informations modifiées avec succès."), code=303)
 
 
