@@ -115,11 +115,9 @@
 
 
 
-        <section>
-            <div class="row m-2">
-                {% block contenu %}
-                {%endblock%}
-            </div>
+        <section class="container mb-3">
+            {% block contenu %}
+            {%endblock%}
         </section>
         {%block section_how %}
         {% endblock %}
@@ -143,6 +141,7 @@
                         <li><a href="#" class="text-secondary text-decoration-none">Politique de confidentialité</a>
                         </li>
                         <li><a href="#" class="text-secondary text-decoration-none">Nous contacter</a></li>
+                        <li><a href="{{url_for('admin.index')}}" class="text-secondary text-decoration-none">admin</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 text-md-end fs-5">
