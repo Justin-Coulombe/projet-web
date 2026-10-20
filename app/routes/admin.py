@@ -27,6 +27,9 @@ def gestion():
     context['publications'] = []
     categorie = request.args.get('categorie', 'uti')
 
+    admin = adminqueries.get_admin_by_id(session['admin_id'])
+    context['admin'] = admin
+
     if request.method == "POST":
         form = request.form
         if form['identifier'] == "ban":
@@ -83,7 +86,8 @@ def confirmation():
 @Bp_admin.route('/login', methods=['GET','POST'])
 def login():
     context = {}
-    context['message'] = []
+    context['messages'] = []
+    context['valid'] = True
     if 'admin_id' in session:
         return redirect("/admin")
     
@@ -95,6 +99,9 @@ def login():
         if admin :
             session['admin_id'] = admin[0]
             return redirect("/admin")
+        else:
+            context['messages'].append("Aucun administrateur avec ces identifiants")
+            context['valid'] = False
 
     return render_template("admin/login.jinja", context=context)
 

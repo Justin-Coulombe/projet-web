@@ -86,7 +86,6 @@ def research():
     else:
         valid_time = validate_date_inputs(start, end)
 
-    print(f"valid time {valid_time}")
     if not valid_time:
         message_time = "La date ne doit pas être antérieur"
         context["time_message"] = message_time
@@ -120,7 +119,6 @@ def validate_date_inputs(start, end):
     start_stamp = start_time.timestamp()
     end_stamp = end_time.timestamp()
 
-    print(f"les dates par defaut : \n{start_stamp}\n{end_stamp}")
 
     if start_stamp > end_stamp:
         return False

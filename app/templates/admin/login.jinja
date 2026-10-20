@@ -14,23 +14,23 @@ Administration | ParkShare
 <div class="row g-8 justify-content-center">
     <div class="w-100 h-100 d-flex justify-content-center align-items-center">
         
-        <form class="bg-secondary p-3 rounded-2"  method="post">
+        <form class="bg-secondary p-3 rounded-2 needs-validation"  method="post" novalidate>
             <div {%if not context.messages %} hidden {%endif%} class="bg-danger text-white m-2 rounded-2">
                 <p class="ms-2">Connexion refusée:</p>
                 <ul>
                     {% for message in context.messages%}
-                    <li>message</li>
+                    <li>{{message}}</li>
                     {% endfor %}
-                </ul>
+                </ul>   
             </div>
             <div class="d-flex">
                 <div class="m-2">
                     <label class="text-white form-label" for="inputidentifier">nom d'identification</label>
-                    <input type="text" name="inputidentifier" id="inputidentifier" class="form-control">
+                    <input type="text" name="inputidentifier" id="inputidentifier" class="form-control {% if not context.valid %} is-invalid {%endif%}">
                 </div>
                 <div class="m-2">
                     <label class="text-white form-label" for="inputpassword">mot de passe</label>
-                    <input type="password" id="inputpassword" name="inputpassword" class="form-control">
+                    <input type="password" id="inputpassword" name="inputpassword" class="form-control {% if not context.valid %} is-invalid {%endif%}">
                 </div>
             </div>
             <div class="m-2 d-flex justify-content-between align-items-center">

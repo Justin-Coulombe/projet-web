@@ -19,9 +19,9 @@ Administration | ParkShare
             <p class="fs-3 fw-bold">Admin</p>
         </div>
     </div>
-    <div class="col">
-        <a href="{{url_for('admin.gestion', page='1', categorie='uti')}}" class="w-100 fs-2 d-flex align-items-center justify-content-center m-2 h-50 btn btn-light" id="ToUser">Utilisateurs</a>
-        <a href="{{url_for('admin.gestion', page='1', categorie='pub')}}" class="w-100 fs-2 d-flex align-items-center justify-content-center m-2 h-50 btn btn-light" id="ToPublic">Publications</a>
+    <div class="col m-2">
+        <a href="{{url_for('admin.gestion', page='1', categorie='uti')}}" class="w-100 fs-2 d-flex align-items-center bg-tertiary justify-content-center m-2 h-50 btn btn-light" id="ToUser">Utilisateurs</a>
+        <a href="{{url_for('admin.gestion', page='1', categorie='pub')}}" class="w-100 fs-2 d-flex align-items-center bg-tertiary justify-content-center m-2 h-50 btn btn-light" id="ToPublic">Publications</a>
     </div>
 </div>
 {% endblock %}

@@ -4,7 +4,7 @@ Administration | ParkShare
 {%endblock%}
 
 {% block centered_title%}
-<div class="fs-3 m-2 fw-bold">Gestion</div>
+<div class="fs-3 m-2 fw-bold">Gestion de l'application</div>
 {%endblock%}
 
 {% block recherche%}
@@ -14,9 +14,9 @@ Administration | ParkShare
 <div class="row g-8 justify-content-center">
     <div id="nav_id" class="col-2 bg-secondary p-3">
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <div mb-2>
-                <p class="fw-bold">Nom</p>
-                <p>ID</p>
+            <div class="mb-2">
+                <p class="fs-5 fw-bold ">{{context.admin[1]}}</p>
+                <p class="fw-bold">Admin</p>
             </div>
 
             <div class="h-50">
@@ -36,7 +36,7 @@ Administration | ParkShare
             <div class="input-group col">
                 <span class="input-group-text">@</span>
                 <input name="mail" placeholder="recherche par mail">
-                <button type="submit" value="search" class="input-group-text btn btn-primary">O</button> 
+                <button type="submit" value="search" class="input-group-text btn btn-primary"><i class="bi bi-search"></i></button> 
             </div>
         </form> 
 
