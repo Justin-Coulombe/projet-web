@@ -21,6 +21,7 @@ def create_publication_table():
             placemax INTEGER NOT NULL,
             placedispo INTEGER NOT NULL,
             FOREIGN KEY (author) REFERENCES User(id)
+            ON DELETE CASCADE ON UPDATE CASCADE
         )
     """
 
@@ -226,3 +227,56 @@ def get_sample_publications_limit(limite):
         )
 
     return publications
+
+
+def get_publications_by_user(userid):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    command = """
+        SELECT
+            id,
+            author,
+            address,
+            prix,
+            debut,
+            fin,
+            ville,
+            emplacement,
+            image,
+            placedispo
+        FROM Publication
+        WHERE author = ?
+    """
+
+    cursor.execute(command, (userid,))
+
+    results = cursor.fetchall()
+
+    close_connection(conn, cursor)
+
+    publications = []
+
+    for item in results:
+        publications.append(
+            publication(
+                item[0],
+                item[1],
+                item[2],
+                item[3],
+                item[4],
+                item[5],
+                item[6],
+                item[7],
+                item[8],
+                item[9]
+            )
+        )
+
+    return publications
+
+def delete_publication_by_id(pubid):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM publication WHERE id = ?", (pubid,))
+    close_connection(conn, cursor)

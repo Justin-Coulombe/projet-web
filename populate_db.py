@@ -36,7 +36,8 @@ CREATE TABLE IF NOT EXISTS User (
     nom TEXT NOT NULL,
     prenom TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    mdp TEXT NOT NULL
+    mdp TEXT NOT NULL,
+    banni BOOLEAN DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS Publication (
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS Publication (
     placemax INTEGER NOT NULL,
     placedispo INTEGER NOT NULL,
     FOREIGN KEY (author) REFERENCES User(id)
+    ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Reservation (
@@ -60,6 +62,7 @@ CREATE TABLE IF NOT EXISTS Reservation (
     debut DATETIME NOT NULL,
     fin DATETIME NOT NULL,
     FOREIGN KEY (publication) REFERENCES Publication(id)
+    ON DELETE CASCADE ON UPDATE CASCADE
 );
 """
 
