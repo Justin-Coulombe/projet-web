@@ -15,13 +15,13 @@ Administration | ParkShare
     <div id="identification" class="col-3">
         <img class="m-2 rounded-circle w-100" src="{{url_for('static', filename='img/placeholder.jpg')}}">
         <div class="text-center">
-            <p class="fs-3">Nom</p>
+            <p class="fs-3">{{context.admin[1]}}</p>
             <p class="fs-3 fw-bold">Admin</p>
         </div>
     </div>
     <div class="col">
-        <a href="#" class="w-100 fs-2 d-flex align-items-center justify-content-center m-2 h-50 btn btn-light" id="ToUser">Utilisateurs</a>
-        <a href="#" class="w-100 fs-2 d-flex align-items-center justify-content-center m-2 h-50 btn btn-light" id="ToPublic">Publications</a>
+        <a href="{{url_for('admin.gestion', page='1', categorie='uti')}}" class="w-100 fs-2 d-flex align-items-center justify-content-center m-2 h-50 btn btn-light" id="ToUser">Utilisateurs</a>
+        <a href="{{url_for('admin.gestion', page='1', categorie='pub')}}" class="w-100 fs-2 d-flex align-items-center justify-content-center m-2 h-50 btn btn-light" id="ToPublic">Publications</a>
     </div>
 </div>
 {% endblock %}

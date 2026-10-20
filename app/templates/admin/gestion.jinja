@@ -26,7 +26,7 @@ Administration | ParkShare
                 </ul>
             </div>
             <div class="ms-2 mt-5">
-                <a class="btn btn-danger">déconnexion</a>
+                <a class="btn btn-danger" href="{{url_for('admin.logout')}}">déconnexion</a>
             </div>
         </div>
     </div>
@@ -112,9 +112,13 @@ Administration | ParkShare
         </form>
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
+                {%if request.args.page %}
                 {% for page in range(context.page_number|int)%}
                 <li class="page-item"><a class="page-link {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
                 {% endfor%}
+                {%else%}
+                <li class="page-item"><a class="page-link active" href="{{url_for(request.endpoint)}}">1</a></li>
+                {%endif%}
             </ul>
         </nav>
     </div>

@@ -97,6 +97,7 @@ def get_publications_with_city_date_location_location(params):
           AND DATE(debut) >= DATE(?)
           AND DATE(fin) <= DATE(?)
           AND emplacement LIKE ?
+          AND (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(
@@ -150,7 +151,7 @@ def get_all_publications():
             emplacement,
             image,
             placedispo
-        FROM Publication
+        FROM Publication WHERE (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(command)
@@ -197,6 +198,7 @@ def get_sample_publications_limit(limite):
             image,
             placedispo
         FROM Publication
+        WHERE (SELECT banni FROM User WHERE id = author) = FALSE
         ORDER BY RANDOM()
         LIMIT ?
     """
@@ -246,7 +248,7 @@ def get_publications_by_user(userid):
             image,
             placedispo
         FROM Publication
-        WHERE author = ?
+        WHERE author = ? AND (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(command, (userid,))

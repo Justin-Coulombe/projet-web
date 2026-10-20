@@ -3,17 +3,24 @@ from winreg import QueryValueEx
 from flask import redirect, request, render_template, Blueprint, session
 from app.database.queries import users as userqueries
 from app.database.queries import publications as postqueries
+from app.database.queries import admin as adminqueries
 from app.routes.api import paginate_data as pagination
+import time
 Bp_admin = Blueprint('admin', __name__)
 
 @Bp_admin.route("/")
 def index():
-    return render_template("admin/index.jinja")
+    if 'admin_id' not in session:
+        return redirect('login')
+    admin = adminqueries.get_admin_by_id(session['admin_id'])
+
+    context = {'admin' : admin}
+    return render_template("admin/index.jinja", context=context)
 
 @Bp_admin.route("/gestion", methods=['GET', 'POST'])
-def modération():
+def gestion():
     if 'admin_id' not in session:
-        return redirect('authentification')
+        return redirect('login')
     context = {}
     context['users'] = []
     context['no_search'] = False
@@ -49,7 +56,7 @@ def modération():
         context['page_number'] = len(pages)
         page_index = request.args.get('page', 1, type=int)
         context['active_page'] = page_index
-
+        
         for user in pages[page_index-1]:
             user['postnumber'] = get_user_posts_number(str(user['id']))
             context['users'].append(user)
@@ -76,14 +83,25 @@ def confirmation():
 @Bp_admin.route('/login', methods=['GET','POST'])
 def login():
     context = {}
+    context['message'] = []
+    if 'admin_id' in session:
+        return redirect("/admin")
+    
     if request.method == 'POST':
         form = request.form
-        username = form.get('username')
-        password = form.get('password')
-
-        admin
+        identifier = form.get('inputidentifier')
+        password = form.get('inputpassword')
+        admin = adminqueries.get_admin_by_name_password(identifier, password)
+        if admin :
+            session['admin_id'] = admin[0]
+            return redirect("/admin")
 
     return render_template("admin/login.jinja", context=context)
+
+@Bp_admin.route('/logout', methods=['GET'])
+def logout():
+    session.clear()
+    return redirect("/")
 
 def get_user_posts_number(userid):
     posts = postqueries.get_publications_by_user(userid)
