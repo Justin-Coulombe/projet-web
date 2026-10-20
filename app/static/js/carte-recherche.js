@@ -2,6 +2,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const carte = L.map("carte-recherche").setView([46.8139, -71.208], 12);
+  
+  requestAnimationFrame(() => {
+      carte.invalidateSize();
+  });
 
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
