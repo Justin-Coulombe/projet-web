@@ -54,7 +54,10 @@ Mon profil | ParkShare
                         {% endif %}
 
 
-                        <form method="POST" novalidate>
+                        <form method="POST" novalidate data-ajax-form="profile" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
 
                             <div class="row">
 
@@ -172,7 +175,10 @@ Mon profil | ParkShare
                             method="POST"
                             action="{{ url_for('profile.change_password') }}"
                             novalidate
-                        >
+                         data-ajax-form="password" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
 
                             <div class="mb-3">
 

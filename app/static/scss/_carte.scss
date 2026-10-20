@@ -1,0 +1,59 @@
+
+#carte-recherche {
+    width: 100%;
+    height: calc(100vh - 190px);
+    min-height: 500px;
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    overflow: hidden;
+    z-index: 0;
+}
+
+#liste-stationnements {
+    max-height: calc(100vh - 190px);
+    overflow-y: auto;
+}
+
+.parkshare-marker-container {
+    background: transparent;
+    border: none;
+}
+
+.parkshare-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 90px;
+    height: 34px;
+
+    background: white;
+    border: 2px solid #212529;
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: #212529;
+    white-space: nowrap;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+
+    &:hover {
+        background: #212529;
+        color: white;
+    }
+}
+
+@media (max-width: 991.98px) {
+    #carte-recherche {
+        height: 420px;
+        min-height: 420px;
+    }
+
+    #liste-stationnements {
+        max-height: none;
+        overflow: visible;
+    }
+}

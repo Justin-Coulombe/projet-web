@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, session, g
+from app.security import install_security
 
 from app.database.init_db import init_database
 from app.database.queries.users import get_user_by_id
@@ -22,6 +23,7 @@ def create_app():
         "SECRET_KEY",
         "dev-secret-key-change-me"
     )
+    install_security(app)
 
     init_database()
 
