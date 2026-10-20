@@ -109,10 +109,7 @@ Mon profil | ParkShare
                                         class="bi bi-pencil-square btn btn-outline-primary btn-sm">
                                         Modifier
                                     </a>
-                                    <a href="/stationnement/supprimer/{{publication.id}}"
-                                        class="bi bi-trash btn btn-outline-danger btn-sm">
-                                        Supprimer
-                                    </a>
+                                    <form class="d-inline" method="POST" data-ajax-form="delete" data-confirm="Supprimer définitivement cette annonce ?" action="/stationnement/supprimer/{{publication.id}}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button type="submit" class="bi bi-trash btn btn-outline-danger btn-sm">Supprimer</button></form>
                                     {% endif%}
                                 </td>
                             </tr>

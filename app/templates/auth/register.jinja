@@ -30,7 +30,10 @@ Créer un compte | ParkShare
         {% endif %}
 
 
-        <form method="POST">
+        <form method="POST" data-ajax-form="register" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
 
             <div class="row">
 
