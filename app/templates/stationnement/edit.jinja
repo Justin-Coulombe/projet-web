@@ -8,7 +8,7 @@ stationnement | ParkShare
 {% endblock %}
 
 {% block script %}
-<script defer src="/static/js/validation.js"></script>
+
 <script src="/static/js/base.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{{ url_for('static', filename='js/geocoding.js') }}"></script>
@@ -41,7 +41,10 @@ stationnement | ParkShare
         {% endif %}
 
         <form id="ajout_form" class="row g-3" action="/stationnement/edit/{{ publication.id }}"
-            enctype="multipart/form-data" method="post" novalidate>
+            enctype="multipart/form-data" method="post" novalidate data-ajax-form="parking-edit" data-original-adresse="{{ publication.address|e }}" data-original-ville="{{ publication.city|e }}" data-has-coordinates="{{ 'true' if has_coordinates else 'false' }}" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
 
             <div class="col-md-12">
                 <label for="adresse" class="form-label fw-bold">Adresse stationnement</label>
@@ -133,7 +136,7 @@ stationnement | ParkShare
                 <div class="input-group">
                     <label for="prix" class="form-label input-group fw-bold">Prix</label>
                     <input type="number" class="form-control {{classe_prix}}" id="prix" name="prix"
-                        value="{{publication.price}}">
+                        value="{{publication.price}}" min="0.01" max="1000" step="0.01" required>
                     <span class="input-group-text">$/heure</span>
                     <div class="invalid-feedback">{{msg_prix}}</div>
                 </div>
@@ -141,7 +144,7 @@ stationnement | ParkShare
             <div class="col-md-6">
                 <label for="place" class="form-label fw-bold ">Nombre de place</label>
                 <input type="number" class="form-control {{classe_place}}" id="place" name="place"
-                    value="{{publication.open_place}}">
+                    value="{{publication.open_place}}" min="1" max="100" step="1" required>
                 <div class="invalid-feedback">{{msg_place}}</div>
             </div>
 
@@ -202,7 +205,10 @@ stationnement | ParkShare
         {% endif %}
 
         <form method="post" action="/stationnement/edit/{{ publication.id }}/image" enctype="multipart/form-data"
-            novalidate>
+            novalidate data-ajax-form="image" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
 
             <div class="mb-3">
                 <img src="{% if publication.img %} {{path~publication.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"

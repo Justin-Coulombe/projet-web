@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')?.content || "",
         },
         credentials: "same-origin",
         body: JSON.stringify({

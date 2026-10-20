@@ -11,14 +11,14 @@ def create_publication_table():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             author INTEGER NOT NULL,
             address TEXT NOT NULL,
-            prix DOUBLE NOT NULL,
+            prix DOUBLE NOT NULL CHECK (prix >= 0.01 AND prix <= 1000),
             debut DATETIME NOT NULL,
             fin DATETIME NOT NULL,
             ville TEXT NOT NULL,
             emplacement TEXT,
             image TEXT,
-            placetotal INTEGER NOT NULL CHECK (placetotal > 0),
-            placeactuel INTEGER NOT NULL CHECK (placeactuel >= 0),
+            placetotal INTEGER NOT NULL CHECK (placetotal BETWEEN 1 AND 100),
+            placeactuel INTEGER NOT NULL CHECK (placeactuel BETWEEN 0 AND placetotal),
             disponibilite BOOLEAN NOT NULL DEFAULT TRUE,
             latitude REAL,
             longitude REAL,
@@ -383,6 +383,7 @@ def update_publication(
             prix = ?,
             placetotal = ?,
             placeactuel = ?,
+            disponibilite = CASE WHEN ? > 0 THEN 1 ELSE 0 END,
             debut = ?,
             fin = ?,
             ville = ?,
@@ -395,6 +396,7 @@ def update_publication(
             address,
             prix,
             placetotal,
+            placeactuel,
             placeactuel,
             debut,
             fin,
@@ -460,7 +462,8 @@ def get_publications_in_bounds(
     south, north, west, east,
     emplacement="Tous",
     debut=None,
-    fin=None
+    fin=None,
+    ville=None
 ):
     conn = create_connection()
 
@@ -474,11 +477,14 @@ def get_publications_in_bounds(
 
         params = [south, north, west, east]
 
+        if ville:
+            conditions.append("ville = ?")
+            params.append(ville)
+
         if emplacement in ("Intérieur", "Extérieur"):
             conditions.append("emplacement = ?")
             params.append(emplacement)
 
-        # L'annonce doit couvrir la période demandée.
         if debut:
             conditions.append("debut <= ?")
             params.append(debut)
@@ -495,7 +501,7 @@ def get_publications_in_bounds(
             FROM Publication
             WHERE {' AND '.join(conditions)}
             ORDER BY id DESC
-            LIMIT 500
+            LIMIT 50
         """
 
         rows = conn.execute(sql, params).fetchall()

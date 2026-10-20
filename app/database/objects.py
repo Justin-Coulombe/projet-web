@@ -1,11 +1,7 @@
-
 class publication:
-    def __init__(
-        self, pId, pAuthor, pAddress, pPrice,
-        pDebut, pFin, pCity, pLocation,
-        pImgUrl, pOpenPlace, pPlaceUse, pUse,
-        pLatitude=None, pLongitude=None
-    ):
+    def __init__(self, pId, pAuthor, pAddress, pPrice, pDebut, pFin, pCity,
+                 pLocation, pImgUrl, pOpenPlace, pPlaceUse, pUse,
+                 pLatitude=None, pLongitude=None):
         self.id = pId
         self.author_id = pAuthor
         self.address = pAddress
@@ -21,36 +17,20 @@ class publication:
         self.latitude = pLatitude
         self.longitude = pLongitude
 
-
     def to_dict(self):
         return {
-            "id": self.id,
-            "author": self.author_id,
-            "address": self.address,
-            "price": self.price,
-            "start": self.start,
-            "end": self.end,
-            "city": self.city,
-            "location": self.location,
-            "img": self.img,
-            "open_place": self.open_place,
-            "place_use": self.place_use,
-            "open": self.use,
-            "latitude": self.latitude,
-            "longitude": self.longitude
+            'id': self.id, 'author': self.author_id,
+            'address': self.address, 'price': self.price,
+            'start': self.start, 'end': self.end,
+            'city': self.city, 'location': self.location,
+            'img': self.img, 'open_place': self.open_place,
+            'place_use': self.place_use, 'open': self.use,
+            'latitude': self.latitude, 'longitude': self.longitude
         }
 
 
-
-    def to_dict(self):
-        return {'id':self.id , 'author': self.author_id, 'address': self.address,
-                'price': self.price,'start': self.start, 'end': self.end,
-                'city': self.city, 'location': self.location, 'img': self.img,
-                'open_place': self.open_place,'place_use':self.place_use,'open':self.use}
-
-
 class reservation:
-    def __init__(self, pId, pClient,pDebut,pFin,pPublication):
+    def __init__(self, pId, pClient, pDebut, pFin, pPublication):
         self.id = pId
         self.author_id = pClient
         self.start = pDebut
@@ -58,7 +38,7 @@ class reservation:
         self.post = pPublication
 
     def to_dict(self):
-        return {'id':self.id , 'author': self.author_id,'start': self.start, 'end': self.end,
-                'post': self.post}
-
-
+        return {
+            'id': self.id, 'author': self.author_id,
+            'start': self.start, 'end': self.end, 'post': self.post
+        }

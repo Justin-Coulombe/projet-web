@@ -13,6 +13,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const compteur = document.getElementById("nb_results");
   const message = document.getElementById("carte-message");
 
+  const selectVille = formulaire.querySelector('[name="ville"]');
+
+  const centresVilles = {
+    Montréal: [45.5019, -73.5674],
+    Québec: [46.8139, -71.208],
+    Laval: [45.6066, -73.7124],
+    Gatineau: [45.4765, -75.7013],
+    Longueuil: [45.5312, -73.5181],
+    Sherbrooke: [45.4042, -71.8929],
+    Lévis: [46.7382, -71.2465],
+    Saguenay: [48.4281, -71.0688],
+    "Trois-Rivières": [46.3432, -72.543],
+    Terrebonne: [45.7005, -73.6478],
+    "Saint-Jean-sur-Richelieu": [45.3071, -73.2626],
+    Brossard: [45.4675, -73.4512],
+    Repentigny: [45.7422, -73.4501],
+    "Saint-Jérôme": [45.7804, -74.0036],
+    Drummondville: [45.8834, -72.4843],
+  };
+
   const coucheMarqueurs = L.layerGroup().addTo(carte);
 
   let marqueurs = new Map();
@@ -22,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function lireFiltres() {
     return {
+      ville: formulaire?.querySelector('[name="ville"]')?.value || "",
       filter: formulaire?.querySelector('[name="filter"]')?.value || "Tous",
       debut: formulaire?.querySelector('[name="debut"]')?.value || "",
       fin: formulaire?.querySelector('[name="fin"]')?.value || "",
@@ -148,8 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function chargerStationnements() {
     const bounds = carte.getBounds();
     const filtres = lireFiltres();
+    mettreAJourURL();
 
-    // Annuler la requête précédente si la carte bouge.
     if (requeteEnCours) {
       requeteEnCours.abort();
     }
@@ -163,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
       north: bounds.getNorth().toString(),
       west: bounds.getWest().toString(),
       east: bounds.getEast().toString(),
+      ville: filtres.ville,
       filter: filtres.filter,
       debut: filtres.debut,
       fin: filtres.fin,
@@ -197,32 +219,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const paramsURL = new URLSearchParams(window.location.search);
+
+  for (const nom of ["ville", "filter", "debut", "fin"]) {
+    const champ = formulaire.querySelector(`[name="${nom}"]`);
+    const valeur = paramsURL.get(nom);
+
+    if (champ && valeur !== null) {
+      champ.value = valeur;
+    }
+  }
+
+  const centreInitial = centresVilles[selectVille.value];
+
+  if (centreInitial) {
+    carte.setView(centreInitial, 12, { animate: false });
+  }
+
   function planifierRecherche() {
     clearTimeout(timer);
     timer = setTimeout(chargerStationnements, 250);
   }
 
-  // Quand l'utilisateur déplace la carte ou zoome.
   carte.on("moveend", planifierRecherche);
 
-  // Filtrage instantané sans recharger la page.
   formulaire
     ?.querySelector('[name="filter"]')
     ?.addEventListener("change", planifierRecherche);
 
-  // Mise à jour après un changement de dates.
   formulaire
     ?.querySelectorAll('[name="debut"], [name="fin"]')
     .forEach((champ) => {
       champ.addEventListener("change", planifierRecherche);
     });
 
-  // Le formulaire n'effectue plus de navigation GET.
   formulaire?.addEventListener("submit", (event) => {
     event.preventDefault();
-    chargerStationnements();
+
+    const centre = centresVilles[selectVille.value];
+
+    if (centre) {
+      carte.setView(centre, 12, { animate: false });
+    }
+
+    planifierRecherche();
   });
 
-  // Recherche initiale.
+  selectVille.addEventListener("change", () => {
+    const centre = centresVilles[selectVille.value];
+
+    if (centre) {
+      carte.setView(centre, 12, { animate: false });
+    }
+
+    planifierRecherche();
+  });
+
   chargerStationnements();
+
+  function mettreAJourURL() {
+    const filtres = lireFiltres();
+    const url = new URL(window.location.href);
+
+    for (const [cle, valeur] of Object.entries(filtres)) {
+      if (valeur && valeur !== "Tous") {
+        url.searchParams.set(cle, valeur);
+      } else {
+        url.searchParams.delete(cle);
+      }
+    }
+
+    window.history.replaceState(null, "", url);
+  }
+
 });

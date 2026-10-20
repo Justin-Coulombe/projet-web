@@ -1,29 +1,8 @@
-from flask import request, render_template, Blueprint
+"""Ancienne URL de recherche : redirige sans faire de rendu d'un template supprimé."""
+from flask import Blueprint, redirect, url_for
 
-Bp_recherche = Blueprint("Recherche", __name__)
+Bp_recherche = Blueprint('Recherche', __name__)
 
-
-@Bp_recherche.route("", methods=["GET", "POST"])
+@Bp_recherche.route('', methods=['GET'])
 def index():
-    """
-    Affiche une page de recherche avec des recommandations si la
-    méthode est GET. Affiche une page avec les résultats de la recherche.
-    """
-
-    if request.method == "POST":
-        # ville = request.form.get('ville', type=str)
-        # date_debut = request.form.get('debut', type=date)
-        # date_fin = request.form.get('fin', type=date)
-
-        # envoie à la bd
-
-        return render_template(
-            "Recherche/index.jinja",
-            element="hello POST"
-        )
-
-    return render_template(
-        "Recherche/index.jinja",
-        element="Hello GET"
-    )
-
+    return redirect(url_for('publications.research'), code=308)
