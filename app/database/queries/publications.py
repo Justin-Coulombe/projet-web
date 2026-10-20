@@ -11,17 +11,18 @@ def create_publication_table():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             author INTEGER NOT NULL,
             address TEXT NOT NULL,
-            prix DOUBLE NOT NULL,
+            prix DOUBLE NOT NULL CHECK (prix >= 0.01 AND prix <= 1000),
             debut DATETIME NOT NULL,
             fin DATETIME NOT NULL,
             ville TEXT NOT NULL,
             emplacement TEXT,
             image TEXT,
-            placetotal INTEGER NOT NULL CHECK (placetotal > 0),
-            placeactuel INTEGER NOT NULL CHECK (placeactuel >= 0),
+            placetotal INTEGER NOT NULL CHECK (placetotal BETWEEN 1 AND 100),
+            placeactuel INTEGER NOT NULL CHECK (placeactuel BETWEEN 0 AND placetotal),
             disponibilite BOOLEAN NOT NULL DEFAULT TRUE,
+            latitude REAL,
+            longitude REAL,
             FOREIGN KEY (author) REFERENCES User(id)
-            ON DELETE CASCADE ON UPDATE CASCADE
         )
     """
 

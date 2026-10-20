@@ -11,22 +11,22 @@ Administration | ParkShare
 {%endblock%}
 
 {% block contenu %}
-<div class="row g-8 justify-content-center">
-    <div id="nav_id" class="col-2 bg-secondary p-3">
+<div class="row g-8 bg-tertiary justify-content-center">
+    <div id="nav_id" class="col-2 bg-dark text-white p-3">
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <div class="mb-2">
-                <p class="fs-5 fw-bold ">{{context.admin[1]}}</p>
-                <p class="fw-bold">Admin</p>
+            <div class="mb-5">
+                <p class="fs-5 fw-bold mb-0">{{context.admin[1]}}</p>
+                <span class="badge bg-primary">Admin</span>
             </div>
 
             <div class="h-50">
                 <ul class="nav nav-pills">
-                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'uti') )}}" class="w-100 {%if request.args.categorie == 'uti' %} active {%endif%} nav-link btn btn-primary">Utilisateurs</a> </li>
-                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'pub') )}}" class="w-100 {%if request.args.categorie == 'pub' %} active {%endif%} nav-link btn btn-primary">Publications</a> </li>
+                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'uti', page='1') )}}" class="w-100 {%if request.args.categorie == 'uti' %} active {%endif%}  btn btn-outline-white text-white">Utilisateurs</a> </li>
+                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'pub', page='1') )}}" class="w-100 {%if request.args.categorie == 'pub' %} active {%endif%}  btn btn-outline-white text-white ">Publications</a> </li>
                 </ul>
             </div>
             <div class="ms-2 mt-5">
-                <a class="btn btn-danger" href="{{url_for('admin.logout')}}">déconnexion</a>
+                <a class="btn btn-outline-light" href="{{url_for('admin.logout')}}">déconnexion</a>
             </div>
         </div>
     </div>
@@ -48,16 +48,16 @@ Administration | ParkShare
                     <input name="selected" class="form-check-input" checked type="radio" value="none">
                     <span class="input-group-label ms-2">Désélection</span>
                 </div>
-                <button type="submit" class="col-2 btn btn-danger me-2">Bannir</button> 
+                <button type="submit" class="col-2 btn btn-outline-danger me-2">Bannir</button> 
             </div>
 
             <div id="display"> 
                 <ul class="list-group">
                     {% if request.args.categorie == 'uti'%}
-                    <li class="list-group-item m-1">  
+                    <li class="list-group-item-secondary m-1">  
                         <div class="container">
                             <div class="row justify-content-center align-items-center">
-                                <span class="col"></span>
+                                <span class="col"> </span>
                                 <div class="col-6 fw-bold text-left">email | annonceur</div>
                                 <span class="col text-center fw-bold">nb postes</span>
                             </div>
@@ -114,10 +114,10 @@ Administration | ParkShare
             <ul class="pagination justify-content-center">
                 {%if request.args.page %}
                 {% for page in range(context.page_number|int)%}
-                <li class="page-item"><a class="page-link {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
+                <li class="page-item"><a class="page-link btn-outline-dark {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
                 {% endfor%}
                 {%else%}
-                <li class="page-item"><a class="page-link active" href="{{url_for(request.endpoint)}}">1</a></li>
+                <li class="page-item"><a class="page-link btn-outline-dark active" href="{{url_for(request.endpoint)}}">1</a></li>
                 {%endif%}
             </ul>
         </nav>
