@@ -1,5 +1,3 @@
-from winreg import QueryValueEx
-
 from flask import redirect, request, render_template, Blueprint, session
 from app.database.queries import users as userqueries
 from app.database.queries import publications as postqueries

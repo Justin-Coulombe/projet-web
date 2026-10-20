@@ -1,4 +1,3 @@
-from asyncio.proactor_events import _ProactorReadPipeTransport
 from datetime import datetime, timezone
 
 from flask import Blueprint, request, jsonify

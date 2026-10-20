@@ -7,7 +7,6 @@ PARKSHARE.db
 .venv/
 node_modules/
 .DS_Store
-database/
 app/static/img/stationnement/
 *.pyc
 app/static/css/main.css
