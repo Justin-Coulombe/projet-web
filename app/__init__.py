@@ -29,6 +29,12 @@ def create_app():
 
     from app.routes.auth import bp_auth
     from app.routes.recherche import Bp_recherche
+    from app.routes.admin import Bp_admin
+
+    app.register_blueprint(
+        Bp_admin, 
+        url_prefix="/admin"
+    )
 
     app.register_blueprint(
         bp_auth,

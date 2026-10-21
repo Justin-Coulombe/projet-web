@@ -109,7 +109,8 @@ def get_publications_with_city_date_location_location(params):
               AND DATE(debut) >= DATE(?)
               AND DATE(fin) <= DATE(?)
               AND emplacement LIKE ?
-        """
+              AND (SELECT banni FROM User WHERE id = author) = FALSE
+    """
 
         cursor.execute(
             command,
@@ -169,7 +170,7 @@ def get_all_publications():
             placetotal,
             placeactuel,
             disponibilite
-        FROM Publication
+        FROM Publication WHERE (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(command)
@@ -220,6 +221,7 @@ def get_sample_publications_limit(limite):
             placeactuel,
             disponibilite
         FROM Publication
+        WHERE (SELECT banni FROM User WHERE id = author) = FALSE
         ORDER BY RANDOM()
         LIMIT ?
     """
@@ -275,7 +277,7 @@ def get_publications_by_user(user_id):
         from
         publication
         WHERE
-        author = ?
+        author = ? AND (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(command, (user_id,))
@@ -526,3 +528,18 @@ def get_publications_in_bounds(
 
     finally:
         conn.close()
+
+def delete_publication_by_id(publication_id):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE Publication
+        SET disponibilite = 0
+        WHERE id = ?
+        """,
+        (publication_id,)
+    )
+
+    close_connection(conn, cursor)

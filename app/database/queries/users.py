@@ -11,7 +11,8 @@ def create_user_table():
             nom TEXT NOT NULL,
             prenom TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            mdp TEXT NOT NULL
+            mdp TEXT NOT NULL,
+            banni BOOLEAN DEFAULT false
         )
     """
 
@@ -42,7 +43,8 @@ def get_user_by_email(email):
         """
         SELECT id, nom, prenom, email, mdp
         FROM User
-        WHERE email = ?
+        WHERE email LIKE ?
+        AND banni = 0
         """,
         (email,)
     )
@@ -63,6 +65,42 @@ def get_user_by_email(email):
     }
 
 
+def get_users_by_email(email):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT id, nom, prenom, email, mdp
+        FROM User
+        WHERE email LIKE ?
+        AND banni = 0
+        """,
+        (email,)
+    )
+
+    row = cursor.fetchall()
+
+    close_connection(conn, cursor)
+
+    if row is None:
+        return None
+
+    result = []
+    for user in row:
+        result.append(
+            {
+                "id": user[0],
+                "nom": user[1],
+                "prenom": user[2],
+                "email": user[3],
+                "mdp": user[4]
+            }
+        )
+
+    return result
+
+
 def get_user_by_id(user_id):
     conn = create_connection()
     cursor = conn.cursor()
@@ -72,6 +110,7 @@ def get_user_by_id(user_id):
         SELECT id, nom, prenom, email
         FROM User
         WHERE id = ?
+        AND banni = 0
         """,
         (user_id,)
     )
@@ -149,3 +188,27 @@ def get_user_with_password(user_id):
         "email": row[3],
         "mdp": row[4]
     }
+
+def ban_user_by_id(userid):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        UPDATE User SET banni = true
+        WHERE id = ?
+        """,
+        (userid,)
+    )
+    close_connection(conn, cursor)
+
+def delete_user_by_id(userid):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        DELETE FROM User WHERE banni = true
+        AND id = ?
+        """,
+        (userid,)
+    )
+    close_connection(conn, cursor)   

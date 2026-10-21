@@ -1,0 +1,128 @@
+{% extends '_modele.jinja' %}
+{% block title%}
+Administration | ParkShare
+{%endblock%}
+
+{% block centered_title%}
+<div class="fs-3 m-2 fw-bold">Gestion de l'application</div>
+{%endblock%}
+
+{% block recherche%}
+{%endblock%}
+
+{% block contenu %}
+<div class="row g-8 bg-tertiary justify-content-center">
+    <div id="nav_id" class="col-2 bg-dark text-white p-3">
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="mb-5">
+                <p class="fs-5 fw-bold mb-0">{{context.admin[1]}}</p>
+                <span class="badge bg-primary">Admin</span>
+            </div>
+
+            <div class="h-50">
+                <ul class="nav nav-pills">
+                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'uti', page='1') )}}" class="w-100 {%if request.args.categorie == 'uti' %} active {%endif%}  btn btn-outline-white text-white">Utilisateurs</a> </li>
+                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'pub', page='1') )}}" class="w-100 {%if request.args.categorie == 'pub' %} active {%endif%}  btn btn-outline-white text-white ">Publications</a> </li>
+                </ul>
+            </div>
+            <div class="ms-2 mt-5">
+                <a class="btn btn-outline-light" href="{{url_for('admin.logout')}}">déconnexion</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <form method="get" class="mb-2 {% if context.no_search %}invisible{%endif%}">
+            <input type="hidden" name="identifier" value="search">
+            <div class="input-group col">
+                <span class="input-group-text">@</span>
+                <input name="mail" placeholder="recherche par mail">
+                <button type="submit" value="search" class="input-group-text btn btn-primary"><i class="bi bi-search"></i></button> 
+            </div>
+        </form> 
+
+        <form method="post">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <input type="hidden" name="identifier" value="ban">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="input-group m-2">
+                    <input type="hidden">
+                    <input name="selected" class="form-check-input" checked type="radio" value="none">
+                    <span class="input-group-label ms-2">Désélection</span>
+                </div>
+                <button type="submit" class="col-2 btn btn-outline-danger me-2">Bannir</button> 
+            </div>
+
+            <div id="display"> 
+                <ul class="list-group">
+                    {% if request.args.get('categorie', 'uti') == 'uti' %}
+                    <li class="list-group-item-secondary m-1">  
+                        <div class="container">
+                            <div class="row justify-content-center align-items-center">
+                                <span class="col"> </span>
+                                <div class="col-6 fw-bold text-left">email | annonceur</div>
+                                <span class="col text-center fw-bold">nb postes</span>
+                            </div>
+                        </div>
+                    </li>
+                    {% for user in context.users %}
+                    <li class="list-group-item m-2">  
+                        <div class="container">
+                            <div class="row justify-content-center align-items-center">
+                                <span class="col"><input name="selected" class="form-check-input" type="radio" value="{{user.id}}"></span>
+                                <div class="col-6">{{user.email}}</div>
+                                <span class="col text-center fw-bold">{{user.postnumber}} post(s)</span>
+                            </div>
+                        </div>
+                    </li>
+                    {%else%}
+                    <li class="list-group-item m-2">  
+                        Aucun résultats
+                    </li>
+                    {% endfor %}
+
+                    {%else%}
+
+                    <li class="list-group-item m-2">  
+                        <div class="container">
+                            <div class="row justify-content-center align-items-center">
+                                <span class="col"></span>
+                                <div class="col-6 fw-bold text-left">addresse</div>
+                                <span class="col text-center fw-bold">prix</span>
+                            </div>
+                        </div>
+                    </li>
+                    {% for item in context.publications %}
+                    <li class="list-group-item m-2">  
+                        <div class="container">
+                            <div class="row justify-content-center align-items-center">
+                                <span class="col"><input name="selected" class="form-check-input" type="radio" value="{{item.id}}"></span>
+                                <div class="col-6 text-left">{{item.address}}</div>
+                                <span class="col text-center fw-bold">{{item.price}} $/h</span>
+                            </div>
+                        </div>
+                    </li>
+                    {%else%}
+                    <li class="list-group-item m-2">  
+                        Aucun résultats
+                    </li>
+                    {% endfor %}
+                    {%endif%}
+                </ul>
+            </div>
+            
+        </form>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {%if request.args.page %}
+                {% for page in range(context.page_number|int)%}
+                <li class="page-item"><a class="page-link btn-outline-dark {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
+                {% endfor%}
+                {%else%}
+                <li class="page-item"><a class="page-link btn-outline-dark active" href="{{url_for(request.endpoint)}}">1</a></li>
+                {%endif%}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
