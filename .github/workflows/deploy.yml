@@ -1,3 +1,4 @@
+
 name: Deploy
 
 on:
@@ -9,10 +10,12 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     runs-on: ubuntu-latest
 
     steps:
@@ -35,8 +38,9 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
           ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
@@ -50,77 +54,98 @@ jobs:
             --exclude "/node_modules/" \
             --exclude "/.env" \
             --exclude "/database/" \
-            --exclude "/app/static/images/stationnement/" \
+            --exclude "/app/static/img/stationnement/" \
             ./ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/parkshare/
-
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/parkshare/"
 
       - name: Configure Nominatim on VPS
         env:
           NOMINATIM_USER_AGENT: ${{ secrets.NOMINATIM_USER_AGENT }}
         run: |
+          set -e
+
           if [ -z "$NOMINATIM_USER_AGENT" ]; then
             echo "ERROR: NOMINATIM_USER_AGENT secret missing"
             exit 1
           fi
 
-          printf '%s' "$NOMINATIM_USER_AGENT" | \
-            ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            'python3 -c '"'"'
-            import sys
-            from pathlib import Path
+          if [[ "$NOMINATIM_USER_AGENT" == *$'\n'* ]] || \
+             [[ "$NOMINATIM_USER_AGENT" == *$'\r'* ]]; then
+            echo "ERROR: Invalid User-Agent"
+            exit 1
+          fi
 
-            path = Path("/var/www/parkshare/.env")
-            value = sys.stdin.read()
+          umask 077
+          TEMP_FILE=$(mktemp)
+          trap 'rm -f "$TEMP_FILE"' EXIT
 
-            if not value or "\n" in value or "\r" in value:
-                raise SystemExit("Invalid Nominatim User-Agent")
+          printf '%s' "$NOMINATIM_USER_AGENT" > "$TEMP_FILE"
 
-            lines = path.read_text().splitlines() if path.exists() else []
-            lines = [
-                line for line in lines
-                if not line.startswith("NOMINATIM_USER_AGENT=")
-            ]
-            lines.append("NOMINATIM_USER_AGENT=" + value)
+          scp "$TEMP_FILE" \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/parkshare-nominatim-${{ github.run_id }}.tmp"
 
-            path.write_text("\n".join(lines) + "\n")
-            path.chmod(0o600)
+          ssh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" 'python3 -' <<'PY'
+          from pathlib import Path
 
-            print("Nominatim configuration updated")
-            '"'"''
+          env_path = Path("/var/www/parkshare/.env")
+          temp_path = Path("/tmp/parkshare-nominatim-${{ github.run_id }}.tmp")
 
+          try:
+              value = temp_path.read_text().strip()
+
+              if not value or "\n" in value or "\r" in value:
+                  raise SystemExit("Invalid Nominatim configuration")
+
+              lines = (
+                  env_path.read_text().splitlines()
+                  if env_path.exists() else []
+              )
+
+              lines = [
+                  line for line in lines
+                  if not line.startswith("NOMINATIM_USER_AGENT=")
+              ]
+
+              lines.append("NOMINATIM_USER_AGENT=" + value)
+              env_path.write_text("\n".join(lines) + "\n")
+              env_path.chmod(0o600)
+
+              print("Nominatim configuration updated")
+          finally:
+              temp_path.unlink(missing_ok=True)
+          PY
 
       - name: Install dependencies and restart server
         run: |
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            set -e
+          ssh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" 'bash -se' <<'EOF'
+          set -e
 
-            cd /var/www/parkshare
+          cd /var/www/parkshare
+          source .venv/bin/activate
 
-            source .venv/bin/activate
+          pip install -r requirements.txt
 
-            python - <<'PY'
-            from dotenv import load_dotenv
-            import os
+          python - <<'PY'
+          from dotenv import load_dotenv
+          import os
 
-            load_dotenv("/var/www/parkshare/.env")
+          load_dotenv("/var/www/parkshare/.env")
 
-            if not os.getenv("NOMINATIM_USER_AGENT"):
-                raise SystemExit("NOMINATIM_USER_AGENT missing")
+          if not os.getenv("NOMINATIM_USER_AGENT"):
+              raise SystemExit("NOMINATIM_USER_AGENT missing")
 
-            print("Nominatim configuration OK")
-            PY
+          print("Nominatim configuration OK")
+          PY
 
-            pip install -r requirements.txt
+          mkdir -p database
+          mkdir -p app/static/img/stationnement
 
-            mkdir -p database
-            mkdir -p app/static/images/stationnement
+          sudo systemctl restart parkshare
 
-            sudo systemctl restart parkshare
+          sleep 3
 
-            sleep 3
+          curl --fail --silent --show-error \
+            http://127.0.0.1:8000/ > /dev/null
 
-            curl --fail http://127.0.0.1:8000/ > /dev/null
-
-            echo "Deployment successful"
+          echo "Deployment successful"
           EOF
