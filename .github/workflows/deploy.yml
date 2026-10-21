@@ -54,6 +54,42 @@ jobs:
             ./ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/parkshare/
 
+
+      - name: Configure Nominatim on VPS
+        env:
+          NOMINATIM_USER_AGENT: ${{ secrets.NOMINATIM_USER_AGENT }}
+        run: |
+          if [ -z "$NOMINATIM_USER_AGENT" ]; then
+            echo "ERROR: NOMINATIM_USER_AGENT secret missing"
+            exit 1
+          fi
+
+          printf '%s' "$NOMINATIM_USER_AGENT" | \
+            ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            'python3 -c '"'"'
+            import sys
+            from pathlib import Path
+
+            path = Path("/var/www/parkshare/.env")
+            value = sys.stdin.read()
+
+            if not value or "\n" in value or "\r" in value:
+                raise SystemExit("Invalid Nominatim User-Agent")
+
+            lines = path.read_text().splitlines() if path.exists() else []
+            lines = [
+                line for line in lines
+                if not line.startswith("NOMINATIM_USER_AGENT=")
+            ]
+            lines.append("NOMINATIM_USER_AGENT=" + value)
+
+            path.write_text("\n".join(lines) + "\n")
+            path.chmod(0o600)
+
+            print("Nominatim configuration updated")
+            '"'"''
+
+
       - name: Install dependencies and restart server
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
@@ -62,6 +98,18 @@ jobs:
             cd /var/www/parkshare
 
             source .venv/bin/activate
+
+            python - <<'PY'
+            from dotenv import load_dotenv
+            import os
+
+            load_dotenv("/var/www/parkshare/.env")
+
+            if not os.getenv("NOMINATIM_USER_AGENT"):
+                raise SystemExit("NOMINATIM_USER_AGENT missing")
+
+            print("Nominatim configuration OK")
+            PY
 
             pip install -r requirements.txt
 

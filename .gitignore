@@ -3,6 +3,7 @@ __pycache__/
 __pycache__
 __.vscode__
 PARKSHARE.db
+geocoding_cache.db
 .env
 .venv/
 node_modules/
