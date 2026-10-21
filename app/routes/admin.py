@@ -56,6 +56,15 @@ def gestion():
         pages = pagination(users, 5)
         context['page_number'] = len(pages)
         page_index = request.args.get('page', 1, type=int)
+
+        if page_index < 1:
+            page_index = 1
+
+        if not pages:
+            pages = [[]]
+
+        if page_index > len(pages):
+            page_index = len(pages)
         context['active_page'] = page_index
         
         for user in pages[page_index-1]:
@@ -69,6 +78,15 @@ def gestion():
         pages = pagination(pubs, 5)
         context['page_number'] = len(pages)
         page_index = request.args.get('page', 1, type=int)
+
+        if page_index < 1:
+            page_index = 1
+
+        if not pages:
+            pages = [[]]
+
+        if page_index > len(pages):
+            page_index = len(pages)
         context['active_page'] = page_index
 
         for pub in pages[page_index-1]:

@@ -528,3 +528,18 @@ def get_publications_in_bounds(
 
     finally:
         conn.close()
+
+def delete_publication_by_id(publication_id):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE Publication
+        SET disponibilite = 0
+        WHERE id = ?
+        """,
+        (publication_id,)
+    )
+
+    close_connection(conn, cursor)

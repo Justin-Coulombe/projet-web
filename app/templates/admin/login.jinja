@@ -15,6 +15,7 @@ Administration | ParkShare
     <div class="w-100 h-100 d-flex justify-content-center align-items-center">
         
         <form class="bg-secondary p-3 rounded-2 needs-validation"  method="post" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
             <div {%if not context.messages %} hidden {%endif%} class="bg-danger text-white m-2 rounded-2">
                 <p class="ms-2">Connexion refusée:</p>
                 <ul>
