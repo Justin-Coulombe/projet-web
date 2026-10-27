@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, Blueprint, session
+from flask import redirect, request, render_template, Blueprint, session, url_for
 from app.database.queries import users as userqueries
 from app.database.queries import publications as postqueries
 from app.database.queries import admin as adminqueries
@@ -10,40 +10,56 @@ Bp_admin = Blueprint('admin', __name__)
 def index():
     if 'admin_id' not in session:
         return redirect('login')
-    admin = adminqueries.get_admin_by_id(session['admin_id'])
-
-    context = {'admin' : admin}
-    return render_template("admin/index.jinja", context=context)
+    return redirect(url_for("admin.gestion", **dict(request.args, page=1, categorie='uti')))
 
 @Bp_admin.route("/gestion", methods=['GET', 'POST'])
 def gestion():
+
+    context = {}
     if 'admin_id' not in session:
         return redirect('login')
-    context = {}
+
+    if "gestion_message_wlc" in session:
+        context["feedback"] = {"type": "success", "message": session['gestion_message_wlc']}
+        session.pop("gestion_message_wlc")
+
+    if "gestion_message" in session:
+        context["feedback"] = {"type": session["gestion_message_type"], "message": session['gestion_message']}
+        session.pop("gestion_message")
+        session.pop("gestion_message_type")
+    
     context['users'] = []
     context['no_search'] = False
     context['publications'] = []
     categorie = request.args.get('categorie', 'uti')
-
     admin = adminqueries.get_admin_by_id(session['admin_id'])
+
     context['admin'] = admin
 
     if request.method == "POST":
         form = request.form
-        if form['identifier'] == "ban":
-            if categorie == 'pub':
-                pubid = request.form.get('selected')
-                if pubid != 'none':
-                    postqueries.delete_publication_by_id(pubid)
-                    return redirect("confirmation")
-                
-            else:
-                userid = request.form.get('selected')
-                if userid != "none":
-                    userqueries.ban_user_by_id(userid)
-                    return redirect("confirmation")
+        if categorie == 'pub':
+            pubid = form.get('selected')
+            if pubid != 'none':
+                if postqueries.delete_publication_by_id(pubid) != 0:
+                    session["gestion_message"] = "Publication banni avec succès."
+                    session["gestion_message_type"] = "success"
+                    return redirect(url_for(request.endpoint, **dict(request.args)))
+                else:
+                    session["gestion_message"] = "Action annulée: une erreur s'est produit."
+                    session["gestion_message_type"] = "error"
+                    return redirect(url_for(request.endpoint, **dict(request.args)))
         else:
-            return "unknown request"
+            userid = form.get('selected')
+            if userid != "none":
+                if userqueries.ban_user_by_id(userid) != 0:
+                    session["gestion_message"] = "Utilisateur banni avec succès."
+                    session["gestion_message_type"] = "success"
+                    return redirect(url_for(request.endpoint, **dict(request.args)))
+                else:
+                    session["gestion_message"] = "Action annulée: une erreur s'est produit."
+                    session["gestion_message_type"] = "error"
+                    return redirect(url_for(request.endpoint, **dict(request.args)))
 
     if categorie == 'uti':
         mail = request.args.get('mail', default="")    
@@ -95,9 +111,7 @@ def gestion():
     return render_template("admin/gestion.jinja", context=context)
 
 
-@Bp_admin.route("/confirmation")
-def confirmation():
-    return "Opération réussie"
+
 
 @Bp_admin.route('/login', methods=['GET','POST'])
 def login():
@@ -105,7 +119,8 @@ def login():
     context['messages'] = []
     context['valid'] = True
     if 'admin_id' in session:
-        return redirect("/admin")
+        
+        return redirect(url_for("admin.gestion", **dict(request.args, page=1, categorie='uti')))
     
     if request.method == 'POST':
         form = request.form
@@ -114,10 +129,16 @@ def login():
         admin = adminqueries.get_admin_by_name_password(identifier, password)
         if admin :
             session['admin_id'] = admin[0]
+            session['gestion_message_wlc'] = "Bienvenu dans le gestionnaire"
             return redirect("/admin")
         else:
             context['messages'].append("Aucun administrateur avec ces identifiants")
             context['valid'] = False
+            context['password'] = password
+            context['identifier'] = identifier
+
+        return render_template("admin/login.jinja", context=context)
+
 
     return render_template("admin/login.jinja", context=context)
 

@@ -88,4 +88,16 @@ Publications | ParkShare
     </li>
     {%endfor%}
 </ul>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {%if request.args.page %}
+        {% for page in range(context.page_number|int)%}
+        <li class="page-item"><a class="page-link text-dark btn-outline-dark {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
+        {% endfor%}
+        {%else%}
+        <li class="page-item"><a class="page-link btn-outline-dark active text-dark" href="{{url_for(request.endpoint, **dict(request.args, page=page+1))}}">1</a></li>
+        {%endif%}
+    </ul>
+</nav>
 {%endblock%}

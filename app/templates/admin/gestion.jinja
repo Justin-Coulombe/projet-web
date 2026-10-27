@@ -11,37 +11,55 @@ Administration | ParkShare
 {%endblock%}
 
 {% block contenu %}
-<div class="row g-8 bg-tertiary justify-content-center">
-    <div id="nav_id" class="rounded-2 col-2 bg-dark text-white p-3">
+
+
+<div class="row g-8 justify-content-center">
+    <div id="nav_id" class="rounded-2 col-2 shadow p-3">
         <div class="d-flex  flex-column justify-content-center align-items-center">
-            <div class="mb-5  border-bottom border-white p-3">
+            <div class="mb-5  border-bottom border-black p-3">
                 <p class="fs-5 fw-bold mb-0">{{context.admin[1]}}</p>
-                <span class="badge bg-primary">Admin</span>
+                <span class="badge bg-dark text-white">Admin</span>
             </div>
 
             <div class="h-50">
                 <ul class="nav nav-pills justify-content-center">
-                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'uti', page='1', mail='') )}}" class="w-100 {%if request.args.categorie == 'uti' %} active {%endif%}  btn btn-outline-white text-white">Utilisateurs</a> </li>
-                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'pub', page='1') )}}" class="w-100 {%if request.args.categorie == 'pub' %} active {%endif%}  btn btn-outline-white text-white ">Publications</a> </li>
+                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'uti', page='1', mail='') )}}" class="w-100 {%if request.args.categorie == 'uti' %} active {%endif%}  btn btn-outline-dark">Utilisateurs</a> </li>
+                    <li class="m-2 nav-item"> <a href="{{url_for(request.endpoint, **dict(request.args, categorie = 'pub', page='1') )}}" class="w-100 {%if request.args.categorie == 'pub' %} active {%endif%}  btn btn-outline-dark ">Publications</a> </li>
                 </ul>
             </div>
-            <div class="mt-5">
+            <div class="mt-5 border-top border-black pt-4">
                 <a class="btn btn-outline-danger" href="{{url_for('admin.logout')}}">déconnexion</a>
             </div>
         </div>
     </div>
-    <div class="col">
-        <form method="get" class="mb-2 {% if context.no_search %}invisible{%endif%}">
-            <input type="hidden" name="identifier" value="search">
+    <div class="col ">
+        {% if context.feedback %}
+        {% if context.feedback.type == "success"%}
+        <div class="bg-success text-white p-2 rounded-3 mb-2" id="feedback_box">
+            {{context.feedback.message}}
+        </div>
+        {% else %}
+        <div class="bg-danger text-white p-2 rounded-3 mb-2" id="feedback_box">
+            {{context.feedback.message}}
+        </div>
+        {%endif%}
+        {%endif%}
+        <form method="get" class="mb-2 {% if context.no_search %}invisible{%endif%}" action="{{url_for(request.endpoint)}}">
+            {% for key, value in request.args.items(multi=True) %}
+            {% if key not in ['mail', 'page'] %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+            {% endfor %}
+            
             <div class="input-group col">
+                <input type="hidden" name="page" value="1">
                 <input class="form-control" name="mail" placeholder="recherche par mail">
-                <button type="submit" value="search" class="input-group-text btn btn-primary"><i class="bi bi-search"></i></button> 
+                <button type="submit" value="search" class="input-group-text btn btn-outline-dark"><i class="bi bi-search"></i></button> 
             </div>
         </form> 
 
         <form method="post">
             <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-            <input type="hidden" name="identifier" value="ban">
             <div class="d-flex justify-content-between align-items-center">
                 <div class=" m-2">
                     <input name="selected" class="form-check-input" checked type="radio" value="none">
@@ -73,7 +91,7 @@ Administration | ParkShare
                         </div>
                     </li>
                     {%else%}
-                    <li class="list-group-item m-2">  
+                    <li class="list-group-item">  
                         Aucun résultats
                     </li>
                     {% endfor %}
@@ -93,7 +111,7 @@ Administration | ParkShare
                         <div class="container">
                             <div class="row justify-content-center align-items-center">
                                 <span class="col"><input name="selected" class="form-check-input" type="radio" value="{{item.id}}"></span>
-                                <div class="col-6 text-left"><a class="text-black" href="{{url_for('')}}">{{item.address}}</a></div>
+                                <div class="col-6 text-left"><a class="text-black" href="{{ url_for('stationnement.detail', publication_id=item.id) }}">{{item.address}}</a></div>
                                 <span class="col text-center fw-bold">{{item.price}} $/h</span>
                             </div>
                         </div>
@@ -108,14 +126,14 @@ Administration | ParkShare
             </div>
             
         </form>
-        <nav aria-label="Page navigation example">
+        <nav>
             <ul class="pagination justify-content-center">
                 {%if request.args.page %}
                 {% for page in range(context.page_number|int)%}
                 <li class="page-item"><a class="page-link text-dark btn-outline-dark {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
                 {% endfor%}
                 {%else%}
-                <li class="page-item"><a class="page-link btn-outline-dark active text-dark" href="{{url_for(request.endpoint)}}">1</a></li>
+                <li class="page-item "><a class="page-link btn-outline-dark active text-dark" href="{{url_for(request.endpoint)}}">1</a></li>
                 {%endif%}
             </ul>
         </nav>
