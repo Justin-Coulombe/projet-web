@@ -199,7 +199,10 @@ def ban_user_by_id(userid):
         """,
         (userid,)
     )
+    count = cursor.rowcount
     close_connection(conn, cursor)
+    return count
+    
 
 def delete_user_by_id(userid):
     conn = create_connection()

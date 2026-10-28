@@ -541,5 +541,8 @@ def delete_publication_by_id(publication_id):
         """,
         (publication_id,)
     )
-
+    count = cursor.rowcount
     close_connection(conn, cursor)
+    return count
+
+    

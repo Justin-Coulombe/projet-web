@@ -57,7 +57,7 @@ def create_app():
 
     @app.route("/")
     def index():
-        raw = get_sample_publications_limit(5)
+        raw = get_sample_publications_limit(4)
         publications = []
 
         for pub in raw:
