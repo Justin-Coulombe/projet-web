@@ -60,11 +60,11 @@ Publications | ParkShare
 {% endblock %}
 
 {%block contenu %}
-<ul class="list-unstyled row row-cols-4">
+<ul class="list-unstyled row row-cols-3 g-3">
     {% set path = "/static/img/stationnement/" %}
     {% for item in context.publications %}
-    <li class="col m-2">
-        <a href="/stationnement/detail/{{item.id}}" class="d-flex link-underline link-underline-opacity-0">
+    <li class="col">
+        <a href="/stationnement/detail/{{item.id}}" class="d-flex link-underline link-underline-opacity-0" style="height: 21rem;">
             <div class="card">
                 <img class="card-img-top"
                     src="{% if item.img %} {{path~item.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
@@ -76,9 +76,9 @@ Publications | ParkShare
                         <span class="card-text bi bi-house text-muted small me-3"> {{item.location}} </span>
                         <span class="card-text bi bi-geo-alt small me-3"> {{item.open_place}} place(s) </span>
                         {% if item.place_use == item.open_place %}
-                        <span class="badge rounded-3 bg-success fs-5"> Disponible </span>
+                        <span class="badge rounded-3 bg-success"> Disponible </span>
                         {% else %}
-                        <span class="badge rounded-3 bg-danger fs-5">Indisponible</span>
+                        <span class="badge rounded-3 bg-danger">Indisponible</span>
                         {% endif %}
                     </div>
                 </div>
