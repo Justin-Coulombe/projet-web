@@ -11,10 +11,13 @@ stationnement | ParkShare
 {% block contenu%}
 
 <div class="d-flex align-items-center justify-content-between mb-4 mt-3">
+    {% if publication.open_place - publication.place_use == 0 %}
     <h2 class=" fw-bold"> Détails de l’annonce</h2>
     {%if publication.author_id == session['user_id']%}
     <a href="/stationnement/edit/{{publication.id}}" class="btn btn-dark">Modifier l'annonce</a>
     {% endif %}
+    {% endif %}
+
 </div>
 <div class="mb-3">
     <img src="{% if publication.img %} {{path~publication.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
