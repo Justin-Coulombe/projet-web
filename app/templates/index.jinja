@@ -1,7 +1,7 @@
 {% extends "_modele.jinja" %}
 
 {%block centered_title %}
-<div class="hero">
+<div class="hero pb-3">
     <h1 class="display-5 fw-bold mb-3">Trouvez une place de stationnement,<br>près de chez vous.</h1>
     <p class="mb-4">Louez des espaces de stationnement privés, simplement et en toute confiance.</p>
     <form action="/publications/recherche" method="get" id="research"
@@ -56,7 +56,7 @@
 {% endblock %}
 
 {% block contenu %}
-<div class="container">
+<div class="container mt-2">
     <div class="d-flex align-items-center justify-content-between">
         <p class="fs-4 fw-bold">Annonces du moment</p>
         <a href="/publications" class="link-underline link-underline-opacity-0 text-black">

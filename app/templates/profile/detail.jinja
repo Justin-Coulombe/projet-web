@@ -9,7 +9,7 @@ Mon profil | ParkShare
 
 
 {% block contenu %}
-<div class="container mt-3">
+<div class="container-fluid mt-3">
     <div class="row">
         <div class="col-md-3">
 
@@ -74,7 +74,7 @@ Mon profil | ParkShare
                                 <th scope="col">Adresse</th>
                                 <th scope="col">Ville</th>
                                 <th scope="col">Prix</th>
-                                <th scope="col">Place occupée</th>
+                                <th scope="col" class="text-nowrap">Place occupée</th>
                                 <th scope="col">Emplacement</th>
                                 <th scope="col">Disponibilité</th>
                                 <th scope="col"></th>
@@ -83,20 +83,20 @@ Mon profil | ParkShare
                         </thead>
                         <tbody>
                             {% for publication in lst_pubications %}
-                            {% set Complete = publication.place_use == publication.open_place %}
+                            {% set Complete = publication.place_use == 0 %}
                             {% set empty = publication.open_place - publication.place_use == 0 %}
                             <tr>
                                 <td> <a class="underline-10 text-decoration-none text-reset"
                                         href="/stationnement/detail/{{publication.id}}">{{
                                         publication.address }}</a> </td>
                                 <td>{{ publication.city }}</td>
-                                <td>{{ publication.price }} $/heure</td>
+                                <td class="text-nowrap">{{ publication.price }} $/heure</td>
                                 <td>{{ publication.open_place - publication.place_use }} / {{ publication.open_place }}
                                 </td>
                                 <td><span class="badge rounded-1 bg-dark">{{ publication.location }}</span></td>
                                 {% if empty %}
                                 <td><span class="badge rounded-3 bg-success">Disponible</span></td>
-                                {% elif Complete%}
+                                {% elif Complete %}
                                 <td><span class="badge rounded-3 bg-danger">Complet</span></td>
                                 {%else%}
                                 <td><span class="badge rounded-3 bg-warning">
@@ -105,11 +105,19 @@ Mon profil | ParkShare
 
                                 <td>
                                     {% if publication.open_place - publication.place_use == 0 %}
-                                    <a href="/stationnement/edit/{{publication.id}}"
-                                        class="bi bi-pencil-square btn btn-outline-primary btn-sm">
-                                        Modifier
-                                    </a>
-                                    <form class="d-inline" method="POST" data-ajax-form="delete" data-confirm="Supprimer définitivement cette annonce ?" action="/stationnement/supprimer/{{publication.id}}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button type="submit" class="bi bi-trash btn btn-outline-danger btn-sm">Supprimer</button></form>
+                                    <div class="text-nowrap">
+
+                                        <a href="/stationnement/edit/{{publication.id}}"
+                                            class="bi bi-pencil-square btn btn-outline-primary btn-sm">
+                                            Modifier
+                                        </a>
+                                        <form class="d-inline" method="POST" data-ajax-form="delete"
+                                            data-confirm="Supprimer définitivement cette annonce ?"
+                                            action="/stationnement/supprimer/{{publication.id}}"><input type="hidden"
+                                                name="_csrf" value="{{ csrf_token() }}"><button type="submit"
+                                                class="bi bi-trash btn btn-outline-danger btn-sm"> Supprimer</button>
+                                        </form>
+                                    </div>
                                     {% endif%}
                                 </td>
                             </tr>
