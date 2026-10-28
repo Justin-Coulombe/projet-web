@@ -64,11 +64,11 @@
         </a>
     </div>
 
-    <div class="d-flex">
+    <ul class="list-unstyled row row-cols-4 g-3">
         {% set path = "/static/img/stationnement/" %}
         {% for item in context.publications%}
-        <div style="width: 20rem;">
-            <a href="/stationnement/detail/{{item.id}}" class="link-underline link-underline-opacity-0">
+        <li class="col">
+            <a style="height: 21rem;" href="/stationnement/detail/{{item.id}}" class="d-flex link-underline link-underline-opacity-0">
                 <div class="card">
                     <img class="card-img-top"
                         src="{% if item.img %} {{path~item.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
@@ -80,19 +80,19 @@
                                 <span class="card-text bi bi-house text-muted small me-3"> {{item.location}} </span>
                                 <span class="card-text bi bi-geo-alt small me-3"> {{item.open_place}} place(s)
                                 </span>
-                                {% if item.place_use == item.open_place %}
-                                <span class="badge rounded-3 bg-success"> Disponible </span>
-                                {% else %}
-                                <span class="badge rounded-3 bg-danger">Indisponible</span>
-                                {% endif %}
                             </div>
+                            {% if item.place_use == item.open_place %}
+                            <span class="badge rounded-3 bg-success"> Disponible </span>
+                            {% else %}
+                            <span class="badge rounded-3 bg-danger">Indisponible</span>
+                            {% endif %}
                     </div>
 
                 </div>
             </a>
-        </div>
+        </li>
         {%endfor%}
-    </div>
+    </ul>
 </div>
 {% endblock %}
 
