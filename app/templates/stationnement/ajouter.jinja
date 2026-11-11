@@ -141,26 +141,6 @@
                 <div class="invalid-feedback">{{msg_emplacement}}</div>
             </div>
 
-            <fieldset class="border">
-                <legend class="float-none w-auto px-2">Les disponibilités du stationnement</legend>
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="dateDebut" class="form-label fw-bold">Disponible du :</label>
-                        <input type="datetime-local" class="form-control {{classe_debut}}" id="dateDebut"
-                            name="dateDebut" value="{{debut}}" required>
-                        <div class="invalid-feedback">{{msg_debut}}</div>
-
-                    </div>
-                    <div class="col-md-6">
-                        <label for="dateFin" class="form-label fw-bold">Jusqu'au :</label>
-                        <input type="datetime-local" class="form-control {{classe_fin}}" id="dateFin" name="dateFin"
-                            value="{{fin}}" required>
-                        <div class="invalid-feedback" id="msgFin">{{msg_fin}}</div>
-
-                    </div>
-                </div>
-            </fieldset>
-
             <label for="image" class="form-label fw-bold">Image du stationnement</label>
             <div class="input-group mb-3">
                 <input type="file" class="form-control {{classe_image}}" id="image" name="image">

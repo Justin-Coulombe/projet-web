@@ -78,14 +78,11 @@
                         <span class="fw-bold mb-1">{{item.price}}$<span class="fw-lighter"> /heure</span>
                             <div class="d-flex justify-content-start align-items-center">
                                 <span class="card-text bi bi-house text-muted small me-3"> {{item.location}} </span>
-                                <span class="card-text bi bi-geo-alt small me-3"> {{item.open_place}} place(s)
+                                <span class="card-text bi bi-geo-alt small me-3"> <span class="badge rounded-3 bg-secondary">
+    Voir les disponibilités
+</span>
                                 </span>
                             </div>
-                            {% if item.place_use == item.open_place %}
-                            <span class="badge rounded-3 bg-success"> Disponible </span>
-                            {% else %}
-                            <span class="badge rounded-3 bg-danger">Indisponible</span>
-                            {% endif %}
                     </div>
 
                 </div>

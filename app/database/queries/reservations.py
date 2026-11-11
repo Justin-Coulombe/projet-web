@@ -85,40 +85,58 @@ def add_Reservation(user_id, debut, fin, publication_id):
 
 
 def get_reservation_by_user(user_id):
-
     conn = create_connection()
-    cursor = conn.cursor()
 
-    command = """
-        SELECT
-        r.id,r.client,r.debut,
-        r.fin,p.id,p.author,
-        p.address, p.prix, p.debut, p.fin,
-        p.ville, p.emplacement, p.image,
-        p.placetotal, p.placeactuel, p.disponibilite
-        FROM Reservation r
-        JOIN Publication p ON p.id = r.publication
-        WHERE r.client = ?
-    """
+    try:
+        cursor = conn.cursor()
 
-    cursor.execute(command, (user_id,))
-    results = cursor.fetchall()
+        command = """
+            SELECT
+                r.id,
+                r.client,
+                r.debut,
+                r.fin,
+                p.id,
+                p.author,
+                p.address,
+                p.prix,
+                p.ville,
+                p.emplacement,
+                p.image,
+                p.placetotal,
+                p.banni
+            FROM Reservation r
+            JOIN Publication p ON p.id = r.publication
+            WHERE r.client = ?
+            ORDER BY r.debut DESC
+        """
 
-    cursor.close()
-    conn.close()
+        cursor.execute(command, (user_id,))
+        results = cursor.fetchall()
 
-    reservations = []
-    for item in results:
-        pub = publication(
-            item[4], item[5], item[6], item[7], item[8],
-            item[9], item[10], item[11], item[12],
-            item[13], item[14], item[15]
-        )
-        reservations.append(
-            reservation(item[0], item[1], item[2], item[3], pub)
-        )
+        reservations = []
 
-    return reservations
+        for item in results:
+            pub = publication(
+                item[4], item[5], item[6],
+                item[7], item[8], item[9],
+                item[10], item[11], item[12]
+            )
+
+            reservations.append(
+                reservation(
+                    item[0],
+                    item[1],
+                    item[2],
+                    item[3],
+                    pub
+                )
+            )
+
+        return reservations
+
+    finally:
+        conn.close()
 
 def get_reservations_by_owner(owner_id):
     """Retourne les réservations des stationnements d'un propriétaire."""

@@ -6,11 +6,28 @@ document.addEventListener("DOMContentLoaded", () => {
     register: ["prenom", "nom", "email", "password", "password_confirm"],
     profile: ["prenom", "nom", "email"],
     password: ["current_password", "new_password", "confirm_password"],
-    parking: ["adresse", "ville", "prix", "place", "emplacement", "dateDebut", "dateFin", "geocode_token", "image"],
-    "parking-edit": ["adresse", "ville", "prix", "place", "emplacement", "dateDebut", "dateFin", "geocode_token"],
+    parking: [
+      "adresse",
+      "ville",
+      "prix",
+      "place",
+      "emplacement",
+      "geocode_token",
+      "image",
+    ],
+    "parking-edit": [
+      "adresse",
+      "ville",
+      "prix",
+      "place",
+      "emplacement",
+      "dateDebut",
+      "dateFin",
+      "geocode_token",
+    ],
     image: ["image"],
     delete: [],
-    logout: []
+    logout: [],
   };
   const getInput = (form, name) => [...form.elements].find(el => el.name === name);
   const value = (form, name) => (getInput(form, name)?.value ?? "").trim();

@@ -58,76 +58,120 @@ Mon profil | ParkShare
 
 
         <div class="col-md-9">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4 pb-0">
-                    <h4>Mes annonces</h4>
-                    {% if success %}
-                    <div class="alert alert-success">{{ success }}</div>
-                    {% endif %}
-                    {% if not lst_pubications %}
-                    <p>Vous avez aucune annonce pour le moment...</p>
-                    <a class="btn btn-sm bi bi-plus-circle" href="/stationnement/ajouter"> Ajouter un stationnement</a>
-                    {% else %}
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Adresse</th>
-                                <th scope="col">Ville</th>
-                                <th scope="col">Prix</th>
-                                <th scope="col" class="text-nowrap">Place occupée</th>
-                                <th scope="col">Emplacement</th>
-                                <th scope="col">Disponibilité</th>
-                                <th scope="col"></th>
-                            </tr>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
 
-                        </thead>
-                        <tbody>
-                            {% for publication in lst_pubications %}
-                            {% set Complete = publication.place_use == 0 %}
-                            {% set empty = publication.open_place - publication.place_use == 0 %}
-                            <tr>
-                                <td> <a class="underline-10 text-decoration-none text-reset"
-                                        href="/stationnement/detail/{{publication.id}}">{{
-                                        publication.address }}</a> </td>
-                                <td>{{ publication.city }}</td>
-                                <td class="text-nowrap">{{ publication.price }} $/heure</td>
-                                <td>{{ publication.open_place - publication.place_use }} / {{ publication.open_place }}
-                                </td>
-                                <td><span class="badge rounded-1 bg-dark">{{ publication.location }}</span></td>
-                                {% if empty %}
-                                <td><span class="badge rounded-3 bg-success">Disponible</span></td>
-                                {% elif Complete %}
-                                <td><span class="badge rounded-3 bg-danger">Complet</span></td>
-                                {%else%}
-                                <td><span class="badge rounded-3 bg-warning">
-                                        {{publication.open_place-publication.place_use}} réservation(s)</span></td>
-                                {% endif%}
+        <h4>Mes annonces</h4>
 
-                                <td>
-                                    {% if publication.open_place - publication.place_use == 0 %}
-                                    <div class="text-nowrap">
+        {% if success %}
+        <div class="alert alert-success">
+            {{ success }}
+        </div>
+        {% endif %}
 
-                                        <a href="/stationnement/edit/{{publication.id}}"
-                                            class="bi bi-pencil-square btn btn-outline-primary btn-sm">
-                                            Modifier
-                                        </a>
-                                        <form class="d-inline" method="POST" data-ajax-form="delete"
-                                            data-confirm="Supprimer définitivement cette annonce ?"
-                                            action="/stationnement/supprimer/{{publication.id}}"><input type="hidden"
-                                                name="_csrf" value="{{ csrf_token() }}"><button type="submit"
-                                                class="bi bi-trash btn btn-outline-danger btn-sm"> Supprimer</button>
-                                        </form>
-                                    </div>
-                                    {% endif%}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endif %}
-                </div>
+        {% if not lst_pubications %}
 
-            </div>
+        <p>Vous n'avez aucune annonce pour le moment.</p>
+
+        <a class="btn btn-sm btn-outline-dark"
+           href="{{ url_for('stationnement.ajouter_stationnement') }}">
+            <i class="bi bi-plus-circle"></i>
+            Ajouter un stationnement
+        </a>
+
+        {% else %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Adresse</th>
+                        <th>Ville</th>
+                        <th>Prix</th>
+                        <th>Nombre de places</th>
+                        <th>Emplacement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for publication in lst_pubications %}
+
+                    <tr>
+                        <td>
+                            <a class="text-decoration-none text-dark"
+                               href="{{ url_for(
+                                   'stationnement.detail',
+                                   publication_id=publication.id
+                               ) }}">
+                                {{ publication.address }}
+                            </a>
+                        </td>
+
+                        <td>{{ publication.city }}</td>
+
+                        <td class="text-nowrap">
+                            {{ publication.price }} $/heure
+                        </td>
+
+                        <td>{{ publication.placeTotal }}</td>
+
+                        <td>
+                            <span class="badge bg-dark">
+                                {{ publication.location }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-2">
+
+                                <a href="{{ url_for(
+                                    'stationnement.edit',
+                                    publication_id=publication.id
+                                ) }}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Modifier
+                                </a>
+
+                                <form method="POST"
+                                      data-ajax-form="delete"
+                                      data-confirm="Supprimer définitivement cette annonce ?"
+                                      action="{{ url_for(
+                                          'stationnement.delete',
+                                          publication_id=publication.id
+                                      ) }}">
+
+                                    <input type="hidden"
+                                           name="_csrf"
+                                           value="{{ csrf_token() }}">
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                        Supprimer
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
 
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">

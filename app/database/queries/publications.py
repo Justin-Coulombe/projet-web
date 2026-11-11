@@ -40,37 +40,48 @@ def ajouter_stationnement(
     longitude
 ):
     conn = create_connection()
-    cursor = conn.cursor()
 
+    try:
+        command = """
+            INSERT INTO Publication (
+                author,
+                address,
+                prix,
+                ville,
+                emplacement,
+                image,
+                placetotal,
+                banni,
+                latitude,
+                longitude
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
 
-    command = """
-        INSERT INTO Publication (
-            author, address, prix,
-            ville, emplacement, image,
-            placetotal, banni,
-            latitude, longitude
+        conn.execute(
+            command,
+            (
+                id_author,
+                address,
+                prix,
+                ville,
+                emplacement,
+                image,
+                placetotal,
+                0,
+                latitude,
+                longitude
+            )
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,)
-    """
 
-    cursor.execute(
-        command,
-        (
-            id_author,
-            address,
-            prix,
-            ville,
-            emplacement,
-            image,
-            placetotal,
-            0,
-            latitude,
-            longitude
-        )
-    )
+        conn.commit()
 
-    close_connection(conn, cursor)
+    except Exception:
+        conn.rollback()
+        raise
 
+    finally:
+        conn.close()
 
 
 def get_all_publications():
@@ -357,40 +368,72 @@ def get_publications_in_bounds(
 
     try:
         conditions = [
-            "latitude BETWEEN ? AND ?",
-            "longitude BETWEEN ? AND ?",
-            "disponibilite = 1",
-            "placeactuel > 0"
+            "p.latitude BETWEEN ? AND ?",
+            "p.longitude BETWEEN ? AND ?",
+            "p.banni = 0",
+            "u.banni = 0"
         ]
 
         params = [south, north, west, east]
 
         if ville:
-            conditions.append("ville = ?")
+            conditions.append("p.ville = ?")
             params.append(ville)
 
         if emplacement in ("Intérieur", "Extérieur"):
-            conditions.append("emplacement = ?")
+            conditions.append("p.emplacement = ?")
             params.append(emplacement)
 
-        if debut:
-            conditions.append("debut <= ?")
-            params.append(debut)
+        if debut and fin:
 
-        if fin:
-            conditions.append("fin >= ?")
-            params.append(fin)
+            conditions.append("""
+                (
+                    SELECT COUNT(*)
+                    FROM Reservation r
+                    WHERE r.publication = p.id
+                      AND datetime(r.debut) <= datetime(?)
+                      AND datetime(r.fin) > datetime(?)
+                ) < p.placetotal
+            """)
 
-        conditions.append("banni = FALSE")
+            params.extend([debut, debut])
+
+            conditions.append("""
+                NOT EXISTS (
+                    SELECT 1
+                    FROM Reservation evt
+                    WHERE evt.publication = p.id
+                      AND datetime(evt.debut) > datetime(?)
+                      AND datetime(evt.debut) < datetime(?)
+                      AND (
+                          SELECT COUNT(*)
+                          FROM Reservation active
+                          WHERE active.publication = p.id
+                            AND datetime(active.debut)
+                                <= datetime(evt.debut)
+                            AND datetime(active.fin)
+                                > datetime(evt.debut)
+                      ) >= p.placetotal
+                )
+            """)
+
+            params.extend([debut, fin])
 
         sql = f"""
             SELECT
-                id, address, ville, prix, emplacement,
-                image, placetotal,
-                latitude, longitude
-            FROM Publication
+                p.id,
+                p.address,
+                p.ville,
+                p.prix,
+                p.emplacement,
+                p.image,
+                p.placetotal,
+                p.latitude,
+                p.longitude
+            FROM Publication p
+            JOIN User u ON u.id = p.author
             WHERE {' AND '.join(conditions)}
-            ORDER BY id DESC
+            ORDER BY p.id DESC
             LIMIT 50
         """
 
@@ -406,7 +449,7 @@ def get_publications_in_bounds(
                 "img": row[5],
                 "total": row[6],
                 "latitude": row[7],
-                "longitude": row[8],
+                "longitude": row[8]
             }
             for row in rows
         ]
