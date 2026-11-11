@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, session, g
 from app.security import install_security
-
+from app.errors import register_error_handlers
 from app.database.init_db import init_database
 from app.database.queries.users import get_user_by_id
 from dotenv import load_dotenv
@@ -96,5 +96,7 @@ def create_app():
     app.register_blueprint(
         bp_detail,
         url_prefix="/profile")
+
+    register_error_handlers(app)
 
     return app
