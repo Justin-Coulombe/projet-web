@@ -41,7 +41,7 @@ def gestion():
         if categorie == 'pub':
             pubid = form.get('selected')
             if pubid != 'none':
-                if postqueries.delete_publication_by_id(pubid) != 0:
+                if postqueries.ban_publication_by_id(pubid) != 0:
                     session["gestion_message"] = "Publication banni avec succès."
                     session["gestion_message_type"] = "success"
                     return redirect(url_for(request.endpoint, **dict(request.args)))

@@ -12,14 +12,11 @@ def create_publication_table():
             author INTEGER NOT NULL,
             address TEXT NOT NULL,
             prix DOUBLE NOT NULL CHECK (prix >= 0.01 AND prix <= 1000),
-            debut DATETIME NOT NULL,
-            fin DATETIME NOT NULL,
             ville TEXT NOT NULL,
             emplacement TEXT,
             image TEXT,
             placetotal INTEGER NOT NULL CHECK (placetotal BETWEEN 1 AND 100),
-            placeactuel INTEGER NOT NULL CHECK (placeactuel BETWEEN 0 AND placetotal),
-            disponibilite BOOLEAN NOT NULL DEFAULT TRUE,
+            banni BOOLEAN NOT NULL DEFAULT TRUE,
             latitude REAL,
             longitude REAL,
             FOREIGN KEY (author) REFERENCES User(id)
@@ -35,9 +32,6 @@ def ajouter_stationnement(
     address,
     prix,
     placetotal,
-    placeactuel,
-    debut,
-    fin,
     ville,
     emplacement,
     image,
@@ -51,12 +45,12 @@ def ajouter_stationnement(
 
     command = """
         INSERT INTO Publication (
-            author, address, prix, debut, fin,
+            author, address, prix,
             ville, emplacement, image,
-            placetotal, placeactuel, disponibilite,
+            placetotal, banni,
             latitude, longitude
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,)
     """
 
     cursor.execute(
@@ -65,14 +59,11 @@ def ajouter_stationnement(
             id_author,
             address,
             prix,
-            debut,
-            fin,
             ville,
             emplacement,
             image,
             placetotal,
-            placeactuel,
-            1,
+            0,
             latitude,
             longitude
         )
@@ -80,76 +71,6 @@ def ajouter_stationnement(
 
     close_connection(conn, cursor)
 
-
-
-def get_publications_with_city_date_location_location(params):
-    conn = create_connection()
-
-    try:
-        cursor = conn.cursor()
-
-        command = """
-            SELECT
-                id,
-                author,
-                address,
-                prix,
-                debut,
-                fin,
-                ville,
-                emplacement,
-                image,
-                placetotal,
-                placeactuel,
-                disponibilite,
-                latitude,
-                longitude
-            FROM Publication
-            WHERE ville LIKE ?
-              AND DATE(debut) >= DATE(?)
-              AND DATE(fin) <= DATE(?)
-              AND emplacement LIKE ?
-              AND (SELECT banni FROM User WHERE id = author) = FALSE
-    """
-
-        cursor.execute(
-            command,
-            (
-                params.get("city", "%"),
-                params.get("start", "1970-01-01"),
-                params.get("end", "3000-01-01"),
-                params.get("filter", "%")
-            )
-        )
-
-        results = cursor.fetchall()
-
-        publications = []
-
-        for item in results:
-            publications.append(
-                publication(
-                    item[0],   # id
-                    item[1],   # author
-                    item[2],   # address
-                    item[3],   # price
-                    item[4],   # start
-                    item[5],   # end
-                    item[6],   # city
-                    item[7],   # location
-                    item[8],   # img
-                    item[9],   # open_place
-                    item[10],  # place_use
-                    item[11],  # open
-                    item[12],  # latitude
-                    item[13]   # longitude
-                )
-            )
-
-        return publications
-
-    finally:
-        conn.close()
 
 
 def get_all_publications():
@@ -162,15 +83,12 @@ def get_all_publications():
             author,
             address,
             prix,
-            debut,
-            fin,
             ville,
             emplacement,
             image,
             placetotal,
-            placeactuel,
-            disponibilite
-        FROM Publication WHERE (SELECT banni FROM User WHERE id = author) = FALSE
+            banni
+        FROM Publication WHERE banni = FALSE AND (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(command)
@@ -193,10 +111,7 @@ def get_all_publications():
                 item[5],
                 item[6],
                 item[7],
-                item[8],
-                item[9],
-                item[10],
-                item[11]
+                item[8]
             )
         )
     return publications
@@ -212,16 +127,13 @@ def get_sample_publications_limit(limite):
             author,
             address,
             prix,
-            debut,
-            fin,
             ville,
             emplacement,
             image,
             placetotal,
-            placeactuel,
-            disponibilite
+            banni
         FROM Publication
-        WHERE (SELECT banni FROM User WHERE id = author) = FALSE
+        WHERE banni = FALSE AND (SELECT banni FROM User WHERE id = author) = FALSE
         ORDER BY RANDOM()
         LIMIT ?
     """
@@ -246,10 +158,7 @@ def get_sample_publications_limit(limite):
                 item[5],
                 item[6],
                 item[7],
-                item[8],
-                item[9],
-                item[10],
-                item[11]
+                item[8]
             )
         )
 
@@ -262,22 +171,19 @@ def get_publications_by_user(user_id):
 
     command = """
         SELECT
-           id,
+            id,
             author,
             address,
             prix,
-            debut,
-            fin,
             ville,
             emplacement,
             image,
             placetotal,
-            placeactuel,
-            disponibilite
+            banni
         from
         publication
         WHERE
-        author = ? AND (SELECT banni FROM User WHERE id = author) = FALSE
+        banni = FALSE AND author = ? AND (SELECT banni FROM User WHERE id = author) = FALSE
     """
 
     cursor.execute(command, (user_id,))
@@ -300,10 +206,7 @@ def get_publications_by_user(user_id):
                 item[5],
                 item[6],
                 item[7],
-                item[8],
-                item[9],
-                item[10],
-                item[11]
+                item[8]                
             )
         )
     return publications
@@ -315,18 +218,15 @@ def get_publications_by_id(publication_id):
 
     command = """
             SELECT
-               id,
+                id,
                 author,
                 address,
                 prix,
-                debut,
-                fin,
                 ville,
                 emplacement,
                 image,
                 placetotal,
-                placeactuel,
-                disponibilite
+                banni
             from
             publication
             WHERE
@@ -353,9 +253,6 @@ def get_publications_by_id(publication_id):
         publications[6],
         publications[7],
         publications[8],
-        publications[9],
-        publications[10],
-        publications[11]
     )
     return resultat
 
@@ -367,9 +264,6 @@ def update_publication(
     address,
     prix,
     placetotal,
-    placeactuel,
-    debut,
-    fin,
     ville,
     emplacement,
     latitude=None,
@@ -384,10 +278,6 @@ def update_publication(
         SET address = ?,
             prix = ?,
             placetotal = ?,
-            placeactuel = ?,
-            disponibilite = CASE WHEN ? > 0 THEN 1 ELSE 0 END,
-            debut = ?,
-            fin = ?,
             ville = ?,
             emplacement = ?,
             latitude = COALESCE(?, latitude),
@@ -398,10 +288,6 @@ def update_publication(
             address,
             prix,
             placetotal,
-            placeactuel,
-            placeactuel,
-            debut,
-            fin,
             ville,
             emplacement,
             latitude,
@@ -495,11 +381,13 @@ def get_publications_in_bounds(
             conditions.append("fin >= ?")
             params.append(fin)
 
+        conditions.append("banni = FALSE")
+
         sql = f"""
             SELECT
                 id, address, ville, prix, emplacement,
-                image, placetotal, placeactuel,
-                latitude, longitude, debut, fin
+                image, placetotal,
+                latitude, longitude
             FROM Publication
             WHERE {' AND '.join(conditions)}
             ORDER BY id DESC
@@ -516,12 +404,9 @@ def get_publications_in_bounds(
                 "price": row[3],
                 "location": row[4],
                 "img": row[5],
-                "open_place": row[6],
-                "place_use": row[7],
-                "latitude": row[8],
-                "longitude": row[9],
-                "start": row[10],
-                "end": row[11]
+                "total": row[6],
+                "latitude": row[7],
+                "longitude": row[8],
             }
             for row in rows
         ]
@@ -529,14 +414,14 @@ def get_publications_in_bounds(
     finally:
         conn.close()
 
-def delete_publication_by_id(publication_id):
+def ban_publication_by_id(publication_id):
     conn = create_connection()
     cursor = conn.cursor()
 
     cursor.execute(
         """
         UPDATE Publication
-        SET disponibilite = 0
+        SET banni = 1
         WHERE id = ?
         """,
         (publication_id,)

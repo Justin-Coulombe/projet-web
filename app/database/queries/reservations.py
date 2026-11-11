@@ -13,7 +13,6 @@ def create_reservation_table():
             publication INTEGER NOT NULL,
             debut DATETIME NOT NULL,
             fin DATETIME NOT NULL,
-
             FOREIGN KEY (publication)
                 REFERENCES Publication(id),
             FOREIGN KEY (client) REFERENCES User(id)

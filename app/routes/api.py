@@ -6,7 +6,7 @@ from app.routes.auth import login_required
 from app.form_validation import CITIES
 from app.services.geocoding import trouver_coordonnees, creer_jeton, GeocodingIndisponible
 from app.database.queries.publications import (
-    get_publications_with_city_date_location_location, get_publications_in_bounds
+     get_publications_in_bounds
 )
 
 Bp_api = Blueprint('API', __name__)
@@ -18,29 +18,29 @@ def _date(value):
     return datetime.strptime(value, '%Y-%m-%dT%H:%M').strftime('%Y-%m-%d %H:%M')
 
 
-@Bp_api.route('/publications/search')
-def search_publication():
-    city = request.args.get('city', '%')
-    if city in ('', 'empt'):
-        city = '%'
-    if city != '%' and city not in CITIES:
-        return jsonify(error='Ville invalide.'), 400
-    filter_value = request.args.get('filter', '%')
-    if filter_value in ('', 'Tous'):
-        filter_value = '%'
-    if filter_value not in ('%', 'Intérieur', 'Extérieur'):
-        return jsonify(error='Type invalide.'), 400
-    try:
-        start = _date(request.args.get('start')) or '1970-01-01 00:00'
-        end = _date(request.args.get('end')) or '3000-01-01 00:00'
-        if start > end:
-            raise ValueError()
-    except ValueError:
-        return jsonify(error='Dates invalides.'), 400
-    rows = get_publications_with_city_date_location_location(
-        {'city': city, 'start': start, 'end': end, 'filter': filter_value}
-    )
-    return jsonify([obj.to_dict() for obj in rows])
+# @Bp_api.route('/publications/search')
+# def search_publication():
+#     city = request.args.get('city', '%')
+#     if city in ('', 'empt'):
+#         city = '%'
+#     if city != '%' and city not in CITIES:
+#         return jsonify(error='Ville invalide.'), 400
+#     filter_value = request.args.get('filter', '%')
+#     if filter_value in ('', 'Tous'):
+#         filter_value = '%'
+#     if filter_value not in ('%', 'Intérieur', 'Extérieur'):
+#         return jsonify(error='Type invalide.'), 400
+#     try:
+#         start = _date(request.args.get('start')) or '1970-01-01 00:00'
+#         end = _date(request.args.get('end')) or '3000-01-01 00:00'
+#         if start > end:
+#             raise ValueError()
+#     except ValueError:
+#         return jsonify(error='Dates invalides.'), 400
+#     rows = get_publications_with_city_date_location_location(
+#         {'city': city, 'start': start, 'end': end, 'filter': filter_value}
+#     )
+#     return jsonify([obj.to_dict() for obj in rows])
 
 
 @Bp_api.route('/geocode', methods=['POST'])

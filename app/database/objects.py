@@ -1,19 +1,16 @@
 class publication:
-    def __init__(self, pId, pAuthor, pAddress, pPrice, pDebut, pFin, pCity,
-                 pLocation, pImgUrl, pOpenPlace, pPlaceUse, pUse,
+    def __init__(self, pId, pAuthor, pAddress, pPrice, pCity,
+                 pLocation, pImgUrl, pPlaceTotal, pBanni = False,
                  pLatitude=None, pLongitude=None):
         self.id = pId
         self.author_id = pAuthor
         self.address = pAddress
         self.price = pPrice
-        self.start = pDebut
-        self.end = pFin
         self.city = pCity
         self.location = pLocation
         self.img = pImgUrl
-        self.open_place = pOpenPlace
-        self.place_use = pPlaceUse
-        self.use = pUse
+        self.placeTotal = pPlaceTotal
+        self.banni = pBanni
         self.latitude = pLatitude
         self.longitude = pLongitude
 
@@ -21,11 +18,10 @@ class publication:
         return {
             'id': self.id, 'author': self.author_id,
             'address': self.address, 'price': self.price,
-            'start': self.start, 'end': self.end,
             'city': self.city, 'location': self.location,
-            'img': self.img, 'open_place': self.open_place,
-            'place_use': self.place_use, 'open': self.use,
-            'latitude': self.latitude, 'longitude': self.longitude
+            'img': self.img, 'place_total': self.placeTotal,
+            'banni' : self.banni,'latitude': self.latitude,
+            'longitude': self.longitude
         }
 
 
