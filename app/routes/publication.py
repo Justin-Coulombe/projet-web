@@ -11,7 +11,7 @@ Bp_publication = Blueprint('publications', __name__)
 @Bp_publication.route('/', methods=['GET'])
 def index():
     data = [p.to_dict() for p in get_all_publications()]
-    per_page = 6
+    per_page = 12
 
     page = request.args.get('page', default=1, type=int)
     pages = paginate(data, per_page)
