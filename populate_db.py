@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
 """Crée des données fictives pour ParkShare (SQLite + carte OpenStreetMap).
 
-À exécuter depuis le dépôt : python populate_db.py --reset --yes
+À exécuter depuis la racine du dépôt : python populate_db.py --reset --yes
 
-DANGER : --reset supprime TOUTES les lignes des tables Reservation,
-Publication et User dans la base locale database/parkshare.db.
+Schéma ciblé (voir app/database/queries/) :
+    User(id, nom, prenom, email, mdp, banni)
+    Publication(id, author, address, prix, ville, emplacement, image,
+                placetotal, banni, latitude, longitude)
+    Reservation(id, client, publication, debut, fin)
+    Admin(id, username, cle)            <- jamais touchée par ce script
+
+DANGER : --reset supprime TOUTES les lignes de Reservation, Publication et
+User (la table Admin est conservée).
+
+Points importants pour les requêtes de l'application :
+  * Publication.banni vaut TRUE par défaut et toutes les requêtes de lecture
+    filtrent "banni = FALSE" -> les annonces sont insérées avec banni = 0,
+    sauf quelques-unes volontairement à 1 (en attente / bannies).
+  * Les requêtes filtrent aussi sur User.banni de l'auteur -> quelques
+    utilisateurs bannis sont créés pour tester ce filtre.
 
 Photos téléchargées depuis Lorem Picsum dans app/static/img/stationnement/.
 Elles sont aléatoires et ne représentent pas forcément des stationnements.
@@ -32,6 +46,7 @@ ROOT = Path(__file__).resolve().parent
 DATABASE = ROOT / "database" / "parkshare.db"
 IMAGE_DIR = ROOT / "app" / "static" / "img" / "stationnement"
 DEMO_PASSWORD = "ParkShareDemo123!"
+FORMAT_DATE = "%Y-%m-%dT%H:%M"
 
 # Centre approximatif des villes (pas des adresses individuelles).
 # Les coordonnées de chaque publication sont réparties artificiellement
@@ -122,21 +137,67 @@ PRENOMS = ["Alice", "David", "Emma", "Gabriel", "Hugo", "Isabelle", "Karim", "L�
 NOMS = ["Tremblay", "Gagnon", "Roy", "Côté", "Bouchard", "Gauthier", "Morin", "Lavoie", "Fortin", "Pelletier"]
 
 SCHEMA_ATTENDU = {
-    "User": {"id", "nom", "prenom", "email", "mdp"},
+    "User": {"id", "nom", "prenom", "email", "mdp", "banni"},
     "Publication": {
-        "id", "author", "address", "prix", "debut", "fin", "ville",
-        "emplacement", "image", "placetotal", "placeactuel",
-        "disponibilite", "latitude", "longitude",
+        "id", "author", "address", "prix", "ville", "emplacement",
+        "image", "placetotal", "banni", "latitude", "longitude",
     },
     "Reservation": {"id", "client", "publication", "debut", "fin"},
 }
 
+# Même définition que app/database/queries/ ; sert uniquement si la base
+# n'existe pas encore et que init_database() est introuvable.
+SCHEMA_SQL = """
+CREATE TABLE IF NOT EXISTS User (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom TEXT NOT NULL,
+    prenom TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    mdp TEXT NOT NULL,
+    banni BOOLEAN DEFAULT false
+);
+CREATE TABLE IF NOT EXISTS Publication (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    author INTEGER NOT NULL,
+    address TEXT NOT NULL,
+    prix DOUBLE NOT NULL CHECK (prix >= 0.01 AND prix <= 1000),
+    ville TEXT NOT NULL,
+    emplacement TEXT,
+    image TEXT,
+    placetotal INTEGER NOT NULL CHECK (placetotal BETWEEN 1 AND 100),
+    banni BOOLEAN NOT NULL DEFAULT TRUE,
+    latitude REAL,
+    longitude REAL,
+    FOREIGN KEY (author) REFERENCES User(id)
+);
+CREATE TABLE IF NOT EXISTS Reservation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client INTEGER NOT NULL,
+    publication INTEGER NOT NULL,
+    debut DATETIME NOT NULL,
+    fin DATETIME NOT NULL,
+    FOREIGN KEY (publication) REFERENCES Publication(id),
+    FOREIGN KEY (client) REFERENCES User(id)
+);
+CREATE TABLE IF NOT EXISTS Admin (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    cle TEXT NOT NULL
+);
+"""
+
 
 def initialiser_db() -> None:
-    # Les fonctions officielles du projet créent les tables utilisées par Flask.
+    # On préfère les fonctions officielles du projet (celles de Flask) ;
+    # sinon on crée les tables avec le schéma ci-dessus.
     os.chdir(ROOT)
-    from app.database.init_db import init_database
-    init_database()
+    try:
+        from app.database.init_db import init_database
+        init_database()
+    except ImportError:
+        DATABASE.parent.mkdir(parents=True, exist_ok=True)
+        with sqlite3.connect(DATABASE) as conn:
+            conn.executescript(SCHEMA_SQL)
 
 
 def verifier_schema(conn: sqlite3.Connection) -> None:
@@ -195,17 +256,30 @@ def telecharger_photo(index: int, *, force: bool = False) -> str | None:
     return None
 
 
-def creer_utilisateurs(conn: sqlite3.Connection, rng: random.Random, count: int) -> list[int]:
+def creer_utilisateurs(
+    conn: sqlite3.Connection, rng: random.Random, count: int, bannis: int
+) -> tuple[list[int], set[int]]:
+    """Le 1er utilisateur est le compte admin de démo (jamais banni).
+
+    Les `bannis` derniers utilisateurs sont bannis (User.banni = 1) afin de
+    tester le filtre « auteur non banni » des requêtes de publications.
+    """
     ids = []
+    ids_bannis: set[int] = set()
+    nb_bannis = min(bannis, max(count - 2, 0))  # garde au moins 2 utilisateurs actifs
+
     for i in range(count):
         prenom, nom = ("Admin", "Demo") if i == 0 else (rng.choice(PRENOMS), rng.choice(NOMS))
         email = "admin@parkshare.test" if i == 0 else f"demo{i:03d}@parkshare.test"
-        conn.execute(
-            "INSERT INTO User (nom, prenom, email, mdp) VALUES (?, ?, ?, ?)",
-            (nom, prenom, email, generate_password_hash(DEMO_PASSWORD)),
+        banni = int(i >= count - nb_bannis and i != 0)
+        cursor = conn.execute(
+            "INSERT INTO User (nom, prenom, email, mdp, banni) VALUES (?, ?, ?, ?, ?)",
+            (nom, prenom, email, generate_password_hash(DEMO_PASSWORD), banni),
         )
-        ids.append(conn.execute("SELECT last_insert_rowid()").fetchone()[0])
-    return ids
+        ids.append(cursor.lastrowid)
+        if banni:
+            ids_bannis.add(cursor.lastrowid)
+    return ids, ids_bannis
 
 
 def creer_publications(
@@ -214,42 +288,43 @@ def creer_publications(
     count: int,
     utilisateurs: list[int],
     noms_photos: list[str],
-) -> list[tuple[int, int, int, datetime, datetime]]:
+    taux_bannies: float,
+) -> list[tuple[int, int, int, bool]]:
+    """Renvoie (id, auteur, placetotal, visible) pour chaque annonce créée."""
     villes = list(VILLES)
     poids = [VILLES[ville]["poids"] for ville in villes]
-    maintenant = datetime.now().replace(second=0, microsecond=0)
     references = []
 
-    for i in range(count):
+    for _ in range(count):
         ville = rng.choices(villes, weights=poids, k=1)[0]
         rue = rng.choice(VILLES[ville]["rues"])
         adresse = f"{rng.randint(10, 1900)} {rue}"
         latitude, longitude = generer_coordonnees(rng, ville)
         auteur = rng.choice(utilisateurs)
-        prix = round(rng.uniform(3.0, 28.0), 2)
-        places_totales = rng.randint(1, 12)
-        places_disponibles = rng.randint(1, places_totales)
-        debut = maintenant - timedelta(days=rng.randint(1, 30))
-        fin = maintenant + timedelta(days=rng.randint(20, 100))
+        prix = round(rng.uniform(3.0, 28.0), 2)               # CHECK 0.01..1000
+        # Surtout des petits stationnements, parfois de grands lots (CHECK 1..100)
+        if rng.random() < 0.1:
+            places_totales = rng.randint(20, 60)
+        else:
+            places_totales = rng.randint(1, 12)
         type_emplacement = rng.choice(("Intérieur", "Extérieur"))
         photo = rng.choice(noms_photos) if noms_photos else None
+        # banni = 1 : annonce en attente de validation ou bannie par l'admin
+        banni = int(rng.random() < taux_bannies)
 
         cursor = conn.execute(
             """
             INSERT INTO Publication (
-                author, address, prix, debut, fin, ville, emplacement,
-                image, placetotal, placeactuel, disponibilite,
-                latitude, longitude
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                author, address, prix, ville, emplacement,
+                image, placetotal, banni, latitude, longitude
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                auteur, adresse, prix, debut.strftime("%Y-%m-%dT%H:%M"),
-                fin.strftime("%Y-%m-%dT%H:%M"), ville, type_emplacement,
-                photo, places_totales, places_disponibles, 1,
-                latitude, longitude,
+                auteur, adresse, prix, ville, type_emplacement,
+                photo, places_totales, banni, latitude, longitude,
             ),
         )
-        references.append((cursor.lastrowid, auteur, places_disponibles, debut, fin))
+        references.append((cursor.lastrowid, auteur, places_totales, not banni))
 
     return references
 
@@ -259,34 +334,45 @@ def creer_reservations(
     rng: random.Random,
     count: int,
     utilisateurs: list[int],
-    publications: list[tuple[int, int, int, datetime, datetime]],
+    utilisateurs_bannis: set[int],
+    publications: list[tuple[int, int, int, bool]],
 ) -> int:
-    # Une réservation utilise une place disponible et ne peut pas être faite
-    # par le propriétaire. Modèle simplifié, comme l'application actuelle.
-    possibles = list(publications)
-    rng.shuffle(possibles)
+    """Réservations plausibles : jamais par le propriétaire, jamais sur une
+    annonce bannie ou d'un auteur banni, et sans dépasser placetotal sur un
+    même créneau. Un quart sont dans le passé (historique)."""
+    maintenant = datetime.now().replace(minute=0, second=0, microsecond=0)
+    clients_possibles = [u for u in utilisateurs if u not in utilisateurs_bannis]
+    candidates = [
+        p for p in publications if p[3] and p[1] not in utilisateurs_bannis
+    ]
+    creneaux: dict[int, list[tuple[datetime, datetime]]] = {}
     total = 0
+    tentatives = 0
 
-    for identifiant, proprietaire, places_libres, debut_pub, fin_pub in possibles:
-        if total >= count:
-            break
-        clients = [u for u in utilisateurs if u != proprietaire]
-        if not clients or places_libres <= 0:
+    while total < count and candidates and tentatives < count * 20:
+        tentatives += 1
+        identifiant, proprietaire, places_totales, _ = rng.choice(candidates)
+        clients = [u for u in clients_possibles if u != proprietaire]
+        if not clients:
             continue
         client = rng.choice(clients)
-        depart = max(datetime.now().replace(second=0, microsecond=0) + timedelta(days=1), debut_pub)
+
+        if rng.random() < 0.25:
+            depart = maintenant - timedelta(days=rng.randint(1, 30), hours=rng.randint(0, 10))
+        else:
+            depart = maintenant + timedelta(days=rng.randint(1, 45), hours=rng.randint(0, 10))
         arrivee = depart + timedelta(hours=rng.randint(1, 8))
-        if arrivee > fin_pub:
+
+        existants = creneaux.setdefault(identifiant, [])
+        chevauchent = sum(1 for (d, a) in existants if d < arrivee and a > depart)
+        if chevauchent >= places_totales:
             continue
+
         conn.execute(
             "INSERT INTO Reservation (client, publication, debut, fin) VALUES (?, ?, ?, ?)",
-            (client, identifiant, depart.strftime("%Y-%m-%dT%H:%M"), arrivee.strftime("%Y-%m-%dT%H:%M")),
+            (client, identifiant, depart.strftime(FORMAT_DATE), arrivee.strftime(FORMAT_DATE)),
         )
-        nouvelles_places = places_libres - 1
-        conn.execute(
-            "UPDATE Publication SET placeactuel = ?, disponibilite = ? WHERE id = ?",
-            (nouvelles_places, int(nouvelles_places > 0), identifiant),
-        )
+        existants.append((depart, arrivee))
         total += 1
 
     return total
@@ -295,17 +381,22 @@ def creer_reservations(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Génère la base fictive ParkShare et télécharge des images Picsum.")
     parser.add_argument("--users", type=int, default=15, help="Nombre d'utilisateurs fictifs (défaut : 15)")
+    parser.add_argument("--banned-users", type=int, default=2, help="Dont combien sont bannis (défaut : 2)")
     parser.add_argument("--publications", type=int, default=80, help="Nombre d'annonces (défaut : 80)")
+    parser.add_argument("--banned-rate", type=float, default=0.08, help="Part d'annonces banni=1 (défaut : 0.08)")
     parser.add_argument("--reservations", type=int, default=12, help="Nombre de réservations (défaut : 12)")
     parser.add_argument("--photos", type=int, default=16, help="Nombre de photos à télécharger (défaut : 16)")
-    parser.add_argument("--no-photos", action="store_true", help="Ne pas télécharger de photos (images placeholder)")
+    parser.add_argument("--no-photos", action="store_true", help="Ne pas télécharger de photos (Publication.image = NULL)")
     parser.add_argument("--force-photos", action="store_true", help="Télécharger à nouveau les photos déjà présentes")
     parser.add_argument("--seed", type=int, default=42, help="Graine des données fictives (défaut : 42)")
-    parser.add_argument("--reset", action="store_true", help="Effacer les données des trois tables avant l'insertion")
+    parser.add_argument("--db", type=Path, default=None, help="Chemin de la base (défaut : database/parkshare.db)")
+    parser.add_argument("--reset", action="store_true", help="Effacer les données de User/Publication/Reservation avant l'insertion")
     parser.add_argument("--yes", action="store_true", help="Confirmer la suppression avec --reset")
     args = parser.parse_args()
-    if args.users < 1 or args.publications < 1 or args.reservations < 0 or args.photos < 0:
-        parser.error("--users et --publications doivent être >=1; --reservations et --photos >=0")
+    if args.users < 1 or args.publications < 1 or args.reservations < 0 or args.photos < 0 or args.banned_users < 0:
+        parser.error("--users et --publications doivent être >=1; les autres compteurs >=0")
+    if not 0 <= args.banned_rate <= 1:
+        parser.error("--banned-rate doit être entre 0 et 1")
     if args.reservations and args.users < 2:
         parser.error("Il faut au moins deux utilisateurs pour générer des réservations.")
     if args.reset and not args.yes:
@@ -314,7 +405,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    global DATABASE
     args = parse_args()
+    if args.db:
+        DATABASE = args.db.resolve()
     rng = random.Random(args.seed)
     initialiser_db()
     conn = sqlite3.connect(DATABASE)
@@ -346,11 +440,22 @@ def main() -> int:
                 conn.execute("DELETE FROM Publication")
                 conn.execute("DELETE FROM User")
                 conn.execute("DELETE FROM sqlite_sequence WHERE name IN ('Reservation', 'Publication', 'User')")
-            utilisateurs = creer_utilisateurs(conn, rng, args.users)
-            publications = creer_publications(conn, rng, args.publications, utilisateurs, noms_photos)
-            reservations = creer_reservations(conn, rng, args.reservations, utilisateurs, publications)
+            utilisateurs, bannis = creer_utilisateurs(conn, rng, args.users, args.banned_users)
+            publications = creer_publications(
+                conn, rng, args.publications, utilisateurs, noms_photos, args.banned_rate
+            )
+            reservations = creer_reservations(
+                conn, rng, args.reservations, utilisateurs, bannis, publications
+            )
 
-        print(f"Créé : {len(utilisateurs)} utilisateurs, {len(publications)} annonces, {reservations} réservations")
+        visibles = sum(
+            1 for (_, auteur, _, visible) in publications if visible and auteur not in bannis
+        )
+        print(
+            f"Créé : {len(utilisateurs)} utilisateurs ({len(bannis)} bannis), "
+            f"{len(publications)} annonces ({visibles} visibles pour l'app), "
+            f"{reservations} réservations"
+        )
         print(f"Images : {IMAGE_DIR} (noms de fichiers enregistrés dans Publication.image)")
         print(f"Compte de démo : admin@parkshare.test / {DEMO_PASSWORD}")
         print("Coordonnées : artificielles, proches des villes; aucune adresse n'a été géocodée.")
