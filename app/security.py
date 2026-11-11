@@ -1,7 +1,7 @@
 """Contrôle CSRF et limite de taille pour les formulaires / API mutatrices."""
 import hmac
 import secrets
-from flask import jsonify, render_template, request, session
+from flask import abort, jsonify, render_template, request, session
 from werkzeug.exceptions import RequestEntityTooLarge
 
 
@@ -19,7 +19,7 @@ def install_security(app):
         if not valid:
             if request.path.startswith('/api/') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return jsonify(ok=False, errors={'_form': 'Session expirée, rechargez la page.'}), 400
-            return 'Session expirée. Rechargez la page et réessayez.', 400
+            abort(400)
         return None
 
     @app.context_processor

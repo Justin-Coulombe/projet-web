@@ -4,7 +4,7 @@ import os
 import sqlite3
 import uuid
 from pathlib import Path
-from flask import Blueprint, render_template, request, session, url_for
+from flask import Blueprint, render_template, request, session, url_for, abort
 from app.database.queries.publications import (
     ajouter_stationnement as db_ajouter_stationnement,
     get_publications_by_id, get_publication_coordinates,
@@ -85,7 +85,7 @@ def ajouter_stationnement():
 def edit(publication_id):
     publication = get_publications_by_id(publication_id)
     if publication is None or publication.author_id != session['user_id']:
-        return 'Annonce introuvable.', 404
+        abort(404, 'Annonce introuvable.')
     if request.method == 'GET':
         coords = get_publication_coordinates(publication_id)
         return render_template('stationnement/edit.jinja', publication=publication,
@@ -136,7 +136,7 @@ def edit(publication_id):
 def change_img(publication_id):
     publication = get_publications_by_id(publication_id)
     if publication is None or publication.author_id != session['user_id']:
-        return 'Annonce introuvable.', 404
+        abort(404, 'Annonce introuvable.')
     photo, erreur = lire_photo(request.files.get('image'))
     if erreur:
         return _erreur_formulaire({'image': erreur}, 'stationnement/edit.jinja', publication)
@@ -167,7 +167,7 @@ def change_img(publication_id):
 def delete(publication_id):
     publication = get_publications_by_id(publication_id)
     if publication is None or publication.author_id != session['user_id']:
-        return 'Annonce introuvable.', 404
+        abort(404, 'Annonce introuvable.')
     try:
         delete_publication(publication_id, session['user_id'])
     except sqlite3.IntegrityError:
@@ -180,5 +180,5 @@ def delete(publication_id):
 def detail(publication_id):
     publication = get_publications_by_id(publication_id)
     if publication is None:
-        return 'Annonce introuvable.', 404
+        abort(404, 'Annonce introuvable.')
     return render_template('stationnement/detail.jinja', publication=publication)

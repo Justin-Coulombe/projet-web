@@ -214,4 +214,4 @@ def delete_user_by_id(userid):
         """,
         (userid,)
     )
-    close_connection(conn, cursor)   
+    close_connection(conn, cursor)
