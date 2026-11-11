@@ -16,11 +16,9 @@ def index():
     page = request.args.get('page', default=1, type=int)
     pages = paginate(data, per_page)
 
-    # Vérifier que le numéro de page est valide
     if page < 1 or page > max(1, len(pages)):
         abort(404)
 
-    # Les indices Python commencent à 0
     publications = pages[page - 1] if pages else []
 
     return render_template('publications/index.jinja', context={
@@ -33,7 +31,6 @@ def index():
 
 @Bp_publication.route('/recherche', methods=['GET'])
 def research():
-    # La liste et la carte sont chargées via l'API et mises à jour sans recharge.
     return render_template('publications/recherche.jinja', context={
         'publications': [], 'publications_carte': [], 'valid_time': True
     })

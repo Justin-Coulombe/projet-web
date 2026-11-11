@@ -44,7 +44,6 @@ def error_response(error):
 
     response = error.get_response()
 
-    # Les appels API et AJAX reçoivent du JSON.
     is_api = request.path.startswith("/api/")
     is_ajax = (
         request.headers.get("X-Requested-With")
@@ -60,7 +59,6 @@ def error_response(error):
         response.mimetype = "application/json"
         return response
 
-    # Les requêtes normales reçoivent une page HTML.
     response.set_data(render_template(
         "errors/error.jinja",
         code=code,
@@ -79,7 +77,6 @@ def register_error_handlers(app):
     def handle_http_error(error):
         code = error.code or 500
 
-        # Ne personnaliser que les erreurs demandées.
         if code not in ERROR_PAGES and not (500 <= code < 600):
             return error
 
