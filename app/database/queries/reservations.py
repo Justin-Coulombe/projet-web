@@ -119,3 +119,46 @@ def get_reservation_by_user(user_id):
         )
 
     return reservations
+
+def get_reservations_by_owner(owner_id):
+    """Retourne les réservations des stationnements d'un propriétaire."""
+
+    conn = create_connection()
+
+    try:
+        cursor = conn.cursor()
+
+        command = """
+            SELECT
+                r.id,
+                r.debut,
+                r.fin,
+                p.id,
+                p.address,
+                p.ville
+            FROM Reservation AS r
+            JOIN Publication AS p
+                ON r.publication = p.id
+            WHERE p.author = ?
+            ORDER BY r.debut ASC, r.id ASC
+        """
+
+        cursor.execute(command, (owner_id,))
+        results = cursor.fetchall()
+
+        reservations = []
+
+        for row in results:
+            reservations.append({
+                "id": row[0],
+                "debut": row[1],
+                "fin": row[2],
+                "publication_id": row[3],
+                "address": row[4],
+                "ville": row[5]
+            })
+
+        return reservations
+
+    finally:
+        conn.close()
