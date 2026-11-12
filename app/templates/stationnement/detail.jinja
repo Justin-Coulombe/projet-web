@@ -11,11 +11,9 @@ stationnement | ParkShare
 {% block contenu%}
 
 <div class="d-flex align-items-center justify-content-between mb-4 mt-3">
-    {% if publication.open_place - publication.place_use == 0 %}
     <h2 class=" fw-bold"> Détails de l’annonce</h2>
     {%if publication.author_id == session['user_id']%}
     <a href="/stationnement/edit/{{publication.id}}" class="btn btn-dark">Modifier l'annonce</a>
-    {% endif %}
     {% endif %}
 
 </div>
@@ -40,8 +38,8 @@ stationnement | ParkShare
     <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
         <div class="row">
             <div class="col-6 d-flex flex-column">
-                <span class="fw-lighter">Place Disponible</span>
-                {{ publication.place_use}} sur {{publication.open_place}}
+                <span class="fw-lighter">Place</span>
+                {{ publication.place_total}}
             </div>
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Emplacement</span>
@@ -58,18 +56,6 @@ stationnement | ParkShare
             <div class="col-6 d-flex flex-column fw-bold">
                 <span class="fw-lighter">Province</span>
                 Québec
-            </div>
-        </div>
-    </li>
-    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
-        <div class="row">
-            <div class="col-6 d-flex flex-column">
-                <span class="fw-lighter">Disponible du (date et heure)</span>
-                {{publication.start}}
-            </div>
-            <div class="col-6 d-flex flex-column">
-                <span class="fw-lighter">Jusqu'au (date et heure)</span>
-                {{publication.end}}
             </div>
         </div>
     </li>

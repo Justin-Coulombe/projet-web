@@ -120,12 +120,12 @@ def edit(publication_id):
     if errors:
         return _erreur_formulaire(errors, 'stationnement/edit.jinja', publication, **request.form.to_dict())
 
-    occupees = max(0, publication.open_place - publication.place_use)
-    places_libres = data['place'] - occupees
+    # occupees = max(0, publication.open_place - publication.place_use)
+    # places_libres = data['place'] - occupees
     try:
         update_publication(
-            publication_id, data['adresse'], data['prix'], data['place'],
-            places_libres, data['debut'], data['fin'], data['ville'], data['emplacement'],
+            publication_id, data['adresse'], data['prix'], data['placetotal'],
+            data['ville'], data['emplacement'],
             latitude=position['latitude'] if position else None,
             longitude=position['longitude'] if position else None
         )
@@ -187,4 +187,4 @@ def detail(publication_id):
     publication = get_publications_by_id(publication_id)
     if publication is None:
         abort(404, 'Annonce introuvable.')
-    return render_template('stationnement/detail.jinja', publication=publication)
+    return render_template('stationnement/detail.jinja', publication=publication.to_dict())
