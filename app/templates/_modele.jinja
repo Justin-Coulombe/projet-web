@@ -48,15 +48,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/stationnement/ajouter"> Ajouter un stationnement</a>
                         </li>
-                        {% if g.get('user') %}
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('detail.reservations_recues') }}">
-                                Réservations reçues
-                            </a>
-                        </li>
-
-                        {% endif %}
                     </ul>
                     <div class="d-flex gap-2">
                         {% if not g.get('user') %}
@@ -156,7 +147,7 @@
                 <div class="col-6 col-md-3">
                     <h4 class="fw-bold fs-5 mb-2">Légal</h4>
                     <ul class="list-unstyled small">
-                        <li><a href="#" class="text-secondary text-decoration-none">Conditions d'utilisation</a></li>
+                        <li><a href="{{url_for('conditions_utilisation')}}" class="text-secondary text-decoration-none">Conditions d'utilisation</a></li>
                         <li><a href="#" class="text-secondary text-decoration-none">Politique de confidentialité</a>
                         </li>
                         <li><a href="#" class="text-secondary text-decoration-none">Nous contacter</a></li>

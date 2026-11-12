@@ -4,202 +4,217 @@
 Mon profil | ParkShare
 {% endblock %}
 
-{% block recherche%}
-{% endblock %}
-
+{% block recherche %}{% endblock %}
 
 {% block contenu %}
 <div class="container-fluid mt-3">
     <div class="row">
         <div class="col-md-3">
-
             <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <i class="d-flex justify-content-center bi bi-person-circle" style="font-size: 100px;"></i>
+                    <h4 class="card-title text-center">{{ g.user.nom }} {{ g.user.prenom }}</h4>
 
-                <div class="card-body p-1">
-                    <div class="card-body">
-                        <i class="d-flex justify-content-center bi bi-person-circle " style="font-size: 100px;"></i>
-                        <h4 class="card-title d-flex justify-content-center">{{g.user.nom}} {{g.user.prenom}}</h4>
-                        <p class="card-subtitle fg-3 fw-bold">Nom</p>
-                        <p class="card-subtitle fg-3 opacity-75">{{g.user.nom}}</p>
-                        <p class="card-subtitle fg-3 fw-bold">Prenom</p>
-                        <p class="card-subtitle fg-3 opacity-75">{{g.user.prenom}}</p>
-                        <p class="card-subtitle fg-3 fw-bold">Courriel</p>
-                        <p class="card-subtitle fg-3 opacity-75">{{g.user.email}}</p>
-                        <div class="d-grid gap-2 mt-2">
-                            <a href="/profile" class=" bi bi-pencil-square btn btn-outline-dark"> Modifier mon
-                                profil</a>
-                        </div>
+                    <p class="card-subtitle fg-3 fw-bold">Nom</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{ g.user.nom }}</p>
+                    <p class="card-subtitle fg-3 fw-bold">Prénom</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{ g.user.prenom }}</p>
+                    <p class="card-subtitle fg-3 fw-bold">Courriel</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{ g.user.email }}</p>
+
+                    <div class="d-grid gap-2 mt-2">
+                        <a href="/profile" class="bi bi-pencil-square btn btn-outline-dark">
+                            Modifier mon profil
+                        </a>
                     </div>
                 </div>
-
             </div>
+
             <div class="row g-2 mt-2 text-center">
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body">
-                            <p class="card-subtitle fg-3 fw-bold">{{lst_pubications|length}}</p>
+                            <p class="card-subtitle fg-3 fw-bold">{{ lst_pubications|length }}</p>
                             <p class="card-subtitle fg-3 opacity-75">Annonce(s)</p>
-
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body">
-                            <p class="card-subtitle fg-3 fw-bold">{{lst_reversations|length}}</p>
+                            <p class="card-subtitle fg-3 fw-bold">{{ lst_reversations|length }}</p>
                             <p class="card-subtitle fg-3 opacity-75">Réservation(s)</p>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
 
         <div class="col-md-9">
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body p-4">
+            <!-- Mes annonces -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4>Mes annonces</h4>
 
-        <h4>Mes annonces</h4>
+                    {% if success %}
+                        <div class="alert alert-success">{{ success }}</div>
+                    {% endif %}
 
-        {% if success %}
-        <div class="alert alert-success">
-            {{ success }}
-        </div>
-        {% endif %}
+                    {% if not lst_pubications %}
+                        <p>Vous n'avez aucune annonce pour le moment.</p>
+                        <a class="btn btn-sm btn-outline-dark"
+                           href="{{ url_for('stationnement.ajouter_stationnement') }}">
+                            <i class="bi bi-plus-circle"></i>
+                            Ajouter un stationnement
+                        </a>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Adresse</th>
+                                        <th>Ville</th>
+                                        <th>Prix</th>
+                                        <th>Nombre de places</th>
+                                        <th>Emplacement</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for publication in lst_pubications %}
+                                        <tr>
+                                            <td>
+                                                <a class="text-decoration-none text-dark"
+                                                   href="{{ url_for('stationnement.detail', publication_id=publication.id) }}">
+                                                    {{ publication.address }}
+                                                </a>
+                                            </td>
+                                            <td>{{ publication.city }}</td>
+                                            <td class="text-nowrap">{{ publication.price }} $/heure</td>
+                                            <td>{{ publication.placeTotal }}</td>
+                                            <td>
+                                                <span class="badge bg-dark">{{ publication.location }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                        Modifier
+                                                    </a>
+                                                    <form method="POST"
+                                                          data-ajax-form="delete"
+                                                          data-confirm="Supprimer définitivement cette annonce ?"
+                                                          action="{{ url_for('stationnement.delete', publication_id=publication.id) }}">
+                                                        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-        {% if not lst_pubications %}
-
-        <p>Vous n'avez aucune annonce pour le moment.</p>
-
-        <a class="btn btn-sm btn-outline-dark"
-           href="{{ url_for('stationnement.ajouter_stationnement') }}">
-            <i class="bi bi-plus-circle"></i>
-            Ajouter un stationnement
-        </a>
-
-        {% else %}
-
-        <div class="table-responsive">
-
-            <table class="table align-middle">
-
-                <thead>
-                    <tr>
-                        <th>Adresse</th>
-                        <th>Ville</th>
-                        <th>Prix</th>
-                        <th>Nombre de places</th>
-                        <th>Emplacement</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {% for publication in lst_pubications %}
-
-                    <tr>
-                        <td>
-                            <a class="text-decoration-none text-dark"
-                               href="{{ url_for(
-                                   'stationnement.detail',
-                                   publication_id=publication.id
-                               ) }}">
-                                {{ publication.address }}
-                            </a>
-                        </td>
-
-                        <td>{{ publication.city }}</td>
-
-                        <td class="text-nowrap">
-                            {{ publication.price }} $/heure
-                        </td>
-
-                        <td>{{ publication.placeTotal }}</td>
-
-                        <td>
-                            <span class="badge bg-dark">
-                                {{ publication.location }}
-                            </span>
-                        </td>
-
-                        <td>
-                            <div class="d-flex gap-2">
-
-                                <a href="{{ url_for(
-                                    'stationnement.edit',
-                                    publication_id=publication.id
-                                ) }}"
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-pencil-square"></i>
-                                    Modifier
-                                </a>
-
-                                <form method="POST"
-                                      data-ajax-form="delete"
-                                      data-confirm="Supprimer définitivement cette annonce ?"
-                                      action="{{ url_for(
-                                          'stationnement.delete',
-                                          publication_id=publication.id
-                                      ) }}">
-
-                                    <input type="hidden"
-                                           name="_csrf"
-                                           value="{{ csrf_token() }}">
-
-                                    <button type="submit"
-                                            class="btn btn-outline-danger btn-sm">
-                                        <i class="bi bi-trash"></i>
-                                        Supprimer
-                                    </button>
-                                </form>
-
-                            </div>
-                        </td>
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        {% endif %}
-
-    </div>
-</div>
-
+            <!-- Mes réservations effectuées -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
                     <h4>Mes réservations</h4>
+
                     {% if not lst_reversations %}
-                    <p>Vous avez aucune réservation pour le moment...</p>
-                    <a class="btn btn-sm bi bi-plus-circle" href="#"> réservé une place de stationnement</a>
+                        <p>Vous n'avez aucune réservation pour le moment...</p>
                     {% else %}
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Adresse</th>
-                                <th scope="col">Ville</th>
-                                <th scope="col">date de début</th>
-                                <th scope="col">Date de fin</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for reservation in lst_reversations %}
-                            <tr>
-                                <td>{{ reservation.post.address }}</td>
-                                <td>{{ reservation.post.city }}</td>
-                                <td>{{ reservation.start }}</td>
-                                <td> {{ reservation.end }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Adresse</th>
+                                        <th scope="col">Ville</th>
+                                        <th scope="col">Date de début</th>
+                                        <th scope="col">Date de fin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in lst_reversations %}
+                                        <tr>
+                                            <td>{{ reservation.post.address }}</td>
+                                            <td>{{ reservation.post.city }}</td>
+                                            <td>{{ reservation.start }}</td>
+                                            <td>{{ reservation.end }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mes réservations reçues -->
+            {% set reservations_recues = reservations|default([]) %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4 class="h5 fw-bold mb-3">
+                        <i class="bi bi-calendar-check me-2"></i>
+                        Mes réservations reçues ({{ reservations_recues|length }})
+                    </h4>
+
+                    {% if reservations_recues %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Réservation</th>
+                                        <th scope="col">Stationnement</th>
+                                        <th scope="col">Ville</th>
+                                        <th scope="col">Début</th>
+                                        <th scope="col">Fin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in reservations_recues %}
+                                        <tr>
+                                            <td>#{{ reservation.id }}</td>
+                                            <td>
+                                                <a href="{{ url_for('stationnement.detail', publication_id=reservation.publication_id) }}"
+                                                   class="text-dark text-decoration-none fw-semibold">
+                                                    {{ reservation.address }}
+                                                </a>
+                                            </td>
+                                            <td>{{ reservation.ville }}</td>
+                                            <td class="text-nowrap">
+                                                <i class="bi bi-calendar-event me-1"></i>
+                                                {{ reservation.debut|replace('T', ' ') }}
+                                            </td>
+                                            <td class="text-nowrap">
+                                                <i class="bi bi-calendar-check me-1"></i>
+                                                {{ reservation.fin|replace('T', ' ') }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x text-secondary" style="font-size: 3rem;"></i>
+                            <h5 class="fw-bold mt-3">Aucune réservation reçue</h5>
+                            <p class="text-muted">
+                                Vos stationnements n'ont reçu aucune réservation pour le moment.
+                            </p>
+                            <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
+                               class="btn btn-dark mt-2">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Ajouter un stationnement
+                            </a>
+                        </div>
                     {% endif %}
                 </div>
             </div>

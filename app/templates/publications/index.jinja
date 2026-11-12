@@ -60,34 +60,53 @@ Publications | ParkShare
 {% endblock %}
 
 {%block contenu %}
-<ul class="list-unstyled row row-cols-lg-3 row-cols-xl-4 row-cols-sm-2 row-cols-1 row-gap-3">
-    {% set path = "/static/img/stationnement/" %}
-    {% for item in context.publications %}
-    <li class="col">
-        <a href="/stationnement/detail/{{item.id}}" class="d-flex link-underline link-underline-opacity-0" style="height: 21rem;">
-            <div class="card">
-                <img class="card-img-top h-50 w-100"
-                    src="{% if item.img %} {{path~item.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
-                    alt="photo de la place">
-                <div class="card-body">
-                    <p class="fw-bold mb-0">{{item.address}}, {{item.city}}</p>
-                    <span class="fw-bold mb-1">{{item.price}}$<span class="fw-lighter"> /heure</span>
-                    <div class="d-flex justify-content-start align-items-center">
-                        <span class="card-text bi bi-house text-muted small me-3"> {{item.location}} </span>
-                        <span class="card-text bi bi-geo-alt small me-3"> {{item.open_place}} place(s) </span>
-                        {% if item.place_use == item.open_place %}
-                        <span class="badge rounded-3 bg-success"> Disponible </span>
-                        {% else %}
-                        <span class="badge rounded-3 bg-danger">Indisponible</span>
-                        {% endif %}
-                    </div>
-                </div>
 
+<ul class="list-unstyled row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
+    {% set path = "/static/img/stationnement/" %}
+
+    {% for item in context.publications %}
+    <li class="col d-flex">
+        <a href="/stationnement/detail/{{ item.id }}"
+           class="d-block w-100 text-decoration-none text-dark">
+
+            <div class="card h-100 shadow-sm">
+
+                <img
+                    class="card-img-top"
+                    src="{% if item.img %}{{ path ~ item.img }}{% else %}{{ url_for('static', filename='img/placeholder.jpg') }}{% endif %}"
+                    alt="Photo du stationnement"
+                    style="height: 170px; object-fit: cover;">
+
+                <div class="card-body d-flex flex-column">
+
+                    <p class="fw-bold mb-2">
+                        {{ item.address }}, {{ item.city }}
+                    </p>
+
+                    <div class="d-flex flex-column gap-1 mb-3">
+
+                        <span class="bi bi-house text-muted small">
+                            {{ item.location }}
+                        </span>
+
+                        <span class="bi bi-geo-alt text-muted small">
+                            {{ item.place_total }} place(s)
+                        </span>
+
+                    </div>
+
+                    <p class="fw-bold mt-auto mb-0">
+                        {{ item.price }} $
+                        <span class="fw-normal text-muted">/heure</span>
+                    </p>
+
+                </div>
             </div>
         </a>
     </li>
-    {%endfor%}
+    {% endfor %}
 </ul>
+
 
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">

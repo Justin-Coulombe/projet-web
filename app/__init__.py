@@ -74,6 +74,10 @@ def create_app():
             context=context
         )
 
+    @app.route("/conditions-utilisation")
+    def conditions_utilisation():
+        return render_template("conditions_utilisation.jinja")
+
     app.register_blueprint(
         bp_profile,
         url_prefix="/profile"

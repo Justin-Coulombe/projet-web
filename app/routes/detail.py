@@ -24,12 +24,15 @@ def detail_profil():
 
     lst_pubications = get_publications_by_user(session['user_id'])
     lst_reversations = get_reservation_by_user(session['user_id'])
+    reservations = get_reservations_by_owner(session['user_id'])
+
 
     return render_template(
         "profile/detail.jinja",
         success=success,
         lst_pubications=lst_pubications,
-        lst_reversations=lst_reversations
+        lst_reversations=lst_reversations,
+        reservations=reservations
     )
 
 
