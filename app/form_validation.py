@@ -41,7 +41,7 @@ def valider_mot_de_passe(value, field='password'):
     return {}
 
 
-def valider_stationnement(data):
+def valider_stationnement(data, *, verifier_dates=True):
     clean, errors = {}, {}
     adresse = str(data.get('adresse') or '').strip()
     if not 5 <= len(adresse) <= 200 or any(ord(c) < 32 for c in adresse):
@@ -76,21 +76,40 @@ def valider_stationnement(data):
     else:
         clean['place'] = int(valeur_places)
 
-    dates = {}
-    for field in ('dateDebut', 'dateFin'):
-        s = str(data.get(field) or '').strip()
-        try:
-            if not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}', s):
-                raise ValueError()
-            dates[field] = datetime.strptime(s, '%Y-%m-%dT%H:%M')
-        except ValueError:
-            errors[field] = 'Entrez une date et une heure valides.'
-    if len(dates) == 2:
-        if dates['dateFin'] - dates['dateDebut'] < timedelta(minutes=30):
-            errors['dateFin'] = 'La fin doit être au moins 30 minutes après le début.'
-        else:
-            clean['debut'] = dates['dateDebut'].strftime('%Y-%m-%d %H:%M')
-            clean['fin'] = dates['dateFin'].strftime('%Y-%m-%d %H:%M')
+    if verifier_dates:
+        dates = {}
+
+        for field in ('dateDebut', 'dateFin'):
+            s = str(data.get(field) or '').strip()
+
+            try:
+                if not re.fullmatch(
+                    r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}',
+                    s
+                ):
+                    raise ValueError()
+
+                dates[field] = datetime.strptime(
+                    s, '%Y-%m-%dT%H:%M'
+                )
+
+            except ValueError:
+                errors[field] = (
+                    'Entrez une date et une heure valides.'
+                )
+
+        if len(dates) == 2:
+            if dates['dateFin'] - dates['dateDebut'] < timedelta(minutes=30):
+                errors['dateFin'] = (
+                    'La fin doit être au moins 30 minutes après le début.'
+                )
+            else:
+                clean['debut'] = dates['dateDebut'].strftime(
+                    '%Y-%m-%d %H:%M'
+                )
+                clean['fin'] = dates['dateFin'].strftime(
+                    '%Y-%m-%d %H:%M'
+                )
     return clean, errors
 
 

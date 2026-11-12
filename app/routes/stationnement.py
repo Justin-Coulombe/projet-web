@@ -48,7 +48,7 @@ def ajouter_stationnement():
     if request.method == 'GET':
         return render_template('stationnement/ajouter.jinja')
 
-    data, errors = valider_stationnement(request.form)
+    data, errors = valider_stationnement(request.form, verifier_dates=False)
     photo, photo_error = lire_photo(request.files.get('image'), obligatoire=True)
     if photo_error:
         errors['image'] = photo_error
@@ -67,10 +67,16 @@ def ajouter_stationnement():
     try:
         nom, chemin = _sauver_photo(photo)
         db_ajouter_stationnement(
-            data['adresse'], data['prix'], data['place'], data['place'],
-            data['debut'], data['fin'], data['ville'], data['emplacement'],
-            nom, session['user_id'], position['latitude'], position['longitude']
-        )
+    data['adresse'],
+    data['prix'],
+    data['place'],
+    data['ville'],
+    data['emplacement'],
+    nom,
+    session['user_id'],
+    position['latitude'],
+    position['longitude']
+)
     except (sqlite3.Error, OSError):
         if chemin is not None:
             chemin.unlink(missing_ok=True)

@@ -53,6 +53,27 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
+  function creerLienDetail(publicationId) {
+    const filtres = lireFiltres();
+    const params = new URLSearchParams();
+
+    if (filtres.debut) {
+      params.set("debut", filtres.debut);
+    }
+
+    if (filtres.fin) {
+      params.set("fin", filtres.fin);
+    }
+
+    const url = `/stationnement/detail/${publicationId}`;
+
+    if (params.toString()) {
+      return `${url}?${params.toString()}`;
+    }
+
+    return url;
+  }
+
   function creerCarteAnnonce(item) {
     const article = document.createElement("article");
     article.className = "list-group-item mb-2 rounded border";
@@ -104,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const detailsLien = document.createElement("a");
     detailsLien.className = "btn btn-sm btn-dark";
-    detailsLien.href = `/stationnement/detail/${item.id}`;
+    detailsLien.href = creerLienDetail(item.id);
     detailsLien.textContent = "Détails";
 
     boutons.append(voirCarte, detailsLien);
@@ -136,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     prixElement.textContent = `${prix} $/heure`;
 
     const lien = document.createElement("a");
-    lien.href = `/stationnement/detail/${item.id}`;
+    lien.href = creerLienDetail(item.id);
     lien.textContent = "Voir la publication";
 
     popup.append(titre, prixElement, lien);
