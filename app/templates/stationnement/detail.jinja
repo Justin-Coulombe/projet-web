@@ -12,7 +12,7 @@ stationnement | ParkShare
 
 <div class="d-flex align-items-center justify-content-between mb-4 mt-3">
     <h2 class=" fw-bold"> Détails de l’annonce</h2>
-    {%if publication.author_id == session['user_id']%}
+    {% if session.get('user_id') == publication.author %}
     <a href="/stationnement/edit/{{publication.id}}" class="btn btn-dark">Modifier l'annonce</a>
     {% endif %}
 

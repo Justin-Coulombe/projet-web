@@ -112,19 +112,9 @@ def edit(publication_id):
             if position is None:
                 errors['geocode_token'] = "Vérifiez la nouvelle adresse sur la carte."
 
-    # Ne pas créer artificiellement des places libres si une réservation existe.
-    if 'place' in data:
-        occupees = max(0, publication.open_place - publication.place_use)
-        if data['place'] < occupees:
-            errors['place'] = f'Il y a déjà {occupees} réservation(s) actives.'
-    if errors:
-        return _erreur_formulaire(errors, 'stationnement/edit.jinja', publication, **request.form.to_dict())
-
-    # occupees = max(0, publication.open_place - publication.place_use)
-    # places_libres = data['place'] - occupees
     try:
         update_publication(
-            publication_id, data['adresse'], data['prix'], data['placetotal'],
+            publication_id, data['adresse'], data['prix'], data['place'],
             data['ville'], data['emplacement'],
             latitude=position['latitude'] if position else None,
             longitude=position['longitude'] if position else None
