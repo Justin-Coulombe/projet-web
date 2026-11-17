@@ -32,7 +32,7 @@ def create_app():
     from app.routes.admin import Bp_admin
 
     app.register_blueprint(
-        Bp_admin, 
+        Bp_admin,
         url_prefix="/admin"
     )
 

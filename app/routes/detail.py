@@ -48,3 +48,7 @@ def reservations_recues():
         "profile/reservations_recues.jinja",
         reservations=reservations
     )
+
+@bp_detail.route("/client",methods=["GET"])
+@login_required
+def
