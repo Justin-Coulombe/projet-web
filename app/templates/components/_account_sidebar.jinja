@@ -1,0 +1,56 @@
+
+<aside class="ps-profile-edit-sidebar">
+
+    <div class="ps-profile-edit-user">
+
+        <div class="ps-profile-edit-avatar">
+            <i class="bi bi-person-fill" aria-hidden="true"></i>
+        </div>
+
+        <div class="ps-profile-edit-user-info">
+            <strong>
+                {{ g.user.prenom }} {{ g.user.nom }}
+            </strong>
+
+            <span>{{ g.user.email }}</span>
+        </div>
+
+    </div>
+
+    <nav class="ps-profile-edit-nav"
+         aria-label="Navigation du compte">
+
+        <a href="{{ url_for('detail.detail_profil') }}"
+           class="ps-profile-edit-nav-link {% if active_page == 'profil' %}active{% endif %}"
+           {% if active_page == 'profil' %}aria-current="page"{% endif %}>
+
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            Mon profil
+        </a>
+
+        <a href="{{ url_for('detail.mes_reservations') }}"
+           class="ps-profile-edit-nav-link {% if active_page == 'reservations' %}active{% endif %}"
+           {% if active_page == 'reservations' %}aria-current="page"{% endif %}>
+
+            <i class="bi bi-calendar-check" aria-hidden="true"></i>
+            Mes réservations
+        </a>
+
+        <a href="{{ url_for('profile.edit') }}"
+           class="ps-profile-edit-nav-link {% if active_page == 'parametres' %}active{% endif %}"
+           {% if active_page == 'parametres' %}aria-current="page"{% endif %}>
+
+            <i class="bi bi-gear" aria-hidden="true"></i>
+            Paramètres du compte
+        </a>
+
+        <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
+           class="ps-profile-edit-nav-link">
+
+            <i class="bi bi-plus-circle" aria-hidden="true"></i>
+            Proposer une place
+        </a>
+
+    </nav>
+
+</aside>

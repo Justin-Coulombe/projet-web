@@ -1,122 +1,416 @@
-{% extends '_modele.jinja' %}
+
+{% extends "_modele.jinja" %}
 
 {% block title %}
-Publications | ParkShare
+Tous les stationnements | ParkShare
 {% endblock %}
 
-{%block centered_title %}
-<div class="mx-auto p-2">
-    <h2>TOUTES LES PUBLICATIONS</h2>
-</div>
-{%endblock%}
-{% block recherche%}
-<form action="/publications/recherche" method="get" id="research" class=" rounded-3 p-1 mx-auto needs-validation pb-4"
-    style="max-width: 1100px;" novalidate>
-    <div class="row g-2 align-items-center">
-        <div class="col-md-4">
-            <div class="input-group border rounded-3">
-                <span class="input-group-text bg-white border-0"><i class="bi bi-geo-alt"></i></span>
-                <select id="ville" name="ville" class="form-select {{classe_ville}} border-0">
-                    <option selected value=""> Sélectionnez la ville</option>
-                    <option {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
-                    <option {% if ville=="Québec" %}selected{% endif %}>Québec</option>
-                    <option {% if ville=="Laval" %}selected{% endif %}>Laval</option>
-                    <option {% if ville=="Gatineau" %}selected{% endif %}>Gatineau</option>
-                    <option {% if ville=="Longueuil" %}selected{% endif %}>Longueuil</option>
-                    <option {% if ville=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
-                    <option {% if ville=="Lévis" %}selected{% endif %}>Lévis</option>
-                    <option {% if ville=="Saguenay" %}selected{% endif %}>Saguenay</option>
-                    <option {% if ville=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières</option>
-                    <option {% if ville=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
-                    <option {% if ville=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>
-                        Saint-Jean-sur-Richelieu</option>
-                    <option {% if ville=="Brossard" %}selected{% endif %}>Brossard</option>
-                    <option {% if ville=="Repentigny" %}selected{% endif %}>Repentigny</option>
-                    <option {% if ville=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
-                    <option {% if ville=="Drummondville" %}selected{% endif %}>Drummondville</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <input name="debut" type="datetime-local" class="form-control" aria-label="Date de début">
-        </div>
-        <div class="col-md-2">
-            <input name="fin" type="datetime-local"
-                class="form-control {%if not context.valid_time %} is-invalid {%endif%}" aria-label="Date de fin">
-            <div class="invalid-feedback">{{context.time_message}}</div>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select" name="filter">
-                <option selected value="Tous">Tous</option>
-                <option value="Intérieur">Intérieur</option>
-                <option value="Extérieur">Extérieur</option>
-            </select>
-        </div>
-        <div class="col-md-2 d-grid">
-            <button id="submit_btn" type="submit" class="bi bi-search btn btn-dark"> Rechercher</button>
-        </div>
-    </div>
-</form>
-{% endblock %}
+{% block body_class %}ps-publications-page{% endblock %}
 
-{%block contenu %}
+{% block page_layout %}
 
-<ul class="list-unstyled row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
-    {% set path = "/static/img/stationnement/" %}
+{% set publications = context.publications | default([]) %}
+{% set total_pages = context.page_number | default(1) | int %}
+{% set current_page = request.args.get('page', 1) | int %}
+{% set image_fallback = url_for('static', filename='img/placeholder.jpg') %}
 
-    {% for item in context.publications %}
-    <li class="col d-flex">
-        <a href="/stationnement/detail/{{ item.id }}"
-           class="d-block w-100 text-decoration-none text-dark">
+<div class="ps-publications">
 
-            <div class="card h-100 shadow-sm">
+    <div class="container-fluid ps-site-shell">
 
-                <img
-                    class="card-img-top"
-                    src="{% if item.img %}{{ path ~ item.img }}{% else %}{{ url_for('static', filename='img/placeholder.jpg') }}{% endif %}"
-                    alt="Photo du stationnement"
-                    style="height: 170px; object-fit: cover;">
+        <!-- EN-TÊTE -->
+        <header class="ps-publications-header">
 
-                <div class="card-body d-flex flex-column">
+            <span class="ps-publications-eyebrow">
+                Explorer ParkShare
+            </span>
 
-                    <p class="fw-bold mb-2">
-                        {{ item.address }}, {{ item.city }}
-                    </p>
+            <h1>Une place pour chaque destination.</h1>
 
-                    <div class="d-flex flex-column gap-1 mb-3">
+            <p>
+                Comparez les stationnements privés,
+                partout au Québec.
+            </p>
 
-                        <span class="bi bi-house text-muted small">
-                            {{ item.location }}
-                        </span>
+        </header>
 
-                        <span class="bi bi-geo-alt text-muted small">
-                            {{ item.place_total }} place(s)
-                        </span>
+
+        <!-- FORMULAIRE DE RECHERCHE -->
+        <section class="ps-publications-search-section"
+                 aria-label="Rechercher un stationnement">
+
+            <form
+                action="/publications/recherche"
+                method="GET"
+                id="research"
+                class="ps-publications-search needs-validation"
+                novalidate>
+
+                <div class="ps-publications-search-grid">
+
+                    <!-- VILLE -->
+                    <div class="ps-publications-search-field">
+
+                        <label for="ville" class="form-label">
+                            Ville
+                        </label>
+
+                        <select
+                            id="ville"
+                            name="ville"
+                            class="form-select {{ classe_ville | default('') }}">
+
+                            <option value="">
+                                Toutes les villes
+                            </option>
+
+                            {% for nom_ville in [
+                                "Montréal",
+                                "Québec",
+                                "Laval",
+                                "Gatineau",
+                                "Longueuil",
+                                "Sherbrooke",
+                                "Lévis",
+                                "Saguenay",
+                                "Trois-Rivières",
+                                "Terrebonne",
+                                "Saint-Jean-sur-Richelieu",
+                                "Brossard",
+                                "Repentigny",
+                                "Saint-Jérôme",
+                                "Drummondville"
+                            ] %}
+
+                                <option
+                                    value="{{ nom_ville }}"
+                                    {% if request.args.get('ville', '') == nom_ville %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ nom_ville }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
 
                     </div>
 
-                    <p class="fw-bold mt-auto mb-0">
-                        {{ item.price }} $
-                        <span class="fw-normal text-muted">/heure</span>
-                    </p>
+
+                    <!-- ARRIVÉE -->
+                    <div class="ps-publications-search-field">
+
+                        <label for="debut" class="form-label">
+                            Arrivée
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="debut"
+                            name="debut"
+                            class="form-control"
+                            value="{{ request.args.get('debut', '') }}"
+                            aria-label="Date et heure d'arrivée">
+
+                    </div>
+
+
+                    <!-- DÉPART -->
+                    <div class="ps-publications-search-field">
+
+                        <label for="fin" class="form-label">
+                            Départ
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="fin"
+                            name="fin"
+                            class="form-control {% if context.valid_time is defined and not context.valid_time %}is-invalid{% endif %}"
+                            value="{{ request.args.get('fin', '') }}"
+                            aria-label="Date et heure de départ">
+
+                        <div class="invalid-feedback">
+                            {{ context.time_message | default('') }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMPLACEMENT -->
+                    <div class="ps-publications-search-field">
+
+                        <label for="filter" class="form-label">
+                            Emplacement
+                        </label>
+
+                        <select
+                            id="filter"
+                            name="filter"
+                            class="form-select">
+
+                            <option value="Tous"
+                                {% if request.args.get('filter', 'Tous') == 'Tous' %}
+                                    selected
+                                {% endif %}>
+                                Tous
+                            </option>
+
+                            <option value="Intérieur"
+                                {% if request.args.get('filter') == 'Intérieur' %}
+                                    selected
+                                {% endif %}>
+                                Intérieur
+                            </option>
+
+                            <option value="Extérieur"
+                                {% if request.args.get('filter') == 'Extérieur' %}
+                                    selected
+                                {% endif %}>
+                                Extérieur
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BOUTON -->
+                    <div class="ps-publications-search-submit">
+
+                        <button
+                            id="submit_btn"
+                            type="submit"
+                            class="btn ps-publications-search-button">
+
+                            Rechercher
+
+                        </button>
+
+                    </div>
 
                 </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- LISTE DES STATIONNEMENTS -->
+        <section class="ps-publications-results">
+
+            <div class="ps-publications-section-heading">
+
+                <h2>Tous les stationnements</h2>
+
+                <a
+                    href="/publications/recherche"
+                    class="ps-publications-map-link">
+
+                    Vue liste et carte
+
+                    <i class="bi bi-arrow-up-right"
+                       aria-hidden="true"></i>
+
+                </a>
+
             </div>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
 
 
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        {%if request.args.page %}
-        {% for page in range(context.page_number|int)%}
-        <li class="page-item"><a class="page-link text-dark btn-outline-dark {%if request.args.page|int == page+1 %} active {%endif%}" href="{{url_for(request.endpoint, **dict(request.args, page=page+1) )}}">{{page + 1}}</a></li>
-        {% endfor%}
-        {%else%}
-        <li class="page-item"><a class="page-link btn-outline-dark active text-dark" href="{{url_for(request.endpoint, **dict(request.args, page=page+1))}}">1</a></li>
-        {%endif%}
-    </ul>
-</nav>
-{%endblock%}
+            {% if publications %}
+
+                <div class="row g-4">
+
+                    {% for item in publications %}
+
+                        <div class="col-12 col-md-6 col-lg-4 d-flex">
+
+                            <a
+                                href="{{ url_for('stationnement.detail', publication_id=item.id) }}"
+                                class="ps-publications-card">
+
+                                <!-- PHOTO -->
+                                <div class="ps-publications-card-image-wrapper">
+
+                                    {% if item.img %}
+                                        <img
+                                            src="{{ url_for('static', filename='img/stationnement/' ~ item.img) }}"
+                                            alt="Stationnement situé au {{ item.address }}"
+                                            class="ps-publications-card-image"
+                                            loading="lazy">
+                                    {% else %}
+                                        <img
+                                            src="{{ image_fallback }}"
+                                            alt="Photo non disponible"
+                                            class="ps-publications-card-image"
+                                            loading="lazy">
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- INFORMATIONS -->
+                                <div class="ps-publications-card-body">
+
+                                    <span class="ps-publications-card-city">
+                                        {{ item.city }}
+                                    </span>
+
+                                    <h3 class="ps-publications-card-title">
+                                        {{ item.address }}
+                                    </h3>
+
+                                    <p class="ps-publications-card-meta">
+
+                                        {{ item.location }}
+
+                                        <span aria-hidden="true">·</span>
+
+                                        {{ item.place_total }}
+                                        place{% if item.place_total | int != 1 %}s{% endif %}
+
+                                    </p>
+
+
+                                    <!-- PRIX -->
+                                    <div class="ps-publications-card-footer">
+
+                                        <div class="ps-publications-card-price">
+
+                                            <strong>
+                                                {{ "%.2f" | format(item.price | float) | replace(".", ",") }} $
+                                            </strong>
+
+                                            <span>/ heure</span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <!-- AUCUNE ANNONCE -->
+                <div class="ps-publications-empty">
+
+                    <i class="bi bi-p-square"></i>
+
+                    <h3>Aucun stationnement trouvé</h3>
+
+                    <p>
+                        Aucun stationnement n'est disponible
+                        dans cette liste pour le moment.
+                    </p>
+
+                    <a
+                        href="/publications/recherche"
+                        class="btn ps-publications-search-button">
+
+                        Explorer la carte
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- PAGINATION -->
+        {% if total_pages > 1 %}
+
+            <nav
+                class="ps-publications-pagination"
+                aria-label="Pagination des stationnements">
+
+                <ul class="pagination justify-content-center align-items-center">
+
+                    <!-- PAGE PRÉCÉDENTE -->
+                    <li class="page-item {% if current_page <= 1 %}disabled{% endif %}">
+
+                        <a
+                            class="page-link ps-pagination-arrow"
+                            href="{% if current_page > 1 %}{{ url_for(request.endpoint, **dict(request.args, page=current_page-1)) }}{% else %}#{% endif %}"
+                            {% if current_page <= 1 %}aria-disabled="true" tabindex="-1"{% endif %}
+                            aria-label="Page précédente">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                        </a>
+
+                    </li>
+
+
+                    {% for page in range(1, total_pages + 1) %}
+
+                        {% if page == 1
+                              or page == total_pages
+                              or (page >= current_page - 1 and page <= current_page + 1) %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link {% if current_page == page %}active{% endif %}"
+                                    href="{{ url_for(request.endpoint, **dict(request.args, page=page)) }}"
+                                    {% if current_page == page %}aria-current="page"{% endif %}>
+
+                                    {{ page }}
+
+                                </a>
+
+                            </li>
+
+                        {% elif page == 2 and current_page > 3
+                              or page == total_pages - 1 and current_page < total_pages - 2 %}
+
+                            <li class="page-item disabled">
+
+                                <span class="page-link ps-pagination-ellipsis">
+                                    …
+                                </span>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    <!-- PAGE SUIVANTE -->
+                    <li class="page-item {% if current_page >= total_pages %}disabled{% endif %}">
+
+                        <a
+                            class="page-link ps-pagination-arrow"
+                            href="{% if current_page < total_pages %}{{ url_for(request.endpoint, **dict(request.args, page=current_page+1)) }}{% else %}#{% endif %}"
+                            {% if current_page >= total_pages %}aria-disabled="true" tabindex="-1"{% endif %}
+                            aria-label="Page suivante">
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

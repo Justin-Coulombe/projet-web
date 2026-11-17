@@ -1,0 +1,329 @@
+
+{% extends "_modele.jinja" %}
+
+{% block title %}
+Mes réservations | ParkShare
+{% endblock %}
+
+{% block body_class %}ps-reservations-page{% endblock %}
+
+{% block page_layout %}
+
+<div class="ps-profile-edit ps-account-page">
+
+    <div class="container-fluid ps-site-shell">
+
+        <header class="ps-profile-edit-header">
+
+            <span class="ps-profile-edit-eyebrow">
+                MON COMPTE
+            </span>
+
+            <h1>Mes réservations</h1>
+
+            <p>
+                Retrouvez vos réservations et suivez
+                l'activité de vos stationnements.
+            </p>
+
+        </header>
+
+        <div class="ps-profile-edit-layout">
+
+            <!-- SIDEBAR -->
+            {% with active_page = 'reservations' %}
+                {% include "components/_account_sidebar.jinja" %}
+            {% endwith %}
+
+            <!-- CONTENU -->
+            <div class="ps-profile-edit-content">
+
+                <!-- STATISTIQUES -->
+                <div class="row g-3">
+
+                    <div class="col-12 col-sm-6">
+
+                        <div class="ps-account-stat-card">
+
+                            <div class="ps-account-stat-icon">
+                                <i class="bi bi-calendar-check"
+                                   aria-hidden="true"></i>
+                            </div>
+
+                            <span>Réservations effectuées</span>
+
+                            <strong>
+                                {{ lst_reversations | length }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+
+                        <div class="ps-account-stat-card">
+
+                            <div class="ps-account-stat-icon">
+                                <i class="bi bi-calendar-event"
+                                   aria-hidden="true"></i>
+                            </div>
+
+                            <span>Réservations reçues</span>
+
+                            <strong>
+                                {{ reservations | length }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RÉSERVATIONS EFFECTUÉES -->
+                <section class="ps-profile-edit-card">
+
+                    <div class="ps-profile-edit-card-header">
+
+                        <div>
+                            <span class="ps-profile-edit-section-label">
+                                EN TANT QUE CLIENT
+                            </span>
+
+                            <h2>Réservations effectuées</h2>
+
+                            <p>
+                                Les stationnements que vous
+                                avez réservés.
+                            </p>
+                        </div>
+
+                        <div class="ps-profile-edit-header-icon">
+                            <i class="bi bi-calendar-check"
+                               aria-hidden="true"></i>
+                        </div>
+
+                    </div>
+
+                    {% if lst_reversations %}
+
+                    <div class="table-responsive">
+
+                        <table class="table ps-account-table align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">Stationnement</th>
+                                    <th scope="col">Début</th>
+                                    <th scope="col">Fin</th>
+                                    <th scope="col">Détails</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for reservation in lst_reversations %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <a href="{{ url_for('stationnement.detail', publication_id=reservation.post.id) }}"
+                                           class="ps-account-table-link">
+
+                                            <strong>
+                                                {{ reservation.post.address }}
+                                            </strong>
+
+                                            <span>
+                                                {{ reservation.post.city }}
+                                            </span>
+
+                                        </a>
+
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        {{ reservation.start | replace('T', ' ') }}
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        {{ reservation.end | replace('T', ' ') }}
+                                    </td>
+
+                                    <td>
+
+                                        <a href="{{ url_for('stationnement.detail', publication_id=reservation.post.id) }}"
+                                           class="ps-account-view-link">
+
+                                            Voir l'annonce
+                                            <i class="bi bi-arrow-up-right"
+                                               aria-hidden="true"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="ps-account-empty">
+
+                        <i class="bi bi-calendar-x"
+                           aria-hidden="true"></i>
+
+                        <h3>Aucune réservation effectuée</h3>
+
+                        <p>
+                            Vous n'avez pas encore réservé
+                            de stationnement.
+                        </p>
+
+                        <a href="/publications/recherche"
+                           class="btn ps-profile-edit-btn-primary">
+
+                            Trouver un stationnement
+
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                </section>
+
+
+                <!-- RÉSERVATIONS REÇUES -->
+                <section class="ps-profile-edit-card">
+
+                    <div class="ps-profile-edit-card-header">
+
+                        <div>
+                            <span class="ps-profile-edit-section-label">
+                                EN TANT QUE PROPRIÉTAIRE
+                            </span>
+
+                            <h2>Réservations reçues</h2>
+
+                            <p>
+                                Les réservations effectuées
+                                sur vos propres stationnements.
+                            </p>
+                        </div>
+
+                        <div class="ps-profile-edit-header-icon">
+                            <i class="bi bi-p-square"
+                               aria-hidden="true"></i>
+                        </div>
+
+                    </div>
+
+                    {% if reservations %}
+
+                    <div class="table-responsive">
+
+                        <table class="table ps-account-table align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">N°</th>
+                                    <th scope="col">Stationnement</th>
+                                    <th scope="col">Début</th>
+                                    <th scope="col">Fin</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for reservation in reservations %}
+
+                                <tr>
+
+                                    <td>
+                                        <span class="ps-account-tag">
+                                            #{{ reservation.id }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <a href="{{ url_for('stationnement.detail', publication_id=reservation.publication_id) }}"
+                                           class="ps-account-table-link">
+
+                                            <strong>
+                                                {{ reservation.address }}
+                                            </strong>
+
+                                            <span>
+                                                {{ reservation.ville }}
+                                            </span>
+
+                                        </a>
+
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        {{ reservation.debut | replace('T', ' ') }}
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        {{ reservation.fin | replace('T', ' ') }}
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="ps-account-empty">
+
+                        <i class="bi bi-inbox"
+                           aria-hidden="true"></i>
+
+                        <h3>Aucune réservation reçue</h3>
+
+                        <p>
+                            Vos stationnements n'ont reçu
+                            aucune réservation pour le moment.
+                        </p>
+
+                        <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
+                           class="btn ps-profile-edit-btn-outline">
+
+                            Proposer une place
+
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

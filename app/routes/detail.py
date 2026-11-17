@@ -48,3 +48,19 @@ def reservations_recues():
         "profile/reservations_recues.jinja",
         reservations=reservations
     )
+
+@bp_detail.route("/reservations", methods=["GET"])
+@login_required
+def mes_reservations():
+    """Affiche les réservations effectuées et reçues."""
+
+    user_id = session["user_id"]
+
+    lst_reversations = get_reservation_by_user(user_id)
+    reservations = get_reservations_by_owner(user_id)
+
+    return render_template(
+        "profile/reservations.jinja",
+        lst_reversations=lst_reversations,
+        reservations=reservations
+    )
