@@ -39,7 +39,7 @@ stationnement | ParkShare
         <div class="row">
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Place</span>
-                {{ publication.placeTotal}}
+                {{ publication.place_total}}
             </div>
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Emplacement</span>
@@ -59,32 +59,95 @@ stationnement | ParkShare
             </div>
         </div>
     </li>
-    {% if session.get('user_id')%}
-    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
-        <form method="post" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-            <div class="row">
-                <div class="col-6 d-flex flex-column">
-                    <span class="fw-lighter">Du</span>
-                    <input class="is-invalid" type="datetime-local" name="date_du" value="{{form.get('date_du', '')}}">
-                </div>
-                <div class="col-6 d-flex flex-column fw-bold">
-                    <span class="fw-lighter">Au</span>
-                    <input class="{%if not context.v_time %} is-invalid {% endif %}" type="datetime-local" name="date_au" value="{{form.get('date_au', '')}}">
-                    <div class="invalid-feedback">la fin doit suivre le début</div>
-                </div>
+
+{% if session.get('user_id') and session.get('user_id') != publication.author %}
+
+<li class="list-group-item border-0 border-bottom mb-3">
+
+    <h5 class="fw-bold mb-3">Réserver ce stationnement</h5>
+
+    <form method="post" novalidate>
+
+        <input
+            type="hidden"
+            name="_csrf"
+            value="{{ csrf_token() }}"
+        >
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label for="date_du" class="form-label">
+                    Date de début
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="date_du"
+                    name="date_du"
+                    class="form-control"
+                    value="{{ form.get('date_du', '') }}"
+                    required
+                >
             </div>
-            <div class="{% if not context.can_submit %} text-danger {%else%} text-success {%endif%}">
-                {{context.message}}
+
+            <div class="col-md-6">
+                <label for="date_au" class="form-label">
+                    Date de fin
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="date_au"
+                    name="date_au"
+                    class="form-control"
+                    value="{{ form.get('date_au', '') }}"
+                    required
+                >
             </div>
-            <div class="mt-3 d-flex justify-content-between">
-                <button class="btn btn-dark" type="submit" value="verification" name="btn_submit">verifier disponibilité</button>
-                <button class="btn btn-dark" type="submit" value="reservation" name="btn_submit" {% if not context.can_submit %} disabled {%endif%} >Réserver la place</button>
-            </div>
-            
-        </form>
-    </li>
-    {%endif%}
+
+        </div>
+
+        {% if context.message %}
+        <div
+            class="alert {{ 'alert-success' if context.can_submit else 'alert-danger' }} mt-3"
+            role="alert"
+        >
+            {{ context.message }}
+        </div>
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+
+            <button
+                type="submit"
+                name="btn_submit"
+                value="verification"
+                class="btn btn-outline-dark"
+            >
+                <i class="bi bi-calendar-check me-1"></i>
+                Vérifier la disponibilité
+            </button>
+
+            <button
+                type="submit"
+                name="btn_submit"
+                value="reservation"
+                class="btn btn-dark"
+                {% if not context.can_submit %}disabled{% endif %}
+            >
+                <i class="bi bi-check-circle me-1"></i>
+                Confirmer la réservation
+            </button>
+
+        </div>
+
+    </form>
+
+</li>
+
+{% endif %}
+
 
 </ul>
 

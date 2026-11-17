@@ -1,23 +1,49 @@
-from app.database.queries.reservations import *
-from app.database.queries.publications import get_publications_by_id
-from datetime import datetime
+
+"""Validation des périodes et logique des disponibilités."""
+
+from datetime import datetime, timedelta
+
+from app.database.queries.reservations import verifier_disponibilite
+
+
+def valider_periode(date_debut, date_fin):
+    """Valide et normalise les dates d'une réservation."""
+
+    if not date_debut or not date_fin:
+        return None, None, "Les deux dates sont obligatoires."
+
+    try:
+        debut = datetime.fromisoformat(date_debut)
+        fin = datetime.fromisoformat(date_fin)
+    except (ValueError, TypeError):
+        return None, None, "Les dates fournies sont invalides."
+
+    if debut.tzinfo is not None or fin.tzinfo is not None:
+        return None, None, "Format de date non accepté."
+
+    if debut <= datetime.now():
+        return None, None, "La date de début doit être dans le futur."
+
+    if fin - debut < timedelta(minutes=30):
+        return (
+            None,
+            None,
+            "La réservation doit durer au moins 30 minutes."
+        )
+
+    return (
+        debut.strftime("%Y-%m-%d %H:%M:%S"),
+        fin.strftime("%Y-%m-%d %H:%M:%S"),
+        None
+    )
 
 
 def verifier_si_disponible(pub_id, date_debut, date_fin):
-    reservations = get_reservations_by_publication(pub_id)
-    publication = get_publications_by_id(pub_id)
+    """Valide la période et vérifie les places disponibles."""
 
-    debut = datetime.fromisoformat(date_debut)
-    fin = datetime.fromisoformat(date_fin)
+    debut, fin, erreur = valider_periode(date_debut, date_fin)
 
-    chevauchements = 0
-    for res in reservations:
-        debut_res = datetime.fromisoformat(res.start)
-        fin_res = datetime.fromisoformat(res.end)
-        if debut_res < fin and fin_res > debut:
-            chevauchements += 1
+    if erreur:
+        return False, erreur
 
-    if chevauchements < publication.placeTotal:
-        return True, "place disponible"
-
-    return False, "la période demandée chevauche les réservations actuelles"
+    return verifier_disponibilite(pub_id, debut, fin)

@@ -5,9 +5,7 @@ import sqlite3
 import uuid
 from datetime import datetime
 from pathlib import Path
-from xmlrpc.client import FastMarshaller
 from flask import Blueprint, render_template, request, session, url_for, abort, redirect
-from app.database.queries.reservations import *
 from app.database.queries.publications import (
     ajouter_stationnement as db_ajouter_stationnement,
     get_publications_by_id, get_publication_coordinates,
@@ -17,6 +15,7 @@ from app.form_validation import valider_stationnement, lire_photo
 from app.form_responses import fail, success
 from app.routes.auth import login_required
 from app.services.geocoding import valider_jeton
+from app.database.queries.reservations import creer_reservation
 from app.services.reservation_manager import verifier_si_disponible
 
 bp_stationnement = Blueprint('stationnement', __name__)
@@ -176,58 +175,92 @@ def delete(publication_id):
                    message='Annonce supprimée.')
 
 
-@bp_stationnement.route('/detail/<int:publication_id>', methods=['GET', 'POST'])
+@bp_stationnement.route(
+    '/detail/<int:publication_id>',
+    methods=['GET', 'POST']
+)
 def detail(publication_id):
+    """Affiche un stationnement et traite ses réservations."""
 
-    context = {}
-    context['v_time'] = True
     publication = get_publications_by_id(publication_id)
+
     if publication is None:
-        abort(404, 'Annonce introuvable.')
+        abort(404, "Stationnement introuvable.")
 
-    print("hey server 1")
+    context = {
+        'v_time': True,
+        'can_submit': False,
+        'message': '',
+        'success': False
+    }
+
+    form = {
+        'date_du': request.args.get('debut', ''),
+        'date_au': request.args.get('fin', '')
+    }
+
     if request.method == 'POST':
-        print("hey server 2")
-        form = request.form
-        action = form.get('btn_submit')
-        date_du = form.get('date_du')
-        date_au = form.get('date_au')
+
+        # L'affichage reste public, mais pas les réservations.
+        if session.get('user_id') is None:
+            return redirect(url_for('auth.login'))
+
+        form = {
+            'date_du': request.form.get('date_du', ''),
+            'date_au': request.form.get('date_au', '')
+        }
+
+        action = request.form.get('btn_submit')
+
+        if action not in ('verification', 'reservation'):
+            abort(400, "Action de réservation invalide.")
+
+        date_debut = form['date_du']
+        date_fin = form['date_au']
+
         if action == 'verification':
-            if not date_du or not date_au:
-                context['v_time'] = True
-                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)
+            disponible, message = verifier_si_disponible(
+                publication_id,
+                date_debut,
+                date_fin
+            )
 
-            v_time = valid_time(date_du, date_au)
-            context['v_time'] = v_time
-            if not v_time:  
-                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)                  
-            
-            est_dispo, message = verifier_si_disponible(publication_id,date_du, date_au)
-            if est_dispo : 
-                context['can_submit'] = est_dispo
-                context['message'] = message
-                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)   
-            else:
-                context['can_submit'] = est_dispo
-                context['message'] = message
-                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)   
-        else:
-            est_dispo, message = verifier_si_disponible(publication_id,date_du, date_au) 
-            print(est_dispo)   
-            if est_dispo and add_Reservation(session.get('user_id'),date_du, date_au, publication_id):
-                return redirect("/")
+            context['can_submit'] = disponible
+            context['v_time'] = disponible
+            context['message'] = message
 
-            context['message'] = "Opération annulée: une érreur c'est produit"
+        elif action == 'reservation':
+            try:
+                succes, message = creer_reservation(
+                    session['user_id'],
+                    date_debut,
+                    date_fin,
+                    publication_id
+                )
+            except sqlite3.Error:
+                logger.exception("Erreur création réservation")
+
+                succes = False
+                message = (
+                    "Impossible d'enregistrer la réservation "
+                    "pour le moment."
+                )
+
+            if succes:
+                return redirect(
+                    url_for(
+                        'detail.detail_profil',
+                        success='Réservation enregistrée.'
+                    )
+                )
+
+            context['message'] = message
             context['can_submit'] = False
-            return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)
 
-    form = {'date_du': request.args.get('debut', ''), 'date_au' : request.args.get('fin', '')}
-    return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)
-
-
-def valid_time(date_debut, date_fin):
-    debut = datetime.fromisoformat(date_debut)
-    fin = datetime.fromisoformat(date_fin)
-    return fin > debut
-
+    return render_template(
+        'stationnement/detail.jinja',
+        publication=publication.to_dict(),
+        context=context,
+        form=form
+    )
 
