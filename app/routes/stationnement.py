@@ -3,8 +3,11 @@ import logging
 import os
 import sqlite3
 import uuid
+from datetime import datetime
 from pathlib import Path
-from flask import Blueprint, render_template, request, session, url_for, abort
+from xmlrpc.client import FastMarshaller
+from flask import Blueprint, render_template, request, session, url_for, abort, redirect
+from app.database.queries.reservations import *
 from app.database.queries.publications import (
     ajouter_stationnement as db_ajouter_stationnement,
     get_publications_by_id, get_publication_coordinates,
@@ -14,6 +17,7 @@ from app.form_validation import valider_stationnement, lire_photo
 from app.form_responses import fail, success
 from app.routes.auth import login_required
 from app.services.geocoding import valider_jeton
+from app.services.reservation_manager import verifier_si_disponible
 
 bp_stationnement = Blueprint('stationnement', __name__)
 logger = logging.getLogger(__name__)
@@ -172,9 +176,58 @@ def delete(publication_id):
                    message='Annonce supprimée.')
 
 
-@bp_stationnement.route('/detail/<int:publication_id>')
+@bp_stationnement.route('/detail/<int:publication_id>', methods=['GET', 'POST'])
 def detail(publication_id):
+
+    context = {}
+    context['v_time'] = True
     publication = get_publications_by_id(publication_id)
     if publication is None:
         abort(404, 'Annonce introuvable.')
-    return render_template('stationnement/detail.jinja', publication=publication.to_dict())
+
+    print("hey server 1")
+    if request.method == 'POST':
+        print("hey server 2")
+        form = request.form
+        action = form.get('btn_submit')
+        date_du = form.get('date_du')
+        date_au = form.get('date_au')
+        if action == 'verification':
+            if not date_du or not date_au:
+                context['v_time'] = True
+                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)
+
+            v_time = valid_time(date_du, date_au)
+            context['v_time'] = v_time
+            if not v_time:  
+                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)                  
+            
+            est_dispo, message = verifier_si_disponible(publication_id,date_du, date_au)
+            if est_dispo : 
+                context['can_submit'] = est_dispo
+                context['message'] = message
+                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)   
+            else:
+                context['can_submit'] = est_dispo
+                context['message'] = message
+                return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)   
+        else:
+            est_dispo, message = verifier_si_disponible(publication_id,date_du, date_au) 
+            print(est_dispo)   
+            if est_dispo and add_Reservation(session.get('user_id'),date_du, date_au, publication_id):
+                return redirect("/")
+
+            context['message'] = "Opération annulée: une érreur c'est produit"
+            context['can_submit'] = False
+            return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)
+
+    form = {'date_du': request.args.get('debut', ''), 'date_au' : request.args.get('fin', '')}
+    return render_template('stationnement/detail.jinja', publication=publication.to_dict(), context=context, form=form)
+
+
+def valid_time(date_debut, date_fin):
+    debut = datetime.fromisoformat(date_debut)
+    fin = datetime.fromisoformat(date_fin)
+    return fin > debut
+
+

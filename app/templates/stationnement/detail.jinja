@@ -39,7 +39,7 @@ stationnement | ParkShare
         <div class="row">
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Place</span>
-                {{ publication.place}}
+                {{ publication.placeTotal}}
             </div>
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Emplacement</span>
@@ -59,8 +59,33 @@ stationnement | ParkShare
             </div>
         </div>
     </li>
+    {% if session.get('user_id')%}
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <form method="post" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-6 d-flex flex-column">
+                    <span class="fw-lighter">Du</span>
+                    <input class="is-invalid" type="datetime-local" name="date_du" value="{{form.get('date_du', '')}}">
+                </div>
+                <div class="col-6 d-flex flex-column fw-bold">
+                    <span class="fw-lighter">Au</span>
+                    <input class="{%if not context.v_time %} is-invalid {% endif %}" type="datetime-local" name="date_au" value="{{form.get('date_au', '')}}">
+                    <div class="invalid-feedback">la fin doit suivre le début</div>
+                </div>
+            </div>
+            <div class="{% if not context.can_submit %} text-danger {%else%} text-success {%endif%}">
+                {{context.message}}
+            </div>
+            <div class="mt-3 d-flex justify-content-between">
+                <button class="btn btn-dark" type="submit" value="verification" name="btn_submit">verifier disponibilité</button>
+                <button class="btn btn-dark" type="submit" value="reservation" name="btn_submit" {% if not context.can_submit %} disabled {%endif%} >Réserver la place</button>
+            </div>
+            
+        </form>
+    </li>
+    {%endif%}
+
 </ul>
-<div class="mt-1 d-flex justify-content-end">
-    <a href="#" class="btn btn-dark">Réserver la place</a>
-</div>
+
 {% endblock %}

@@ -1,3 +1,4 @@
+from venv import create
 from app.database.connection import create_connection, close_connection
 from app.database.objects import reservation, publication
 
@@ -29,7 +30,7 @@ def add_Reservation(user_id, debut, fin, publication_id):
     cursor = conn.cursor()
 
     command = """
-        SELECT placeactuel, disponibilite
+        SELECT banni
         FROM Publication
         WHERE id = ?
     """
@@ -41,9 +42,9 @@ def add_Reservation(user_id, debut, fin, publication_id):
         close_connection(conn, cursor)
         return False
 
-    placeactuel, disponibilite = result1
-
-    if not disponibilite or placeactuel <= 0:
+    banni = result1[0]
+    print(f"ban : {banni}")
+    if banni == 1:
         close_connection(conn, cursor)
         return False
 
@@ -60,24 +61,6 @@ def add_Reservation(user_id, debut, fin, publication_id):
     cursor.execute(
         command,
         (user_id, publication_id, debut, fin)
-    )
-
-    n_placeactuel = placeactuel - 1
-
-    command = """
-        UPDATE Publication
-        SET placeactuel = ?,
-            disponibilite = ?
-        WHERE id = ?
-    """
-
-    cursor.execute(
-        command,
-        (
-            n_placeactuel,
-            1 if n_placeactuel > 0 else 0,
-            publication_id
-        )
     )
 
     close_connection(conn, cursor)
@@ -180,3 +163,36 @@ def get_reservations_by_owner(owner_id):
 
     finally:
         conn.close()
+
+def get_reservations_in_range(date_debut, date_fin):
+    conn = create_connection()
+    try:
+        curseur = conn.cursor()
+        query = """SELECT * FROM Reservation WHERE debut >= ? AND fin <= ? ORDER BY debut"""
+        curseur.execute(query, (date_debut, date_fin,))
+        res = curseur.fetchall()
+        reservations = []
+        for row in res:
+            reservations.append(
+                reservation(row[0], row[1],row[3],row[4],row[2]) 
+            )
+        return reservations
+    finally:
+        close_connection(conn, curseur)
+
+def get_reservations_by_publication(pub_id):
+    conn = create_connection()
+    try:
+        curseur = conn.cursor()
+        query = """SELECT * FROM Reservation WHERE publication = ? ORDER BY debut"""
+        curseur.execute(query, (pub_id,))
+        res = curseur.fetchall()
+        reservations = []
+        for row in res:
+            print(row)
+            reservations.append(
+                reservation(row[0], row[1],row[3],row[4],row[2]) 
+            )
+        return reservations
+    finally:
+        close_connection(conn, curseur)
