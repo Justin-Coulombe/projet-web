@@ -21,11 +21,9 @@ def detail_profil():
     """Affiche le tableau de bord de l'utilisateur."""
 
     success = request.args.get("success")
-
     lst_pubications = get_publications_by_user(session['user_id'])
     lst_reversations = get_reservation_by_user(session['user_id'])
     reservations = get_reservations_by_owner(session['user_id'])
-
 
     return render_template(
         "profile/detail.jinja",

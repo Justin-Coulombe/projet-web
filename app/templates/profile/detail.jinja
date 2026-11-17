@@ -75,56 +75,57 @@ Mon profil | ParkShare
                         Ajouter un stationnement
                     </a>
                     {% else %}
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Adresse</th>
-                                    <th>Ville</th>
-                                    <th>Prix</th>
-                                    <th>Nombre de places</th>
-                                    <th>Emplacement</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for publication in lst_pubications %}
-                                <tr>
-                                    <td>
-                                        <a class="text-decoration-none text-dark"
-                                            href="{{ url_for('stationnement.detail', publication_id=publication.id) }}">
-                                            {{ publication.address }}
-                                        </a>
-                                    </td>
-                                    <td>{{ publication.city }}</td>
-                                    <td class="text-nowrap">{{ publication.price }} $/heure</td>
-                                    <td>{{ publication.placeTotal }}</td>
-                                    <td>
-                                        <span class="badge bg-dark">{{ publication.location }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-2">
-                                            <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
-                                                class="btn btn-outline-primary btn-sm">
-                                                <i class="bi bi-pencil-square"></i>
-                                                Modifier
-                                            </a>
-                                            <form method="POST" data-ajax-form="delete"
-                                                data-confirm="Supprimer définitivement cette annonce ?"
-                                                action="{{ url_for('stationnement.delete', publication_id=publication.id) }}">
-                                                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm">
-                                                    <i class="bi bi-trash"></i>
-                                                    Supprimer
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Adresse</th>
+                                        <th>Ville</th>
+                                        <th>Prix</th>
+                                        <th>Nombre de places</th>
+                                        <th>Emplacement</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for publication in lst_pubications %}
+                                        <tr>
+                                            <td>
+                                                <a class="text-decoration-none text-dark"
+                                                   href="{{ url_for('stationnement.detail', publication_id=publication.id) }}">
+                                                    {{ publication.address }}
+                                                </a>
+                                            </td>
+                                            <td>{{ publication.city }}</td>
+                                            <td class="text-nowrap">{{ publication.price }} $/heure</td>
+                                            <td>{{ publication.place_total }}</td>
+                                            <td>
+                                                <span class="badge bg-dark">{{ publication.location }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                        Modifier
+                                                    </a>
+                                                    <form method="POST"
+                                                          data-ajax-form="delete"
+                                                          data-confirm="Supprimer définitivement cette annonce ?"
+                                                          action="{{ url_for('stationnement.delete', publication_id=publication.id) }}">
+                                                        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% endif %}
                 </div>
             </div>
