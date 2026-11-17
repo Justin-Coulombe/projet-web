@@ -39,7 +39,7 @@ stationnement | ParkShare
         <div class="row">
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Place</span>
-                {{ publication.place}}
+                {{ publication.place_total}}
             </div>
             <div class="col-6 d-flex flex-column">
                 <span class="fw-lighter">Emplacement</span>
@@ -59,8 +59,96 @@ stationnement | ParkShare
             </div>
         </div>
     </li>
+
+{% if session.get('user_id') and session.get('user_id') != publication.author %}
+
+<li class="list-group-item border-0 border-bottom mb-3">
+
+    <h5 class="fw-bold mb-3">Réserver ce stationnement</h5>
+
+    <form method="post" novalidate>
+
+        <input
+            type="hidden"
+            name="_csrf"
+            value="{{ csrf_token() }}"
+        >
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label for="date_du" class="form-label">
+                    Date de début
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="date_du"
+                    name="date_du"
+                    class="form-control"
+                    value="{{ form.get('date_du', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="col-md-6">
+                <label for="date_au" class="form-label">
+                    Date de fin
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="date_au"
+                    name="date_au"
+                    class="form-control"
+                    value="{{ form.get('date_au', '') }}"
+                    required
+                >
+            </div>
+
+        </div>
+
+        {% if context.message %}
+        <div
+            class="alert {{ 'alert-success' if context.can_submit else 'alert-danger' }} mt-3"
+            role="alert"
+        >
+            {{ context.message }}
+        </div>
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+
+            <button
+                type="submit"
+                name="btn_submit"
+                value="verification"
+                class="btn btn-outline-dark"
+            >
+                <i class="bi bi-calendar-check me-1"></i>
+                Vérifier la disponibilité
+            </button>
+
+            <button
+                type="submit"
+                name="btn_submit"
+                value="reservation"
+                class="btn btn-dark"
+                {% if not context.can_submit %}disabled{% endif %}
+            >
+                <i class="bi bi-check-circle me-1"></i>
+                Confirmer la réservation
+            </button>
+
+        </div>
+
+    </form>
+
+</li>
+
+{% endif %}
+
+
 </ul>
-<div class="mt-1 d-flex justify-content-end">
-    <a href="#" class="btn btn-dark">Réserver la place</a>
-</div>
+
 {% endblock %}
