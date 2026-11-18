@@ -1,0 +1,96 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}Modifier réservation | ParkShare{% endblock %}
+{% block recherche %}{% endblock %}
+
+{% set path = "/static/img/stationnement/" %}
+
+{% block contenu %}
+
+<div class="d-flex align-items-center justify-content-between mb-4 mt-3">
+    <h2 class="fw-bold">Modifier votre réservation</h2>
+</div>
+
+<div class="mb-3">
+    <img src="{% if publication.img %}{{ path ~ publication.img }}{% else %}{{ url_for('static', filename='img/placeholder.jpg') }}{% endif %}"
+         class="card-img-top img-fluid" alt="image de l'annonce"
+         style="max-height: 300px; width: 100%; object-fit: cover;">
+</div>
+
+<ul class="list-group list-group-flush">
+    <li class="list-group-item border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Adresse stationnement</span>
+                {{ publication.address }}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Prix ($/heure)</span>
+                {{ publication.price }}
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Place</span>
+                {{ publication.place_total }}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Emplacement</span>
+                {{ publication.location }}
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Ville</span>
+                {{ publication.city }}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Province</span>
+                Québec
+            </div>
+        </div>
+    </li>
+
+    <li class="list-group-item border-0 mb-3">
+        <h5 class="fw-bold mb-3">Modifier la période</h5>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="date_du" class="form-label">Date de début</label>
+                    <input type="datetime-local" id="date_du" name="date_du"
+                           class="form-control"
+                           value="{{ reservation.start|replace(' ', 'T') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="date_au" class="form-label">Date de fin</label>
+                    <input type="datetime-local" id="date_au" name="date_au"
+                           class="form-control"
+                           value="{{ reservation.end|replace(' ', 'T') }}" required>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <a href="{{ url_for('detail.detail_profil') }}" class="btn btn-outline-dark">
+                    Annuler
+                </a>
+                <button type="submit" class="btn btn-dark">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Enregistrer les modifications
+                </button>
+            </div>
+        </form>
+    </li>
+</ul>
+
+{% endblock %}

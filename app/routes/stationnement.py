@@ -263,4 +263,3 @@ def detail(publication_id):
         context=context,
         form=form
     )
-
