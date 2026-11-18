@@ -1,511 +1,154 @@
-
 {% extends "_modele.jinja" %}
 
 {% block title %}
-{{ publication.address }} | ParkShare
+stationnement | ParkShare
 {% endblock %}
 
-{% block body_class %}ps-parking-detail-page{% endblock %}
+{% block recherche%}
+{% endblock %}
+{% set path = "/static/img/stationnement/" %}
 
-{% block page_layout %}
+{% block contenu%}
 
-{% set est_proprietaire = session.get('user_id') == publication.author %}
-{% set est_connecte = session.get('user_id') is not none %}
-{% set prix_formate = "%.2f" | format(publication.price | float) | replace(".", ",") %}
+<div class="d-flex align-items-center justify-content-between mb-4 mt-3">
+    <h2 class=" fw-bold"> Détails de l’annonce</h2>
+    {% if session.get('user_id') == publication.author %}
+    <a href="/stationnement/edit/{{publication.id}}" class="btn btn-dark">Modifier l'annonce</a>
+    {% endif %}
 
-<div class="ps-parking-detail">
+</div>
+<div class="mb-3">
+    <img src="{% if publication.img %} {{path~publication.img}} {%else%} {{url_for('static', filename='img/placeholder.jpg')}} {%endif%}"
+        class="card-img-top img-fluid" alt="image de l'annonce"
+        style="max-height: 300px; width: 100%; object-fit: cover;">
+</div>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Adresse stationnement</span>
+                {{publication.address}}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Prix ($/heure)</span>
+                {{publication.price}}
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Place</span>
+                {{ publication.place_total}}
+            </div>
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Emplacement</span>
+                {{publication.location}}
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item border border-0 border-bottom border-2 border-tertiary mb-2">
+        <div class="row">
+            <div class="col-6 d-flex flex-column">
+                <span class="fw-lighter">Ville</span>
+                {{publication.city}}
+            </div>
+            <div class="col-6 d-flex flex-column fw-bold">
+                <span class="fw-lighter">Province</span>
+                Québec
+            </div>
+        </div>
+    </li>
 
-    <div class="container-fluid ps-site-shell">
+{% if session.get('user_id') and session.get('user_id') != publication.author %}
 
-        <nav class="ps-detail-breadcrumb"
-             aria-label="Fil d'Ariane">
+<li class="list-group-item border-0 border-bottom mb-3">
 
-            <a href="{{ url_for('index') }}">
-                Accueil
-            </a>
+    <h5 class="fw-bold mb-3">Réserver ce stationnement</h5>
 
-            <i class="bi bi-chevron-right"
-               aria-hidden="true"></i>
+    <form method="post" novalidate>
 
-            <a href="{{ url_for('publications.index', page=1) }}">
-                Stationnements
-            </a>
+        <input
+            type="hidden"
+            name="_csrf"
+            value="{{ csrf_token() }}"
+        >
 
-            <i class="bi bi-chevron-right"
-               aria-hidden="true"></i>
+        <div class="row g-3">
 
-            <span aria-current="page">
-                Détail
-            </span>
+            <div class="col-md-6">
+                <label for="date_du" class="form-label">
+                    Date de début
+                </label>
 
-        </nav>
-
-        <header class="ps-detail-header">
-
-            <div>
-
-                <span class="ps-detail-eyebrow">
-                    DÉCOUVRIR UN STATIONNEMENT
-                </span>
-
-                <h1>{{ publication.address }}</h1>
-
-                <p class="ps-detail-location">
-                    <i class="bi bi-geo-alt"
-                       aria-hidden="true"></i>
-
-                    {{ publication.city }}, Québec
-                </p>
-
+                <input
+                    type="datetime-local"
+                    id="date_du"
+                    name="date_du"
+                    class="form-control"
+                    value="{{ form.get('date_du', '') }}"
+                    required
+                >
             </div>
 
-            {% if est_proprietaire %}
-
-            <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
-               class="btn ps-detail-outline-btn">
-
-                <i class="bi bi-pencil-square me-2"
-                   aria-hidden="true"></i>
-
-                Modifier l'annonce
-            </a>
-
-            {% endif %}
-
-        </header>
-
-        <div class="ps-detail-main-grid">
-
-            <div class="ps-detail-main-content">
-
-                <section class="ps-detail-image-card"
-                         aria-label="Photo du stationnement">
-
-                    {% if publication.img %}
-
-                    <img
-                        src="{{ url_for('static', filename='img/stationnement/' ~ publication.img) }}"
-                        alt="Stationnement situé au {{ publication.address }}"
-                        class="ps-detail-image">
-
-                    {% else %}
-
-                    <img
-                        src="{{ url_for('static', filename='img/placeholder.jpg') }}"
-                        alt="Photo non disponible"
-                        class="ps-detail-image">
-
-                    {% endif %}
-
-                </section>
-
-                <section class="ps-detail-card">
-
-                    <div class="ps-detail-section-heading">
-
-                        <span class="ps-detail-section-label">
-                            LE STATIONNEMENT
-                        </span>
-
-                        <h2>Tout ce qu'il faut savoir.</h2>
-
-                        <p>
-                            Les informations essentielles
-                            sur cet emplacement.
-                        </p>
-
-                    </div>
-
-
-                    <div class="ps-detail-features">
-
-                        <div class="ps-detail-feature">
-
-                            <div class="ps-detail-feature-icon">
-                                <i class="bi bi-p-square"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span>Type d'emplacement</span>
-
-                                <strong>
-                                    {{ publication.location }}
-                                </strong>
-                            </div>
-
-                        </div>
-
-                        <div class="ps-detail-feature">
-
-                            <div class="ps-detail-feature-icon">
-                                <i class="bi bi-car-front"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span>Nombre de places</span>
-
-                                <strong>
-                                    {{ publication.place_total }}
-                                    place{% if publication.place_total | int != 1 %}s{% endif %}
-                                </strong>
-                            </div>
-
-                        </div>
-
-                        <div class="ps-detail-feature">
-
-                            <div class="ps-detail-feature-icon">
-                                <i class="bi bi-geo-alt"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span>Ville</span>
-
-                                <strong>
-                                    {{ publication.city }}
-                                </strong>
-                            </div>
-
-                        </div>
-
-                        <div class="ps-detail-feature">
-
-                            <div class="ps-detail-feature-icon">
-                                <i class="bi bi-cash-coin"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span>Tarif horaire</span>
-
-                                <strong>
-                                    {{ prix_formate }} $ / heure
-                                </strong>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <section class="ps-detail-card">
-
-                    <div class="ps-detail-section-heading">
-
-                        <span class="ps-detail-section-label">
-                            LOCALISATION
-                        </span>
-
-                        <h2>Où se trouve ce stationnement ?</h2>
-
-                        <p>
-                            Consultez l'adresse de l'emplacement
-                            avant votre réservation.
-                        </p>
-
-                    </div>
-
-                    <div class="ps-detail-address">
-
-                        <div class="ps-detail-address-icon">
-                            <i class="bi bi-geo-alt-fill"
-                               aria-hidden="true"></i>
-                        </div>
-
-                        <div>
-                            <strong>
-                                {{ publication.address }}
-                            </strong>
-
-                            <p>
-                                {{ publication.city }},
-                                Québec, Canada
-                            </p>
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <section class="ps-detail-availability">
-
-                    <div class="ps-detail-availability-icon">
-                        <i class="bi bi-calendar-check"
-                           aria-hidden="true"></i>
-                    </div>
-
-                    <div>
-
-                        <h2>Une place au bon moment.</h2>
-
-                        <p>
-                            Les disponibilités dépendent des
-                            réservations existantes.
-                            Sélectionnez vos dates pour vérifier
-                            si une place est libre.
-                        </p>
-
-                    </div>
-
-                </section>
-
+            <div class="col-md-6">
+                <label for="date_au" class="form-label">
+                    Date de fin
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="date_au"
+                    name="date_au"
+                    class="form-control"
+                    value="{{ form.get('date_au', '') }}"
+                    required
+                >
             </div>
-
-            <aside class="ps-detail-booking-column">
-
-                <div class="ps-detail-booking-card">
-
-                    <div class="ps-detail-booking-price">
-
-                        <div>
-                            <strong>
-                                {{ prix_formate }} $
-                            </strong>
-
-                            <span>
-                                / heure
-                            </span>
-                        </div>
-
-                        <span class="ps-detail-booking-price-caption">
-                            Tarif du stationnement
-                        </span>
-
-                    </div>
-
-
-                    <div class="ps-detail-booking-divider"></div>
-
-
-                    {% if est_proprietaire %}
-
-                    <div class="ps-detail-owner">
-
-                        <div class="ps-detail-owner-icon">
-                            <i class="bi bi-house-check"
-                               aria-hidden="true"></i>
-                        </div>
-
-                        <h2>C'est votre stationnement.</h2>
-
-                        <p>
-                            Vous pouvez modifier les informations
-                            et la photo de cette annonce depuis
-                            votre espace personnel.
-                        </p>
-
-                        <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
-                           class="btn ps-detail-primary-btn">
-
-                            <i class="bi bi-pencil-square me-2"
-                               aria-hidden="true"></i>
-
-                            Gérer mon annonce
-                        </a>
-
-                        <a href="{{ url_for('detail.mes_reservations') }}"
-                           class="ps-detail-secondary-link">
-
-                            Voir mes réservations
-                            <i class="bi bi-arrow-up-right"
-                               aria-hidden="true"></i>
-
-                        </a>
-
-                    </div>
-
-
-                    {% elif not est_connecte %}
-
-                    <div class="ps-detail-guest">
-
-                        <h2>Réserver ce stationnement</h2>
-
-                        <p>
-                            Connectez-vous à votre compte ParkShare
-                            pour choisir vos dates et effectuer
-                            une réservation.
-                        </p>
-
-                        <a href="{{ url_for('auth.login') }}"
-                           class="btn ps-detail-primary-btn">
-
-                            Se connecter pour réserver
-
-                            <i class="bi bi-arrow-up-right ms-1"
-                               aria-hidden="true"></i>
-
-                        </a>
-
-                        <p class="ps-detail-guest-register">
-                            Pas encore de compte ?
-
-                            <a href="{{ url_for('auth.register') }}">
-                                S'inscrire
-                            </a>
-                        </p>
-
-                    </div>
-
-
-                    {% else %}
-
-                    <div class="ps-detail-booking-form">
-
-                        <h2>Réserver ce stationnement</h2>
-
-                        <p class="ps-detail-booking-intro">
-                            Choisissez votre période de stationnement
-                            et vérifiez les disponibilités.
-                        </p>
-
-                        <form method="POST"
-                              action="{{ url_for('stationnement.detail', publication_id=publication.id) }}"
-                              id="ps-booking-form" novalidate>
-
-                            <input type="hidden"
-                                   name="_csrf"
-                                   value="{{ csrf_token() }}">
-
-
-                            <div class="ps-detail-booking-field">
-
-                                <label for="date_du"
-                                       class="form-label">
-                                    Date et heure d'arrivée
-                                </label>
-
-                                <input
-                                    type="datetime-local"
-                                    id="date_du"
-                                    name="date_du"
-                                    class="form-control"
-                                    value="{{ form.get('date_du', '') }}"
-                                    required>
-
-                            </div>
-
-
-                            <div class="ps-detail-booking-field">
-
-                                <label for="date_au"
-                                       class="form-label">
-                                    Date et heure de départ
-                                </label>
-
-                                <input
-                                    type="datetime-local"
-                                    id="date_au"
-                                    name="date_au"
-                                    class="form-control"
-                                    value="{{ form.get('date_au', '') }}"
-                                    required>
-
-                            </div>
-
-
-                            {% if context.message %}
-
-                            <div
-                                class="ps-detail-booking-message {{ 'ps-detail-message-success' if context.can_submit else 'ps-detail-message-error' }}"
-                                role="status">
-
-                                <i class="bi {{ 'bi-check-circle' if context.can_submit else 'bi-exclamation-circle' }}"
-                                   aria-hidden="true"></i>
-
-                                <span>
-                                    {{ context.message }}
-                                </span>
-
-                            </div>
-
-                            {% endif %}
-
-
-                            <button
-                                type="submit"
-                                name="btn_submit"
-                                value="verification"
-                                class="btn ps-detail-outline-btn ps-detail-booking-verify">
-
-                                <i class="bi bi-calendar-check me-2"
-                                   aria-hidden="true"></i>
-
-                                Vérifier la disponibilité
-
-                            </button>
-
-
-                            <button
-                                type="submit"
-                                name="btn_submit"
-                                value="reservation"
-                                id="ps-confirm-reservation"
-                                class="btn ps-detail-primary-btn"
-                                {% if not context.can_submit %}disabled{% endif %}>
-
-                                <i class="bi bi-check-circle me-2"
-                                   aria-hidden="true"></i>
-
-                                Confirmer la réservation
-
-                            </button>
-
-                        </form>
-
-
-                        <p class="ps-detail-booking-note">
-
-                            <i class="bi bi-info-circle"
-                               aria-hidden="true"></i>
-
-                            Vérifiez la disponibilité avant
-                            de confirmer votre réservation.
-
-                        </p>
-
-                    </div>
-
-                    {% endif %}
-
-                </div>
-
-            </aside>
 
         </div>
 
-    </div>
+        {% if context.message %}
+        <div
+            class="alert {{ 'alert-success' if context.can_submit else 'alert-danger' }} mt-3"
+            role="alert"
+        >
+            {{ context.message }}
+        </div>
+        {% endif %}
 
-</div>
+        <div class="d-flex flex-wrap gap-2 mt-3">
 
-{% endblock %}
+            <button
+                type="submit"
+                name="btn_submit"
+                value="verification"
+                class="btn btn-outline-dark"
+            >
+                <i class="bi bi-calendar-check me-1"></i>
+                Vérifier la disponibilité
+            </button>
+
+            <button
+                type="submit"
+                name="btn_submit"
+                value="reservation"
+                class="btn btn-dark"
+                {% if not context.can_submit %}disabled{% endif %}
+            >
+                <i class="bi bi-check-circle me-1"></i>
+                Confirmer la réservation
+            </button>
+
+        </div>
+
+    </form>
+
+</li>
+
+{% endif %}
 
 
-{% block script %}
-<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+</ul>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const arrivee = document.getElementById("date_du");
-    const depart = document.getElementById("date_au");
-    const confirmation = document.getElementById("ps-confirm-reservation");
-
-    if (!arrivee || !depart || !confirmation) {
-        return;
-    }
-    function invaliderVerification() {
-        confirmation.disabled = true;
-    }
-
-    arrivee.addEventListener("input", invaliderVerification);
-    arrivee.addEventListener("change", invaliderVerification);
-
-    depart.addEventListener("input", invaliderVerification);
-    depart.addEventListener("change", invaliderVerification);
-});
-</script>
 {% endblock %}

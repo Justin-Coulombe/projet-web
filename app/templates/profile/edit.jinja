@@ -1,302 +1,270 @@
-
 {% extends "_modele.jinja" %}
 
 {% block title %}
-Paramètres du compte | ParkShare
+Mon profil | ParkShare
 {% endblock %}
 
-{% block body_class %}ps-profile-edit-page{% endblock %}
+{% block recherche%}
+{% endblock %}
 
-{% block page_layout %}
+{% block contenu %}
 
-<div class="ps-profile-edit">
+<main class="profile-page">
 
-    <div class="container-fluid ps-site-shell">
+    <div class="container py-5">
 
-        <header class="ps-profile-edit-header">
+        <div class="row justify-content-center">
 
-            <span class="ps-profile-edit-eyebrow">
-                MON COMPTE
-            </span>
+            <div class="col-lg-7">
 
-            <h1>Paramètres du compte</h1>
+                <div class="mb-4">
+                    <h1 class="fw-bold">
+                        Mon profil
+                    </h1>
 
-            <p>
-                Gérez vos informations personnelles
-                et la sécurité de votre compte.
-            </p>
+                    <p class="text-secondary">
+                        Modifiez vos informations personnelles
+                        et les paramètres de votre compte.
+                    </p>
+                </div>
 
-        </header>
 
-        <div class="ps-profile-edit-layout">
+                <!-- Informations personnelles -->
 
-{% with active_page = 'parametres' %}
-    {% include "components/_account_sidebar.jinja" %}
-{% endwith %}
+                <div class="card border-0 shadow-sm mb-4">
 
-            <div class="ps-profile-edit-content">
-                <section class="ps-profile-edit-card"
-                         aria-labelledby="personal-title">
+                    <div class="card-body p-4">
 
-                    <div class="ps-profile-edit-card-header">
+                        <h2 class="h5 fw-bold mb-4">
+                            Informations personnelles
+                        </h2>
 
-                        <div>
-                            <span class="ps-profile-edit-section-label">
-                                PROFIL
-                            </span>
 
-                            <h2 id="personal-title">
-                                Informations personnelles
-                            </h2>
-
-                            <p>
-                                Mettez à jour les renseignements
-                                associés à votre compte.
-                            </p>
-                        </div>
-
-                        <div class="ps-profile-edit-header-icon">
-                            <i class="bi bi-person"
-                               aria-hidden="true"></i>
-                        </div>
-
-                    </div>
-
-                    {% if error %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </div>
-                    {% endif %}
-
-                    {% if success %}
-                    <div class="alert alert-success" role="status">
-                        {{ success }}
-                    </div>
-                    {% endif %}
-
-                    <form method="POST"
-                          action="{{ url_for('profile.edit') }}"
-                          novalidate
-                          data-ajax-form="profile">
-
-                        <input type="hidden"
-                               name="_csrf"
-                               value="{{ csrf_token() }}">
-
-                        {% if errors is defined and errors %}
-                        <div class="alert alert-danger"
-                             role="alert"
-                             data-server-errors>
-
-                            {% for field, message in errors.items() %}
-                            <p class="mb-1">{{ message }}</p>
-                            {% endfor %}
-
-                        </div>
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
                         {% endif %}
 
-                        <div class="row g-4">
 
-                            <div class="col-12 col-md-6">
+                        {% if success %}
+                            <div class="alert alert-success">
+                                {{ success }}
+                            </div>
+                        {% endif %}
 
-                                <label for="prenom"
-                                       class="form-label">
-                                    Prénom
-                                </label>
 
-                                <input type="text"
-                                       class="form-control"
-                                       id="prenom"
-                                       name="prenom"
-                                       value="{{ request.form.get('prenom', g.user.prenom) }}"
-                                       maxlength="80"
-                                       autocomplete="given-name"
-                                       required>
+                        <form method="POST" novalidate data-ajax-form="profile" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label
+                                        for="prenom"
+                                        class="form-label"
+                                    >
+                                        Prénom
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="prenom"
+                                        name="prenom"
+                                        value="{{ g.user.prenom }}"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label
+                                        for="nom"
+                                        class="form-label"
+                                    >
+                                        Nom
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="nom"
+                                        name="nom"
+                                        value="{{ g.user.nom }}"
+                                        required
+                                    >
+
+                                </div>
 
                             </div>
 
-                            <div class="col-12 col-md-6">
 
-                                <label for="nom"
-                                       class="form-label">
-                                    Nom
-                                </label>
+                            <div class="mb-4">
 
-                                <input type="text"
-                                       class="form-control"
-                                       id="nom"
-                                       name="nom"
-                                       value="{{ request.form.get('nom', g.user.nom) }}"
-                                       maxlength="80"
-                                       autocomplete="family-name"
-                                       required>
-
-                            </div>
-
-                            <div class="col-12">
-
-                                <label for="email"
-                                       class="form-label">
+                                <label
+                                    for="email"
+                                    class="form-label"
+                                >
                                     Adresse courriel
                                 </label>
 
-                                <input type="email"
-                                       class="form-control"
-                                       id="email"
-                                       name="email"
-                                       value="{{ request.form.get('email', g.user.email) }}"
-                                       maxlength="254"
-                                       autocomplete="email"
-                                       required>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    value="{{ g.user.email }}"
+                                    required
+                                >
 
                             </div>
 
-                        </div>
 
-                        <div class="ps-profile-edit-actions">
+                            <div class="text-end">
 
-                            <button type="submit"
-                                    class="btn ps-profile-edit-btn-primary">
+                                <button
+                                    type="submit"
+                                    class="btn btn-dark px-4"
+                                >
+                                    Enregistrer les modifications
+                                </button>
 
-                                <i class="bi bi-check-lg me-2"
-                                   aria-hidden="true"></i>
+                            </div>
 
-                                Enregistrer les modifications
-
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                </section>
-
-
-                <section class="ps-profile-edit-card"
-                         aria-labelledby="password-title">
-
-                    <div class="ps-profile-edit-card-header">
-
-                        <div>
-                            <span class="ps-profile-edit-section-label">
-                                SÉCURITÉ
-                            </span>
-
-                            <h2 id="password-title">
-                                Mot de passe
-                            </h2>
-
-                            <p>
-                                Modifiez votre mot de passe
-                                pour sécuriser votre compte.
-                            </p>
-                        </div>
-
-                        <div class="ps-profile-edit-header-icon">
-                            <i class="bi bi-shield-lock"
-                               aria-hidden="true"></i>
-                        </div>
+                        </form>
 
                     </div>
 
-                    {% if password_error %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ password_error }}
-                    </div>
-                    {% endif %}
+                </div>
 
-                    {% if password_success %}
-                    <div class="alert alert-success" role="status">
-                        {{ password_success }}
-                    </div>
-                    {% endif %}
+                <div class="card border-0 shadow-sm">
 
-                    <form method="POST"
-                          action="{{ url_for('profile.change_password') }}"
-                          novalidate
-                          data-ajax-form="password">
+                    <div class="card-body p-4">
 
-                        <input type="hidden"
-                               name="_csrf"
-                               value="{{ csrf_token() }}">
+                        <h2 class="h5 fw-bold mb-1">
+                            Mot de passe
+                        </h2>
 
-                        <div class="mb-4">
+                        <p class="text-secondary mb-4">
+                            Modifiez le mot de passe utilisé pour
+                            vous connecter à votre compte.
+                        </p>
 
-                            <label for="current_password"
-                                   class="form-label">
-                                Mot de passe actuel
-                            </label>
 
-                            <input type="password"
-                                   class="form-control"
-                                   id="current_password"
-                                   name="current_password"
-                                   autocomplete="current-password"
-                                   required>
+                        {% if password_error %}
+                            <div class="alert alert-danger">
+                                {{ password_error }}
+                            </div>
+                        {% endif %}
 
-                        </div>
 
-                        <div class="row g-4">
+                        {% if password_success %}
+                            <div class="alert alert-success">
+                                {{ password_success }}
+                            </div>
+                        {% endif %}
 
-                            <div class="col-12 col-md-6">
 
-                                <label for="new_password"
-                                       class="form-label">
+                        <form
+                            method="POST"
+                            action="{{ url_for('profile.change_password') }}"
+                            novalidate
+                         data-ajax-form="password" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="current_password"
+                                    class="form-label"
+                                >
+                                    Mot de passe actuel
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="current_password"
+                                    name="current_password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="new_password"
+                                    class="form-label"
+                                >
                                     Nouveau mot de passe
                                 </label>
 
-                                <input type="password"
-                                       class="form-control"
-                                       id="new_password"
-                                       name="new_password"
-                                       minlength="8"
-                                       maxlength="128"
-                                       autocomplete="new-password"
-                                       required>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="new_password"
+                                    name="new_password"
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <div class="form-text">
+                                    Minimum 8 caractères.
+                                </div>
 
                             </div>
 
-                            <div class="col-12 col-md-6">
 
-                                <label for="confirm_password"
-                                       class="form-label">
-                                    Confirmer le mot de passe
+                            <div class="mb-4">
+
+                                <label
+                                    for="confirm_password"
+                                    class="form-label"
+                                >
+                                    Confirmer le nouveau mot de passe
                                 </label>
 
-                                <input type="password"
-                                       class="form-control"
-                                       id="confirm_password"
-                                       name="confirm_password"
-                                       minlength="8"
-                                       maxlength="128"
-                                       autocomplete="new-password"
-                                       required>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    required
+                                >
 
                             </div>
 
-                        </div>
 
-                        <p class="ps-profile-edit-password-hint">
-                            <i class="bi bi-info-circle me-1"
-                               aria-hidden="true"></i>
-                            Le mot de passe doit contenir
-                            entre 8 et 128 caractères.
-                        </p>
+                            <div class="text-end">
 
-                        <div class="ps-profile-edit-actions">
+                                <button
+                                    type="submit"
+                                    class="btn btn-outline-dark px-4"
+                                >
+                                    Modifier le mot de passe
+                                </button>
 
-                            <button type="submit"
-                                    class="btn ps-profile-edit-btn-outline">
+                            </div>
 
-                                Modifier le mot de passe
+                        </form>
 
-                            </button>
+                    </div>
 
-                        </div>
-
-                    </form>
-
-                </section>
+                </div>
 
             </div>
 
@@ -304,6 +272,6 @@ Paramètres du compte | ParkShare
 
     </div>
 
-</div>
+</main>
 
 {% endblock %}

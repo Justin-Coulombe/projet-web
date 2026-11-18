@@ -1,46 +1,34 @@
-
 {% extends "_modele.jinja" %}
 
 {% block title %}
 Mon profil | ParkShare
 {% endblock %}
 
-{% block body_class %}ps-profile-page{% endblock %}
+{% block recherche %}{% endblock %}
 
-{% block page_layout %}
+{% block contenu %}
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <i class="d-flex justify-content-center bi bi-person-circle" style="font-size: 100px;"></i>
+                    <h4 class="card-title text-center">{{ g.user.nom }} {{ g.user.prenom }}</h4>
 
-<div class="ps-profile-edit ps-account-page">
+                    <p class="card-subtitle fg-3 fw-bold">Nom</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{ g.user.nom }}</p>
+                    <p class="card-subtitle fg-3 fw-bold">Prénom</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{ g.user.prenom }}</p>
+                    <p class="card-subtitle fg-3 fw-bold">Courriel</p>
+                    <p class="card-subtitle fg-3 opacity-75">{{ g.user.email }}</p>
 
-    <div class="container-fluid ps-site-shell">
-
-        <header class="ps-profile-edit-header">
-
-            <span class="ps-profile-edit-eyebrow">
-                MON COMPTE
-            </span>
-
-            <h1>Mon profil</h1>
-
-            <p>
-                Retrouvez vos informations,
-                vos annonces et votre activité sur ParkShare.
-            </p>
-
-        </header>
-
-        <div class="ps-profile-edit-layout">
-
-            {% with active_page = 'profil' %}
-                {% include "components/_account_sidebar.jinja" %}
-            {% endwith %}
-
-            <div class="ps-profile-edit-content">
-
-                {% if success %}
-                <div class="alert alert-success" role="status">
-                    {{ success }}
+                    <div class="d-grid gap-2 mt-2">
+                        <a href="/profile" class="bi bi-pencil-square btn btn-outline-dark">
+                            Modifier mon profil
+                        </a>
+                    </div>
                 </div>
-                {% endif %}
+            </div>
 
             <div class="row g-2 mt-2 text-center">
                 <div class="col-md-6">
@@ -69,9 +57,12 @@ Mon profil | ParkShare
                 </a>
             </div>
         </div>
-                <section class="ps-profile-edit-card">
 
-                    <div class="ps-profile-edit-card-header">
+        <div class="col-md-9">
+            <!-- Mes annonces -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4>Mes annonces</h4>
 
                     {% if success %}
                     <div class="alert alert-success">{{ success }}</div>
@@ -172,7 +163,8 @@ Mon profil | ParkShare
                                     </td>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ url_for('detail.edit', reservation_id=reservation.id) }}" class="btn btn-outline-primary btn-sm">
+                                            <a href="{{ url_for('detail.edit', reservation_id=reservation.id) }}"
+                                                class="btn btn-outline-primary btn-sm">
                                                 <i class="bi bi-pencil-square"></i>
                                                 Modifier
                                             </a>
@@ -184,175 +176,6 @@ Mon profil | ParkShare
                                                     <i class="bi bi-trash"></i>
                                                     Supprimer
                                                 </button>
-                        <div>
-                            <span class="ps-profile-edit-section-label">
-                                VOTRE PROFIL
-                            </span>
-
-                            <h2>Informations personnelles</h2>
-
-                            <p>
-                                Les informations associées
-                                à votre compte ParkShare.
-                            </p>
-                        </div>
-
-                        <div class="ps-profile-edit-header-icon">
-                            <i class="bi bi-person"
-                               aria-hidden="true"></i>
-                        </div>
-
-                    </div>
-
-                    <div class="ps-account-profile-info">
-
-                        <div>
-                            <span>Prénom</span>
-                            <strong>{{ g.user.prenom }}</strong>
-                        </div>
-
-                        <div>
-                            <span>Nom</span>
-                            <strong>{{ g.user.nom }}</strong>
-                        </div>
-
-                        <div class="ps-account-info-full">
-                            <span>Adresse courriel</span>
-                            <strong>{{ g.user.email }}</strong>
-                        </div>
-
-                    </div>
-
-                    <div class="ps-profile-edit-actions">
-
-                        <a href="{{ url_for('profile.edit') }}"
-                           class="btn ps-profile-edit-btn-outline">
-
-                            <i class="bi bi-pencil-square me-2"
-                               aria-hidden="true"></i>
-
-                            Modifier mes informations
-                        </a>
-
-                    </div>
-
-                </section>
-
-                <section class="ps-profile-edit-card">
-
-                    <div class="ps-account-section-heading">
-
-                        <div>
-                            <span class="ps-profile-edit-section-label">
-                                STATIONNEMENTS
-                            </span>
-
-                            <h2>Mes annonces</h2>
-
-                            <p>
-                                Gérez les places de stationnement
-                                que vous proposez.
-                            </p>
-                        </div>
-
-                        <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
-                           class="btn ps-profile-edit-btn-primary">
-
-                            <i class="bi bi-plus-lg me-1"
-                               aria-hidden="true"></i>
-
-                            Ajouter
-                        </a>
-
-                    </div>
-
-
-                    {% if lst_pubications %}
-
-                    <div class="table-responsive">
-
-                        <table class="table ps-account-table align-middle">
-
-                            <thead>
-                                <tr>
-                                    <th scope="col">Stationnement</th>
-                                    <th scope="col">Prix</th>
-                                    <th scope="col">Places</th>
-                                    <th scope="col">Emplacement</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                {% for publication in lst_pubications %}
-
-                                <tr>
-
-                                    <td>
-                                        <a href="{{ url_for('stationnement.detail', publication_id=publication.id) }}"
-                                           class="ps-account-table-link">
-
-                                            <strong>
-                                                {{ publication.address }}
-                                            </strong>
-
-                                            <span>
-                                                {{ publication.city }}
-                                            </span>
-
-                                        </a>
-                                    </td>
-
-                                    <td class="text-nowrap">
-                                        <strong>
-                                            {{ "%.2f" | format(publication.price | float) | replace(".", ",") }} $
-                                        </strong>
-
-                                        <span class="ps-account-muted">
-                                            /h
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        {{ publication.placeTotal }}
-                                    </td>
-
-                                    <td>
-                                        <span class="ps-account-tag">
-                                            {{ publication.location }}
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <div class="ps-account-table-actions">
-
-                                            <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
-                                               class="btn ps-account-action-button"
-                                               aria-label="Modifier l'annonce {{ publication.address }}">
-
-                                                <i class="bi bi-pencil-square"
-                                                   aria-hidden="true"></i>
-                                            </a>
-
-                                            <form method="POST"
-                                                  action="{{ url_for('stationnement.delete', publication_id=publication.id) }}"
-                                                  data-ajax-form="delete"
-                                                  data-confirm="Supprimer définitivement cette annonce ?">
-
-                                                <input type="hidden"
-                                                       name="_csrf"
-                                                       value="{{ csrf_token() }}">
-
-                                                <button type="submit"
-                                                        class="btn ps-account-action-button ps-account-action-danger"
-                                                        aria-label="Supprimer l'annonce {{ publication.address }}">
-
-                                                    <i class="bi bi-trash"
-                                                       aria-hidden="true"></i>
-
-                                                </button>
-
                                             </form>
 
                                         </div>
@@ -390,8 +213,10 @@ Mon profil | ParkShare
                             <tbody>
                                 {% for reservation in reservations_recues %}
                                 <tr>
-                                    <td>#{{ reservation.id }}</td>
-                                    {# <td><a href="{{}}"> #}
+                                    <td>
+                                        <a href="{{ url_for('detail.client', client_id=reservation.client_id) }}"
+                                            class="text-dark text-decoration-none fw-semibold">
+                                            {{ reservation.client_prenom }} {{ reservation.client_nom }}
                                         </a>
                                     </td>
                                     <td>
@@ -427,77 +252,10 @@ Mon profil | ParkShare
                             Ajouter un stationnement
                         </a>
                     </div>
-
-                                </tr>
-
-                                {% endfor %}
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                    {% else %}
-
-                    <div class="ps-account-empty">
-
-                        <i class="bi bi-p-square"
-                           aria-hidden="true"></i>
-
-                        <h3>Aucune annonce pour le moment</h3>
-
-                        <p>
-                            Vous n'avez pas encore publié
-                            de stationnement sur ParkShare.
-                        </p>
-
-                        <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
-                           class="btn ps-profile-edit-btn-primary">
-
-                            Proposer une place
-                        </a>
-
-                    </div>
-
                     {% endif %}
-
-                </section>
-
-                <section class="ps-account-reservations-banner">
-
-                    <div>
-                        <span class="ps-profile-edit-section-label">
-                            ACTIVITÉ
-                        </span>
-
-                        <h2>Vos réservations au même endroit.</h2>
-
-                        <p>
-                            Consultez vos réservations effectuées
-                            et celles reçues sur vos stationnements.
-                        </p>
-                    </div>
-
-                    <a href="{{ url_for('detail.mes_reservations') }}"
-                       class="btn ps-account-banner-button">
-
-                        Voir mes réservations
-
-                        <i class="bi bi-arrow-up-right ms-1"
-                           aria-hidden="true"></i>
-
-                    </a>
-
-                </section>
-
+                </div>
             </div>
-
         </div>
-
     </div>
-
 </div>
-{% endblock %}
-
 {% endblock %}

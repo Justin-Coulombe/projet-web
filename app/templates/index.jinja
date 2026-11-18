@@ -1,407 +1,115 @@
-
 {% extends "_modele.jinja" %}
 
-{% block title %}
-Accueil | ParkShare
+{%block centered_title %}
+<div class="hero pb-3">
+    <h1 class="display-5 fw-bold mb-3">Trouvez une place de stationnement,<br>près de chez vous.</h1>
+    <p class="mb-4">Louez des espaces de stationnement privés, simplement et en toute confiance.</p>
+    <form action="/publications/recherche" method="get" id="research"
+        class="bg-white rounded-3 p-1 mx-auto shadow needs-validation" style="max-width: 1100px;" novalidate>
+        <div class="row g-2 align-items-center">
+            <div class="col-md-2">
+                <div class="input-group border-end">
+                    <span class="input-group-text bg-white border-0"><i class="bi bi-geo-alt"></i></span>
+                    <select id="ville" name="ville" class="form-select {{classe_ville}} border-0 ">
+                        <option selected value="">Choisissez la ville</option>
+                        <option {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
+                        <option {% if ville=="Québec" %}selected{% endif %}>Québec</option>
+                        <option {% if ville=="Laval" %}selected{% endif %}>Laval</option>
+                        <option {% if ville=="Gatineau" %}selected{% endif %}>Gatineau</option>
+                        <option {% if ville=="Longueuil" %}selected{% endif %}>Longueuil</option>
+                        <option {% if ville=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
+                        <option {% if ville=="Lévis" %}selected{% endif %}>Lévis</option>
+                        <option {% if ville=="Saguenay" %}selected{% endif %}>Saguenay</option>
+                        <option {% if ville=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières</option>
+                        <option {% if ville=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
+                        <option {% if ville=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>
+                            Saint-Jean-sur-Richelieu</option>
+                        <option {% if ville=="Brossard" %}selected{% endif %}>Brossard</option>
+                        <option {% if ville=="Repentigny" %}selected{% endif %}>Repentigny</option>
+                        <option {% if ville=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
+                        <option {% if ville=="Drummondville" %}selected{% endif %}>Drummondville</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 broder border-end">
+                <input name="debut" type="datetime-local" class="form-control border-0" aria-label="Date de début">
+            </div>
+            <div class="col-md-3">
+                <input name="fin" type="datetime-local" class="form-control border-0" aria-label="Date de fin">
+                <div class="invalid-feedback">{{context.time_message}}</div>
+            </div>
+            <div class="col-md-2 border-0">
+                <select class="form-select" name="filter">
+                    <option selected value="Tous">Tous</option>
+                    <option value="Intérieur">Intérieur</option>
+                    <option value="Extérieur">Extérieur</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button id="submit_btn" type="submit" class="bi bi-search btn btn-dark"> Rechercher</button>
+            </div>
+        </div>
+    </form>
+</div>
+{%endblock%}
+{% block recherche %}
 {% endblock %}
 
-{% block body_class %}ps-home-page{% endblock %}
+{% block contenu %}
+<div class="container mt-2">
+    <div class="d-flex align-items-center justify-content-between">
+        <p class="fs-4 fw-bold">Annonces du moment</p>
+        <a href="{{url_for('publications.index', page=1)}}" class="link-underline link-underline-opacity-0 text-black">
+            <p class="fs-6">Voir toutes les publications →</p>
+        </a>
+    </div>
 
-{% block page_layout %}
 
-{% set publications = context.publications | default([]) %}
-{% set image_fallback = url_for('static', filename='img/placeholder.jpg') %}
+<ul class="list-unstyled row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
 
-<div class="ps-home">
+    {% set path = "/static/img/stationnement/" %}
 
-    <section class="ps-home-hero-section">
-        <div class="container-fluid ps-site-shell">
+    {% for item in context.publications %}
 
-            <div class="ps-home-hero">
+    <li class="col d-flex">
 
-                <div class="ps-home-hero-content">
+        <a href="{{ url_for('stationnement.detail', publication_id=item.id) }}"
+           class="text-decoration-none text-dark w-100">
 
-                    <span class="ps-home-eyebrow">
-                        Le stationnement, en mieux.
-                    </span>
+            <div class="card h-100 shadow-sm overflow-hidden">
 
-                    <h1>
-                        Moins de tours.<br>
-                        Plus de détours<br>
-                        qui en valent la peine.
-                    </h1>
+                <img
+                    src="{% if item.img %}{{ path ~ item.img }}{% else %}{{ url_for('static', filename='img/placeholder.jpg') }}{% endif %}"
+                    class="card-img-top"
+                    alt="Photo du stationnement"
+                    style="height: 170px; object-fit: cover;">
 
-                    <p class="ps-home-hero-description">
-                        Trouvez une place près de chez vous.<br>
-                        Louez des espaces privés, simplement<br>
-                        et en toute confiance.
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title fw-bold fs-6">
+                        {{ item.address }}, {{ item.city }}
+                    </h5>
+
+                    <p class="fw-bold mb-2">
+                        {{ item.price }} $
+                        <span class="fw-normal text-muted">/heure</span>
                     </p>
 
-                </div>
-
-                <div class="ps-home-hero-media">
-
-                    {% if publications and publications[0].img %}
-                        <img
-                            src="{{ url_for('static', filename='img/stationnement/' ~ publications[0].img) }}"
-                            alt="Stationnement privé près d'un immeuble"
-                            class="ps-home-hero-image">
-                    {% else %}
-                        <img
-                            src="{{ image_fallback }}"
-                            alt="Stationnement"
-                            class="ps-home-hero-image">
-                    {% endif %}
-
-                    <span class="ps-home-hero-caption">
-                        Pensé pour les villes du Québec
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="ps-home-search-wrapper">
-
-                <form
-                    action="{{ url_for('publications.recherche') if false else '/publications/recherche' }}"
-                    method="GET"
-                    id="research"
-                    class="ps-home-search needs-validation"
-                    novalidate>
-
-                    <div class="ps-home-search-grid">
-
-                        <div class="ps-home-search-field">
-
-                            <label for="ville" class="form-label">
-                                Où allez-vous ?
-                            </label>
-
-                            <select
-                                id="ville"
-                                name="ville"
-                                class="form-select {{ classe_ville | default('') }}">
-
-                                <option value="" selected>
-                                    Choisir une ville
-                                </option>
-
-                                {% for nom_ville in [
-                                    "Montréal",
-                                    "Québec",
-                                    "Laval",
-                                    "Gatineau",
-                                    "Longueuil",
-                                    "Sherbrooke",
-                                    "Lévis",
-                                    "Saguenay",
-                                    "Trois-Rivières",
-                                    "Terrebonne",
-                                    "Saint-Jean-sur-Richelieu",
-                                    "Brossard",
-                                    "Repentigny",
-                                    "Saint-Jérôme",
-                                    "Drummondville"
-                                ] %}
-
-                                    <option
-                                        value="{{ nom_ville }}"
-                                        {% if ville is defined and ville == nom_ville %}
-                                            selected
-                                        {% endif %}>
-                                        {{ nom_ville }}
-                                    </option>
-
-                                {% endfor %}
-
-                            </select>
-
-                        </div>
-
-                        <div class="ps-home-search-field">
-
-                            <label for="debut" class="form-label">
-                                Arrivée
-                            </label>
-
-                            <input
-                                type="datetime-local"
-                                id="debut"
-                                name="debut"
-                                class="form-control"
-                                aria-label="Date et heure d'arrivée">
-
-                        </div>
-
-                        <div class="ps-home-search-field">
-
-                            <label for="fin" class="form-label">
-                                Départ
-                            </label>
-
-                            <input
-                                type="datetime-local"
-                                id="fin"
-                                name="fin"
-                                class="form-control"
-                                aria-label="Date et heure de départ">
-
-                            <div class="invalid-feedback">
-                                {{ context.time_message | default('') }}
-                            </div>
-
-                        </div>
-
-                        <div class="ps-home-search-field">
-
-                            <label for="filter" class="form-label">
-                                Emplacement
-                            </label>
-
-                            <select
-                                id="filter"
-                                name="filter"
-                                class="form-select">
-
-                                <option value="Tous" selected>
-                                    Tous
-                                </option>
-
-                                <option value="Intérieur">
-                                    Intérieur
-                                </option>
-
-                                <option value="Extérieur">
-                                    Extérieur
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="ps-home-search-submit">
-
-                            <button
-                                id="submit_btn"
-                                type="submit"
-                                class="btn ps-home-search-button">
-
-                                Rechercher
-
-                                <i
-                                    class="bi bi-arrow-up-right ms-1"
-                                    aria-hidden="true"></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-    </section>
-
-
-    <section class="ps-home-listings">
-
-        <div class="container-fluid ps-site-shell">
-
-            <div class="ps-home-section-heading">
-
-                <div>
-                    <h2>Votre place vous attend.</h2>
-
-                    <p>
-                        Quelques stationnements à découvrir
-                        dans votre ville.
-                    </p>
-                </div>
-
-                <a
-                    href="{{ url_for('publications.index', page=1) }}"
-                    class="ps-home-section-link">
-
-                    Toutes les annonces
-
-                    <i
-                        class="bi bi-arrow-up-right"
-                        aria-hidden="true"></i>
-
-                </a>
-
-            </div>
-
-            {% if publications %}
-
-                <div class="row g-4">
-
-                    {% for item in publications[:3] %}
-
-                        <div class="col-12 col-md-6 col-lg-4 d-flex">
-
-                            <a
-                                href="{{ url_for('stationnement.detail', publication_id=item.id) }}"
-                                class="ps-home-parking-card">
-
-                                <div class="ps-home-parking-image-wrapper">
-
-                                    {% if item.img %}
-                                        <img
-                                            src="{{ url_for('static', filename='img/stationnement/' ~ item.img) }}"
-                                            alt="Stationnement situé au {{ item.address }}"
-                                            class="ps-home-parking-image"
-                                            loading="lazy">
-                                    {% else %}
-                                        <img
-                                            src="{{ image_fallback }}"
-                                            alt="Photo non disponible"
-                                            class="ps-home-parking-image"
-                                            loading="lazy">
-                                    {% endif %}
-
-                                </div>
-
-                                <div class="ps-home-parking-body">
-
-                                    <span class="ps-home-parking-city">
-                                        {{ item.city }}
-                                    </span>
-
-                                    <h3 class="ps-home-parking-address">
-                                        {{ item.address }}
-                                    </h3>
-
-                                    <p class="ps-home-parking-meta">
-
-                                        {{ item.location }}
-
-                                        <span aria-hidden="true">·</span>
-
-                                        {{ item.place_total }}
-                                        place{% if item.place_total | int != 1 %}s{% endif %}
-
-                                    </p>
-
-                                    <div class="ps-home-parking-footer">
-
-                                        <div class="ps-home-parking-price">
-
-                                            <strong>
-                                                {{ "%.2f" | format(item.price | float) | replace(".", ",") }} $
-                                            </strong>
-
-                                            <span>/ heure</span>
-
-                                        </div>
-
-                                        <span class="ps-home-parking-action">
-                                            Voir l'annonce
-                                            <i
-                                                class="bi bi-arrow-up-right"
-                                                aria-hidden="true"></i>
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            </a>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <div class="ps-home-empty">
-                    <i class="bi bi-p-square"></i>
-
-                    <h3>Aucune annonce pour le moment</h3>
-
-                    <p>
-                        Revenez bientôt découvrir
-                        de nouveaux stationnements.
-                    </p>
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </section>
-
-
-    <section id="how" class="ps-home-how-section">
-
-        <div class="container-fluid ps-site-shell">
-
-            <div class="ps-home-how">
-
-                <h2>Une place. Trois étapes.</h2>
-
-                <div class="row g-4 g-lg-5">
-
-                    <div class="col-12 col-md-4">
-
-                        <div class="ps-home-step">
-
-                            <span class="ps-home-step-number">
-                                01
-                            </span>
-
-                            <h3>Recherchez</h3>
-
-                            <p>
-                                Une ville, des dates et une place
-                                qui correspond à vos besoins.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-12 col-md-4">
-
-                        <div class="ps-home-step">
-
-                            <span class="ps-home-step-number">
-                                02
-                            </span>
-
-                            <h3>Réservez</h3>
-
-                            <p>
-                                Choisissez votre période et
-                                confirmez votre réservation.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-12 col-md-4">
-
-                        <div class="ps-home-step">
-
-                            <span class="ps-home-step-number">
-                                03
-                            </span>
-
-                            <h3>Stationnez</h3>
-
-                            <p>
-                                Profitez de votre place et
-                                de tout ce qui vous attend.
-                            </p>
-
-                        </div>
+                    <div class="mt-auto">
+
+                        <p class="card-text small text-muted mb-2">
+                            <i class="bi bi-house me-1"></i>
+                            {{ item.location }}
+                        </p>
+
+                        <p class="card-text small text-muted mb-2">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            {{ item.place_total }} place(s)
+                        </p>
+
+                        <span class="badge bg-secondary">
+                            Voir les disponibilités
+                        </span>
 
                     </div>
 
@@ -409,10 +117,41 @@ Accueil | ParkShare
 
             </div>
 
-        </div>
+        </a>
 
-    </section>
+    </li>
+
+    {% endfor %}
+
+</ul>
 
 </div>
+{% endblock %}
 
+{%block section_how %}
+<section id="how" class="bg-light py-5 text-center">
+    <div>
+        <h2 class="fw-bold mb-5">Comment ça marche ?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h2 class="bi bi-1-circle-fill"></h2>
+                <h3 class="h6 fw-bold">Recherchez</h3>
+                <p class="small text-muted mx-auto" style="max-width:230px">Trouvez une place selon vos besoins
+                    et vos critères.</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="bi bi-2-circle-fill"></h2>
+                <h3 class="h6 fw-bold">Réservez</h3>
+                <p class="small text-muted mx-auto" style="max-width:230px">Choisissez une période et confirmez
+                    votre réservation.</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="bi bi-3-circle-fill"></h2>
+                <h3 class="h6 fw-bold">Stationnez</h3>
+                <p class="small text-muted mx-auto" style="max-width:230px">Profitez de votre place en toute
+                    tranquillité.</p>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

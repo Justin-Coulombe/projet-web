@@ -1,540 +1,155 @@
-
 {% extends "_modele.jinja" %}
-
-{% block title %}
-Ajouter un stationnement | ParkShare
-{% endblock %}
-
-{% block body_class %}ps-parking-create-page{% endblock %}
-
 {% block extra_head %}
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 {% endblock %}
 
-{% block page_layout %}
-
-<div class="ps-parking-create">
-
-    <div class="container-fluid ps-site-shell">
-
-        <header class="ps-parking-create-header">
-
-            <span class="ps-parking-create-eyebrow">
-                DEVENIR ANNONCEUR
-            </span>
-
-            <h1>Proposer une place</h1>
-
-            <p>
-                Transformez votre stationnement inutilisé
-                en une opportunité. Publiez votre annonce
-                en quelques étapes.
-            </p>
-
-        </header>
-
-
-        <form id="ajout_form"
-              action="{{ url_for('stationnement.ajouter_stationnement') }}"
-              method="POST"
-              enctype="multipart/form-data"
-              data-ajax-form="parking"
-              novalidate>
-
-            <input type="hidden"
-                   name="_csrf"
-                   value="{{ csrf_token() }}">
-
-            <input type="hidden"
-                   id="geocode-token"
-                   name="geocode_token">
-
-            {% if errors %}
-            <div class="alert alert-danger mb-4"
-                 role="alert"
-                 data-server-errors>
-
-                {% for field, message in errors.items() %}
-                <p class="mb-1">{{ message }}</p>
-                {% endfor %}
-
-            </div>
-            {% endif %}
-
-
-            <div class="ps-parking-create-layout">
-
-                <div class="ps-parking-create-main">
-
-                    <section class="ps-parking-create-card">
-
-                        <div class="ps-parking-create-card-heading">
-
-                            <div class="ps-parking-create-card-icon">
-                                <i class="bi bi-geo-alt"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span class="ps-parking-create-section-label">
-                                    ÉTAPE 01
-                                </span>
-
-                                <h2>Où se trouve votre place ?</h2>
-
-                                <p>
-                                    Indiquez l'adresse exacte
-                                    du stationnement.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="row g-4">
-
-                            <div class="col-12">
-
-                                <label for="adresse"
-                                       class="form-label">
-                                    Adresse du stationnement
-                                </label>
-
-                                <input type="text"
-                                       id="adresse"
-                                       name="adresse"
-                                       class="form-control {{ classe_adresse | default('') }}"
-                                       placeholder="Ex. 133 boulevard de l'Entente"
-                                       value="{{ adresse | default('') }}"
-                                       autocomplete="street-address"
-                                       maxlength="200"
-                                       required>
-
-                                <div class="invalid-feedback">
-                                    {{ msg_adresse | default('') }}
-                                </div>
-
-                            </div>
-
-                            <div class="col-12 col-md-6">
-
-                                <label for="ville"
-                                       class="form-label">
-                                    Ville
-                                </label>
-
-                                <select id="ville"
-                                        name="ville"
-                                        class="form-select {{ classe_ville | default('') }}"
-                                        required>
-
-                                    <option value="">
-                                        Choisissez une ville
-                                    </option>
-
-                                    {% for nom_ville in [
-                                        "Montréal",
-                                        "Québec",
-                                        "Laval",
-                                        "Gatineau",
-                                        "Longueuil",
-                                        "Sherbrooke",
-                                        "Lévis",
-                                        "Saguenay",
-                                        "Trois-Rivières",
-                                        "Terrebonne",
-                                        "Saint-Jean-sur-Richelieu",
-                                        "Brossard",
-                                        "Repentigny",
-                                        "Saint-Jérôme",
-                                        "Drummondville"
-                                    ] %}
-
-                                    <option value="{{ nom_ville }}"
-                                        {% if ville | default('') == nom_ville %}
-                                            selected
-                                        {% endif %}>
-                                        {{ nom_ville }}
-                                    </option>
-
-                                    {% endfor %}
-
-                                </select>
-
-                                <div class="invalid-feedback">
-                                    {{ msg_ville | default('') }}
-                                </div>
-
-                            </div>
-
-                            <div class="col-12 col-md-6">
-
-                                <label for="province"
-                                       class="form-label">
-                                    Province
-                                </label>
-
-                                <input type="text"
-                                       id="province"
-                                       class="form-control"
-                                       value="Québec"
-                                       disabled>
-
-                            </div>
-
-                        </div>
-
-                        <div class="ps-parking-create-geocode">
-
-                            <div class="ps-parking-create-geocode-heading">
-
-                                <div>
-                                    <h3>Vérifier la localisation</h3>
-
-                                    <p>
-                                        Vérifiez l'adresse sur la carte
-                                        avant de publier votre annonce.
-                                    </p>
-                                </div>
-
-                            </div>
-
-                            <button type="button"
-                                    id="verifier-adresse"
-                                    class="btn ps-parking-create-btn-outline">
-
-                                <i class="bi bi-geo-alt me-2"
-                                   aria-hidden="true"></i>
-
-                                Vérifier l'adresse
-
-                            </button>
-
-                            <p id="geocode-status"
-                               class="small mt-2 mb-0"
-                               role="status"
-                               aria-live="polite"></p>
-
-                            {% if msg_position %}
-                            <p class="text-danger small mt-2">
-                                {{ msg_position }}
-                            </p>
-                            {% endif %}
-
-                            <div id="geocode-preview"
-                                 class="ps-parking-create-geocode-preview"
-                                 hidden>
-
-                                <div class="ps-parking-create-success">
-
-                                    <i class="bi bi-check-circle-fill"
-                                       aria-hidden="true"></i>
-
-                                    <div>
-                                        <strong>Adresse trouvée !</strong>
-
-                                        <p id="adresse-reconnue"
-                                           class="mb-1"></p>
-
-                                        <small>
-                                            Vérifiez que le repère correspond
-                                            bien à votre stationnement.
-                                        </small>
-                                    </div>
-
-                                </div>
-
-                                <div id="geocode-map"
-                                     aria-label="Carte de vérification de l'adresse">
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <section class="ps-parking-create-card">
-
-                        <div class="ps-parking-create-card-heading">
-
-                            <div class="ps-parking-create-card-icon">
-                                <i class="bi bi-p-square"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span class="ps-parking-create-section-label">
-                                    ÉTAPE 02
-                                </span>
-
-                                <h2>Les détails du stationnement</h2>
-
-                                <p>
-                                    Définissez les caractéristiques
-                                    et le tarif de votre place.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="row g-4">
-
-                            <div class="col-12 col-md-6">
-
-                                <label for="prix"
-                                       class="form-label">
-                                    Prix par heure
-                                </label>
-
-                                <div class="input-group ps-parking-create-input-group">
-
-                                    <input type="number"
-                                           id="prix"
-                                           name="prix"
-                                           class="form-control {{ classe_prix | default('') }}"
-                                           value="{{ prix | default('') }}"
-                                           placeholder="Ex. 5.00"
-                                           min="0.01"
-                                           max="1000"
-                                           step="0.01"
-                                           required>
-
-                                    <span class="input-group-text">
-                                        $ / heure
-                                    </span>
-
-                                </div>
-
-                                <div class="invalid-feedback">
-                                    {{ msg_prix | default('') }}
-                                </div>
-
-                            </div>
-
-                            <div class="col-12 col-md-6">
-
-                                <label for="place"
-                                       class="form-label">
-                                    Nombre de places
-                                </label>
-
-                                <input type="number"
-                                       id="place"
-                                       name="place"
-                                       class="form-control {{ classe_place | default('') }}"
-                                       value="{{ place | default('') }}"
-                                       placeholder="Ex. 1"
-                                       min="1"
-                                       max="100"
-                                       step="1"
-                                       required>
-
-                                <div class="invalid-feedback">
-                                    {{ msg_place | default('') }}
-                                </div>
-
-                            </div>
-
-                            <div class="col-12">
-
-                                <label for="emplacement"
-                                       class="form-label">
-                                    Type de stationnement
-                                </label>
-
-                                <select id="emplacement"
-                                        name="emplacement"
-                                        class="form-select {{ classe_emplacement | default('') }}"
-                                        required>
-
-                                    <option value="">
-                                        Sélectionnez un type
-                                    </option>
-
-                                    <option value="Intérieur"
-                                        {% if emplacement | default('') == 'Intérieur' %}
-                                            selected
-                                        {% endif %}>
-                                        Intérieur
-                                    </option>
-
-                                    <option value="Extérieur"
-                                        {% if emplacement | default('') == 'Extérieur' %}
-                                            selected
-                                        {% endif %}>
-                                        Extérieur
-                                    </option>
-
-                                </select>
-
-                                <div class="invalid-feedback">
-                                    {{ msg_emplacement | default('') }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <section class="ps-parking-create-card">
-
-                        <div class="ps-parking-create-card-heading">
-
-                            <div class="ps-parking-create-card-icon">
-                                <i class="bi bi-image"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <div>
-                                <span class="ps-parking-create-section-label">
-                                    ÉTAPE 03
-                                </span>
-
-                                <h2>Ajoutez une photo</h2>
-
-                                <p>
-                                    Montrez votre stationnement
-                                    aux futurs utilisateurs.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="ps-parking-create-upload">
-
-                            <div class="ps-parking-create-upload-icon">
-                                <i class="bi bi-cloud-arrow-up"
-                                   aria-hidden="true"></i>
-                            </div>
-
-                            <label for="image"
-                                   class="form-label">
-                                Photo du stationnement
-                            </label>
-
-                            <p>
-                                Choisissez une image claire
-                                de votre emplacement.
-                            </p>
-
-                            <input type="file"
-                                   id="image"
-                                   name="image"
-                                   class="form-control {{ classe_image | default('') }}"
-                                   accept="image/jpeg,image/png,image/webp"
-                                   required>
-
-                            <small>
-                                Formats acceptés : JPEG, PNG et WebP.
-                                Maximum 2 Mo.
-                            </small>
-
-                            <div class="invalid-feedback">
-                                {{ message_image | default('') }}
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <div class="ps-parking-create-actions">
-
-                        <a href="{{ url_for('detail.detail_profil') }}"
-                           class="btn ps-parking-create-btn-outline">
-                            Annuler
-                        </a>
-
-                        <button type="submit"
-                                class="btn ps-parking-create-btn-primary">
-
-                            <i class="bi bi-check-lg me-2"
-                               aria-hidden="true"></i>
-
-                            Publier le stationnement
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-                <aside class="ps-parking-create-sidebar">
-
-                    <div class="ps-parking-create-help">
-
-                        <div class="ps-parking-create-help-icon">
-                            <i class="bi bi-lightbulb"
-                               aria-hidden="true"></i>
-                        </div>
-
-                        <h2>Une annonce réussie</h2>
-
-                        <p>
-                            Quelques conseils pour présenter
-                            votre stationnement.
-                        </p>
-
-                        <ul>
-                            <li>
-                                <i class="bi bi-check-circle"
-                                   aria-hidden="true"></i>
-                                Utilisez une adresse exacte.
-                            </li>
-
-                            <li>
-                                <i class="bi bi-check-circle"
-                                   aria-hidden="true"></i>
-                                Ajoutez une photo claire.
-                            </li>
-
-                            <li>
-                                <i class="bi bi-check-circle"
-                                   aria-hidden="true"></i>
-                                Indiquez le nombre réel de places.
-                            </li>
-
-                            <li>
-                                <i class="bi bi-check-circle"
-                                   aria-hidden="true"></i>
-                                Vérifiez le repère sur la carte.
-                            </li>
-                        </ul>
-
-                    </div>
-
-
-                    <div class="ps-parking-create-note">
-
-                        <i class="bi bi-shield-check"
-                           aria-hidden="true"></i>
-
-                        <p>
-                            Votre annonce sera associée
-                            à votre compte ParkShare.
-                        </p>
-
-                    </div>
-
-                </aside>
-
+{% block script %}
+
+<script src="/static/js/base.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/geocoding.js') }}"></script>
+{% endblock %}
+
+{% block recherche%}
+{% endblock %}
+
+{% block contenu %}
+
+<div class="d-flex flex-column align-items-center justify-content-center mt-3">
+    <h2>Ajouter une place</h2>
+    <p>Ajouter une place de stationnement facilement</p>
+</div>
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body p-4">
+        <form id="ajout_form" class="row g-3" action="{{ url_for('stationnement.ajouter_stationnement') }}"
+            enctype="multipart/form-data" method="post" novalidate data-ajax-form="parking" novalidate>
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
+
+            <div class="col-md-12">
+                <label for="adresse" class="form-label fw-bold">Adresse stationnement</label>
+                <input type="text" name="adresse" class="form-control {{classe_adresse}}" id="adresse"
+                    placeholder="133 boulevard de l'entente" value="{{adresse}}">
+                <div class="invalid-feedback">{{msg_adresse}}</div>
             </div>
 
-        </form>
+<div class="col-12">
 
+    <label class="form-label fw-bold">
+        Vérification de l'adresse
+    </label>
+
+    <div>
+        <button
+            type="button"
+            id="verifier-adresse"
+            class="btn btn-outline-primary">
+            <i class="bi bi-geo-alt"></i>
+            Vérifier l'adresse
+        </button>
+    </div>
+
+    <p id="geocode-status"
+       class="small mt-2"
+       role="status"
+       aria-live="polite"></p>
+
+    <input
+        type="hidden"
+        id="geocode-token"
+        name="geocode_token">
+
+    {% if msg_position %}
+    <p class="text-danger small">
+        {{ msg_position }}
+    </p>
+    {% endif %}
+
+    <div id="geocode-preview" hidden>
+        <div class="alert alert-success">
+            <strong>Adresse trouvée !</strong>
+            <div id="adresse-reconnue"></div>
+            <small>
+                Vérifiez que le repère correspond
+                à votre stationnement.
+            </small>
+        </div>
+
+        <div id="geocode-map"
+             style="height: 300px; width: 100%;"
+             class="rounded border">
+        </div>
     </div>
 
 </div>
 
-{% endblock %}
 
+            <div class="col-md-6">
+                <label for="ville" class="form-label fw-bold">Ville</label>
+                <select id="ville" name="ville" class="form-select {{classe_ville}}">
+                    <option selected value="">Choisissez la ville</option>
+                    <option {% if ville=="Montréal" %}selected{% endif %}>Montréal</option>
+                    <option {% if ville=="Québec" %}selected{% endif %}>Québec</option>
+                    <option {% if ville=="Laval" %}selected{% endif %}>Laval</option>
+                    <option {% if ville=="Gatineau" %}selected{% endif %}>Gatineau</option>
+                    <option {% if ville=="Longueuil" %}selected{% endif %}>Longueuil</option>
+                    <option {% if ville=="Sherbrooke" %}selected{% endif %}>Sherbrooke</option>
+                    <option {% if ville=="Lévis" %}selected{% endif %}>Lévis</option>
+                    <option {% if ville=="Saguenay" %}selected{% endif %}>Saguenay</option>
+                    <option {% if ville=="Trois-Rivières" %}selected{% endif %}>Trois-Rivières</option>
+                    <option {% if ville=="Terrebonne" %}selected{% endif %}>Terrebonne</option>
+                    <option {% if ville=="Saint-Jean-sur-Richelieu" %}selected{% endif %}>Saint-Jean-sur-Richelieu
+                    </option>
+                    <option {% if ville=="Brossard" %}selected{% endif %}>Brossard</option>
+                    <option {% if ville=="Repentigny" %}selected{% endif %}>Repentigny</option>
+                    <option {% if ville=="Saint-Jérôme" %}selected{% endif %}>Saint-Jérôme</option>
+                    <option {% if ville=="Drummondville" %}selected{% endif %}>Drummondville</option>
+                </select>
+                <div class="invalid-feedback">{{msg_ville}}</div>
+            </div>
 
-{% block script %}
-<script src="{{ url_for('static', filename='js/base.js') }}"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{{ url_for('static', filename='js/geocoding.js') }}"></script>
+            <div class="col-md-6">
+                <label for="province" class="form-label fw-bold">Province</label>
+                <input type="text" class="form-control" id="province" value="Québec" disabled>
+            </div>
+
+            <div class="col-md-6">
+                <div class="input-group">
+                    <label for="prix" class="form-label input-group fw-bold">Prix</label>
+                    <input type="number" class="form-control {{classe_prix}}" id="prix" name="prix" value="{{prix}}" min="0.01" max="1000" step="0.01" required>
+                    <span class="input-group-text">$/heure</span>
+                    <div class="invalid-feedback">{{msg_prix}}</div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="place" class="form-label fw-bold">Nombre de place</label>
+                <input type="number" class="form-control {{classe_place}}" id="place" name="place" value="{{place}}" min="1" max="100" step="1" required>
+                <div class="invalid-feedback">{{msg_place}}</div>
+            </div>
+
+            <div class="col-md-12">
+                <label for="emplacement" class="form-label fw-bold">Emplacement</label>
+                <select id="emplacement" name="emplacement" class="form-select {{classe_emplacement}}">
+                    <option selected value="">Sélectionnez</option>
+                    <option value="Intérieur" {% if emplacement=="Intérieur" %}selected{% endif %}>Intérieur</option>
+                    <option value="Extérieur" {% if emplacement=="Extérieur" %}selected{% endif %}>Extérieur</option>
+                </select>
+                <div class="invalid-feedback">{{msg_emplacement}}</div>
+            </div>
+
+            <label for="image" class="form-label fw-bold">Image du stationnement</label>
+            <div class="input-group mb-3">
+                <input type="file" class="form-control {{classe_image}}" id="image" name="image">
+                <div class="invalid-feedback mb-3">{{message_image}}</div>
+            </div>
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button type="submit" class="btn btn-dark">Publier la place de stationnement</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

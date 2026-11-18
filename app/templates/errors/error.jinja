@@ -1,98 +1,56 @@
-
 {% extends "_modele.jinja" %}
 
 {% block title %}
 Erreur {{ code }} | ParkShare
 {% endblock %}
 
-{% block body_class %}ps-error-page{% endblock %}
+{% block centered_title %}{% endblock %}
 
-{% block page_layout %}
+{% block recherche %}{% endblock %}
 
-<div class="ps-error">
+{% block contenu %}
 
-    <div class="container-fluid ps-site-shell">
+<div class="error-page">
 
-        <div class="ps-error-card">
+    <div class="error-card">
 
-            <div class="ps-error-icon">
-                <i class="bi {{ icone }}"
-                   aria-hidden="true"></i>
-            </div>
+        <div class="error-icon">
+            <i class="bi {{ icone }}" aria-hidden="true"></i>
+        </div>
 
-            <span class="ps-error-eyebrow">
-                OUPS, UNE ERREUR EST SURVENUE
-            </span>
+        <p class="error-code">{{ code }}</p>
 
-            <p class="ps-error-code">
-                {{ code }}
-            </p>
+        <h1 class="error-title">
+            {{ titre }}
+        </h1>
 
-            <h1 class="ps-error-title">
-                {{ titre }}
-            </h1>
+        <p class="error-message">
+            {{ message }}
+        </p>
 
-            <p class="ps-error-message">
-                {{ message }}
-            </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
 
-            <div class="ps-error-actions">
+            <a href="{{ url_for('index') }}"
+               class="btn btn-dark px-4 py-2">
+                <i class="bi bi-house me-2"></i>
+                Retour à l'accueil
+            </a>
 
-                <a href="{{ url_for('index') }}"
-                   class="btn ps-error-btn-primary">
+            {% if code == 401 %}
 
-                    <i class="bi bi-house"
-                       aria-hidden="true"></i>
+            <a href="{{ url_for('auth.login') }}"
+               class="btn btn-outline-dark px-4 py-2">
+                Se connecter
+            </a>
 
-                    Retour à l'accueil
-                </a>
+            {% else %}
 
-                {% if code == 401 %}
+            <a href="{{ url_for('publications.index') }}"
+               class="btn btn-outline-dark px-4 py-2">
+                Voir les annonces
+            </a>
 
-                <a href="{{ url_for('auth.login') }}"
-                   class="btn ps-error-btn-outline">
-
-                    <i class="bi bi-box-arrow-in-right"
-                       aria-hidden="true"></i>
-
-                    Se connecter
-                </a>
-
-                {% else %}
-
-                <a href="{{ url_for('publications.index', page=1) }}"
-                   class="btn ps-error-btn-outline">
-
-                    <i class="bi bi-search"
-                       aria-hidden="true"></i>
-
-                    Voir les stationnements
-                </a>
-
-                {% endif %}
-
-            </div>
-
-            <div class="ps-error-footer">
-
-                <i class="bi bi-info-circle"
-                   aria-hidden="true"></i>
-
-                <span>
-                    {% if code == 404 %}
-                        Vérifiez l'adresse de la page ou revenez à l'accueil.
-                    {% elif code == 403 %}
-                        Cette page n'est pas accessible avec votre compte.
-                    {% elif code == 401 %}
-                        Une connexion est nécessaire pour continuer.
-                    {% elif code == 500 %}
-                        Vous pouvez réessayer ultérieurement.
-                    {% else %}
-                        Vous pouvez continuer à explorer ParkShare.
-                    {% endif %}
-                </span>
-
-            </div>
+            {% endif %}
 
         </div>
 

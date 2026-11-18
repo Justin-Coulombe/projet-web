@@ -278,10 +278,15 @@ def get_reservations_by_owner(owner_id):
                 r.fin,
                 p.id,
                 p.address,
-                p.ville
+                p.ville,
+                c.id,
+                c.nom,
+                c.prenom
             FROM Reservation AS r
             JOIN Publication AS p
                 ON r.publication = p.id
+            JOIN User AS c
+                ON c.id = r.client
             WHERE p.author = ?
             ORDER BY r.debut ASC, r.id ASC
         """
@@ -298,7 +303,10 @@ def get_reservations_by_owner(owner_id):
                 "fin": row[2],
                 "publication_id": row[3],
                 "address": row[4],
-                "ville": row[5]
+                "ville": row[5],
+                "client_id": row[6],
+                "client_nom": row[7],
+                "client_prenom": row[8],
             })
 
         return reservations
