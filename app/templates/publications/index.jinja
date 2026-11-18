@@ -18,7 +18,6 @@ Tous les stationnements | ParkShare
 
     <div class="container-fluid ps-site-shell">
 
-        <!-- EN-TÊTE -->
         <header class="ps-publications-header">
 
             <span class="ps-publications-eyebrow">
@@ -34,8 +33,6 @@ Tous les stationnements | ParkShare
 
         </header>
 
-
-        <!-- FORMULAIRE DE RECHERCHE -->
         <section class="ps-publications-search-section"
                  aria-label="Rechercher un stationnement">
 
@@ -48,7 +45,6 @@ Tous les stationnements | ParkShare
 
                 <div class="ps-publications-search-grid">
 
-                    <!-- VILLE -->
                     <div class="ps-publications-search-field">
 
                         <label for="ville" class="form-label">
@@ -98,8 +94,6 @@ Tous les stationnements | ParkShare
 
                     </div>
 
-
-                    <!-- ARRIVÉE -->
                     <div class="ps-publications-search-field">
 
                         <label for="debut" class="form-label">
@@ -116,8 +110,6 @@ Tous les stationnements | ParkShare
 
                     </div>
 
-
-                    <!-- DÉPART -->
                     <div class="ps-publications-search-field">
 
                         <label for="fin" class="form-label">
@@ -138,8 +130,6 @@ Tous les stationnements | ParkShare
 
                     </div>
 
-
-                    <!-- EMPLACEMENT -->
                     <div class="ps-publications-search-field">
 
                         <label for="filter" class="form-label">
@@ -176,8 +166,6 @@ Tous les stationnements | ParkShare
 
                     </div>
 
-
-                    <!-- BOUTON -->
                     <div class="ps-publications-search-submit">
 
                         <button
@@ -197,8 +185,6 @@ Tous les stationnements | ParkShare
 
         </section>
 
-
-        <!-- LISTE DES STATIONNEMENTS -->
         <section class="ps-publications-results">
 
             <div class="ps-publications-section-heading">
@@ -231,7 +217,6 @@ Tous les stationnements | ParkShare
                                 href="{{ url_for('stationnement.detail', publication_id=item.id) }}"
                                 class="ps-publications-card">
 
-                                <!-- PHOTO -->
                                 <div class="ps-publications-card-image-wrapper">
 
                                     {% if item.img %}
@@ -250,8 +235,6 @@ Tous les stationnements | ParkShare
 
                                 </div>
 
-
-                                <!-- INFORMATIONS -->
                                 <div class="ps-publications-card-body">
 
                                     <span class="ps-publications-card-city">
@@ -273,8 +256,6 @@ Tous les stationnements | ParkShare
 
                                     </p>
 
-
-                                    <!-- PRIX -->
                                     <div class="ps-publications-card-footer">
 
                                         <div class="ps-publications-card-price">
@@ -301,8 +282,7 @@ Tous les stationnements | ParkShare
 
             {% else %}
 
-                <!-- AUCUNE ANNONCE -->
-                <div class="ps-publications-empty">
+            <div class="ps-publications-empty">
 
                     <i class="bi bi-p-square"></i>
 
@@ -327,8 +307,6 @@ Tous les stationnements | ParkShare
 
         </section>
 
-
-        <!-- PAGINATION -->
         {% if total_pages > 1 %}
 
             <nav
@@ -337,7 +315,6 @@ Tous les stationnements | ParkShare
 
                 <ul class="pagination justify-content-center align-items-center">
 
-                    <!-- PAGE PRÉCÉDENTE -->
                     <li class="page-item {% if current_page <= 1 %}disabled{% endif %}">
 
                         <a
@@ -387,8 +364,6 @@ Tous les stationnements | ParkShare
 
                     {% endfor %}
 
-
-                    <!-- PAGE SUIVANTE -->
                     <li class="page-item {% if current_page >= total_pages %}disabled{% endif %}">
 
                         <a

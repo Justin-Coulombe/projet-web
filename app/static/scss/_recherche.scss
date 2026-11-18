@@ -208,19 +208,12 @@
     }
 }
 
-
-/* ========================================
-   CORRECTIONS VISUELLES — FORMULAIRE
-   ======================================== */
-
-/* Fond blanc et contours visibles */
 .ps-recherche .ps-publications-search {
     background-color: #ffffff;
     border: 1px solid #dfe7db;
     box-shadow: 0 4px 20px rgba(23, 60, 50, 0.05);
 }
 
-/* Champs du formulaire */
 .ps-recherche .ps-publications-search .form-control,
 .ps-recherche .ps-publications-search .form-select {
     background-color: #ffffff;
@@ -230,14 +223,12 @@
     opacity: 1;
 }
 
-/* Focus */
 .ps-recherche .ps-publications-search .form-control:focus,
 .ps-recherche .ps-publications-search .form-select:focus {
     border-color: #173c32;
     box-shadow: 0 0 0 3px rgba(23, 60, 50, 0.12);
 }
 
-/* Bouton Rechercher */
 .ps-recherche .ps-publications-search .ps-publications-search-button {
     background-color: #173c32;
     color: #ffffff;
@@ -245,7 +236,6 @@
     opacity: 1;
 }
 
-/* Hover */
 .ps-recherche .ps-publications-search .ps-publications-search-button:hover {
     background-color: #285a49;
     color: #ffffff;

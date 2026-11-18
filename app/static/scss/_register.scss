@@ -1,0 +1,110 @@
+.ps-register .ps-login-layout {
+    min-height: 760px;
+}
+
+.ps-register .ps-login-promo {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.ps-register .ps-login-form-section {
+    padding-top: 55px;
+    padding-bottom: 55px;
+}
+
+.ps-register .ps-login-form-description {
+    margin-bottom: 30px;
+}
+
+.ps-register .ps-login-field {
+    margin-bottom: 20px;
+}
+
+.ps-register .row .ps-login-field {
+    margin-bottom: 0;
+}
+
+.ps-register .row {
+    margin-bottom: 20px;
+}
+
+.ps-register-password-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 9px;
+    margin-bottom: 0;
+
+    color: #687b72;
+
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.ps-register-password-hint i {
+    flex-shrink: 0;
+    font-size: 0.9rem;
+}
+
+.ps-register .form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.ps-register .form-control.is-valid {
+    border-color: #8eaf97;
+}
+
+.ps-register .invalid-feedback {
+    margin-top: 7px;
+    color: #b33838;
+    font-size: 0.78rem;
+}
+
+.ps-register .alert {
+    border-radius: 10px;
+}
+
+.ps-register .ps-login-submit {
+    margin-top: 28px;
+}
+
+@media (max-width: 991.98px) {
+
+    .ps-register .ps-login-layout {
+        min-height: auto;
+    }
+
+    .ps-register .ps-login-promo {
+        padding: 35px;
+    }
+
+    .ps-register .ps-login-form-section {
+        padding: 45px 35px;
+    }
+
+}
+
+@media (max-width: 575.98px) {
+
+    .ps-register .ps-login-promo {
+        padding: 30px 24px;
+    }
+
+    .ps-register .ps-login-form-section {
+        padding: 35px 24px;
+    }
+
+    .ps-register .row {
+        margin-bottom: 20px;
+    }
+
+    .ps-register .ps-login-form-description {
+        margin-bottom: 25px;
+    }
+
+    .ps-register .ps-login-submit {
+        margin-top: 25px;
+    }
+
+}

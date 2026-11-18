@@ -13,7 +13,6 @@ Paramètres du compte | ParkShare
 
     <div class="container-fluid ps-site-shell">
 
-        <!-- EN-TÊTE -->
         <header class="ps-profile-edit-header">
 
             <span class="ps-profile-edit-eyebrow">
@@ -35,11 +34,7 @@ Paramètres du compte | ParkShare
     {% include "components/_account_sidebar.jinja" %}
 {% endwith %}
 
-
-            <!-- CONTENU PRINCIPAL -->
             <div class="ps-profile-edit-content">
-
-                <!-- INFORMATIONS PERSONNELLES -->
                 <section class="ps-profile-edit-card"
                          aria-labelledby="personal-title">
 
@@ -102,7 +97,6 @@ Paramètres du compte | ParkShare
 
                         <div class="row g-4">
 
-                            <!-- PRÉNOM -->
                             <div class="col-12 col-md-6">
 
                                 <label for="prenom"
@@ -121,7 +115,6 @@ Paramètres du compte | ParkShare
 
                             </div>
 
-                            <!-- NOM -->
                             <div class="col-12 col-md-6">
 
                                 <label for="nom"
@@ -140,7 +133,6 @@ Paramètres du compte | ParkShare
 
                             </div>
 
-                            <!-- COURRIEL -->
                             <div class="col-12">
 
                                 <label for="email"
@@ -180,7 +172,6 @@ Paramètres du compte | ParkShare
                 </section>
 
 
-                <!-- SÉCURITÉ / MOT DE PASSE -->
                 <section class="ps-profile-edit-card"
                          aria-labelledby="password-title">
 
@@ -229,7 +220,6 @@ Paramètres du compte | ParkShare
                                name="_csrf"
                                value="{{ csrf_token() }}">
 
-                        <!-- MOT DE PASSE ACTUEL -->
                         <div class="mb-4">
 
                             <label for="current_password"
@@ -246,7 +236,6 @@ Paramètres du compte | ParkShare
 
                         </div>
 
-                        <!-- NOUVEAU MOT DE PASSE -->
                         <div class="row g-4">
 
                             <div class="col-12 col-md-6">

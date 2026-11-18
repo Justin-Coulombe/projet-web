@@ -13,7 +13,6 @@ Mon profil | ParkShare
 
     <div class="container-fluid ps-site-shell">
 
-        <!-- EN-TÊTE -->
         <header class="ps-profile-edit-header">
 
             <span class="ps-profile-edit-eyebrow">
@@ -31,12 +30,10 @@ Mon profil | ParkShare
 
         <div class="ps-profile-edit-layout">
 
-            <!-- SIDEBAR -->
             {% with active_page = 'profil' %}
                 {% include "components/_account_sidebar.jinja" %}
             {% endwith %}
 
-            <!-- CONTENU -->
             <div class="ps-profile-edit-content">
 
                 {% if success %}
@@ -45,7 +42,6 @@ Mon profil | ParkShare
                 </div>
                 {% endif %}
 
-                <!-- INFORMATIONS DU PROFIL -->
                 <section class="ps-profile-edit-card">
 
                     <div class="ps-profile-edit-card-header">
@@ -104,56 +100,6 @@ Mon profil | ParkShare
 
                 </section>
 
-
-                <!-- STATISTIQUES -->
-                <section aria-label="Statistiques du compte">
-
-                    <div class="row g-3">
-
-                        <div class="col-12 col-sm-6">
-
-                            <div class="ps-account-stat-card">
-
-                                <div class="ps-account-stat-icon">
-                                    <i class="bi bi-p-square"
-                                       aria-hidden="true"></i>
-                                </div>
-
-                                <span>Mes annonces</span>
-
-                                <strong>
-                                    {{ lst_pubications | length }}
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-                        <div class="col-12 col-sm-6">
-
-                            <div class="ps-account-stat-card">
-
-                                <div class="ps-account-stat-icon">
-                                    <i class="bi bi-calendar-check"
-                                       aria-hidden="true"></i>
-                                </div>
-
-                                <span>Mes réservations</span>
-
-                                <strong>
-                                    {{ lst_reversations | length }}
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!-- MES ANNONCES -->
                 <section class="ps-profile-edit-card">
 
                     <div class="ps-account-section-heading">
@@ -310,8 +256,6 @@ Mon profil | ParkShare
 
                 </section>
 
-
-                <!-- ACCÈS AUX RÉSERVATIONS -->
                 <section class="ps-account-reservations-banner">
 
                     <div>

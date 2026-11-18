@@ -28,7 +28,6 @@
     {% set current_endpoint = request.endpoint or '' %}
     {% set user_logged_in = g.get('user') is not none %}
 
-    <!-- Barre de navigation commune -->
     <header class="ps-site-header">
         <nav class="navbar navbar-expand-lg ps-navbar" aria-label="Navigation principale">
             <div class="container-fluid ps-site-shell">
@@ -112,7 +111,6 @@
 
     <main id="contenu-principal" class="flex-grow-1 ps-main">
         {% block page_layout %}
-            <!-- Blocs historiques conservés pour les templates existants. -->
             <div class="ps-page-heading">
                 {% block centered_title %}{% endblock %}
             </div>
@@ -129,7 +127,6 @@
         {% endblock %}
     </main>
 
-    <!-- Pied de page commun -->
     <footer class="ps-site-footer mt-auto">
         <div class="container-fluid ps-site-shell">
             <div class="row g-4 ps-footer-columns">
@@ -160,7 +157,6 @@
                 <div class="col-6 col-md-3 col-lg-3">
                     <h2 class="ps-footer-title">À votre écoute</h2>
                     <ul class="list-unstyled mb-0">
-                        <!-- Remplacer ces libellés par des liens quand les routes seront créées. -->
                         <li><span class="ps-footer-link ps-footer-pending">Nous contacter</span></li>
                         <li>
                             <a class="ps-footer-link" href="{{ url_for('conditions_utilisation') }}">
