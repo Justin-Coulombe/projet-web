@@ -1,0 +1,69 @@
+:root {
+    --ps-forest: #173c32;
+    --ps-lime: #d4f478;
+    --ps-background: #f6f8f5;
+    --ps-muted: #687b72;
+}
+
+.ps-container {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3vw, 40px);
+}
+
+.ps-section {
+    padding-block: 48px;
+}
+
+.ps-eyebrow {
+    color: var(--ps-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ps-card {
+    background: white;
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.ps-card-image {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+}
+
+.btn-ps-accent {
+    background: var(--ps-lime);
+    color: var(--ps-forest);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-weight: 600;
+
+    &:hover,
+    &:focus {
+        background: #c4e965;
+        color: var(--ps-forest);
+    }
+}
+
+.ps-search-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.ps-search-panel .form-control,
+.ps-search-panel .form-select {
+    min-height: 48px;
+    border-radius: 10px;
+}
+
+.ps-page-title {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}

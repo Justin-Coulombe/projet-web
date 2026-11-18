@@ -1,0 +1,392 @@
+.ps-account-page {
+    --account-forest: #173c32;
+    --account-lime: #d4f478;
+    --account-muted: #687b72;
+    --account-border: #dfe7db;
+    --account-soft: #eaf0e5;
+}
+
+.ps-account-profile-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+}
+
+.ps-account-profile-info > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ps-account-profile-info span {
+    color: var(--account-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.ps-account-profile-info strong {
+    color: var(--account-forest);
+    font-size: 1rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.ps-account-info-full {
+    grid-column: 1 / -1;
+}
+
+.ps-account-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    height: 100%;
+    min-height: 155px;
+    padding: 23px;
+
+    background: #fff;
+    border-radius: 16px;
+}
+
+.ps-account-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    margin-bottom: 15px;
+
+    background: var(--account-soft);
+    color: var(--account-forest);
+
+    border-radius: 10px;
+    font-size: 1.2rem;
+}
+
+.ps-account-stat-card > span {
+    color: var(--account-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.ps-account-stat-card > strong {
+    margin-top: 5px;
+
+    color: var(--account-forest);
+    font-size: 2rem;
+    line-height: 1.1;
+    font-weight: 700;
+}
+
+.ps-account-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding-bottom: 24px;
+    margin-bottom: 12px;
+
+    border-bottom: 1px solid var(--account-border);
+}
+
+.ps-account-section-heading h2 {
+    margin-bottom: 8px;
+
+    color: var(--account-forest);
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.ps-account-section-heading p {
+    margin-bottom: 0;
+
+    color: var(--account-muted);
+    font-size: 0.9rem;
+}
+
+.ps-account-table {
+    width: 100%;
+    margin-bottom: 0;
+
+    color: var(--account-forest);
+    --bs-table-bg: transparent;
+}
+
+.ps-account-table thead th {
+    padding: 17px 14px;
+
+    color: var(--account-muted);
+    background: transparent;
+
+    border-bottom: 1px solid var(--account-border);
+
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ps-account-table tbody td {
+    padding: 20px 14px;
+
+    color: var(--account-forest);
+    border-bottom: 1px solid #edf1eb;
+
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+
+.ps-account-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.ps-account-table tbody tr:hover {
+    background: #f8faf7;
+}
+
+.ps-account-table-link {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    color: var(--account-forest);
+    text-decoration: none;
+}
+
+.ps-account-table-link strong {
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.ps-account-table-link span {
+    color: var(--account-muted);
+    font-size: 0.78rem;
+}
+
+.ps-account-table-link:hover strong {
+    text-decoration: underline;
+}
+
+.ps-account-muted {
+    color: var(--account-muted);
+    font-size: 0.75rem;
+}
+
+.ps-account-tag {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 11px;
+
+    background: var(--account-soft);
+    color: var(--account-forest);
+
+    border-radius: 7px;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ps-account-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ps-account-table-actions form {
+    margin: 0;
+}
+
+.ps-account-action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    background: #fff;
+    color: var(--account-forest);
+
+    border: 1px solid var(--account-border);
+    border-radius: 8px;
+}
+
+.ps-account-action-button:hover {
+    background: var(--account-soft);
+    color: var(--account-forest);
+    border-color: #cbd8ce;
+}
+
+.ps-account-action-danger {
+    color: #ad4545;
+}
+
+.ps-account-action-danger:hover {
+    background: #fff0f0;
+    color: #a32e2e;
+    border-color: #edc5c5;
+}
+
+.ps-account-view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    color: var(--account-forest);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.ps-account-view-link:hover {
+    color: #517b60;
+}
+
+.ps-account-empty {
+    padding: 45px 20px;
+    text-align: center;
+}
+
+.ps-account-empty > i {
+    display: block;
+    margin-bottom: 18px;
+
+    color: #9eafa3;
+    font-size: 2.6rem;
+}
+
+.ps-account-empty h3 {
+    margin-bottom: 10px;
+
+    color: var(--account-forest);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.ps-account-empty p {
+    max-width: 430px;
+    margin: 0 auto 25px;
+
+    color: var(--account-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.ps-account-empty .btn {
+    width: auto;
+}
+
+.ps-account-reservations-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+
+    padding: 30px;
+
+    background: var(--account-forest);
+    color: white;
+
+    border-radius: 16px;
+}
+
+.ps-account-reservations-banner
+.ps-profile-edit-section-label {
+    color: var(--account-lime);
+}
+
+.ps-account-reservations-banner h2 {
+    margin-bottom: 10px;
+
+    color: white;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.ps-account-reservations-banner p {
+    margin-bottom: 0;
+    max-width: 420px;
+
+    color: #bfd0c7;
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.ps-account-banner-button {
+    flex-shrink: 0;
+
+    padding: 12px 18px;
+
+    background: var(--account-lime);
+    color: var(--account-forest);
+
+    border: 1px solid var(--account-lime);
+    border-radius: 10px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ps-account-banner-button:hover {
+    background: #c4e965;
+    color: var(--account-forest);
+    border-color: #c4e965;
+}
+
+@media (max-width: 1199.98px) {
+    .ps-account-section-heading {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .ps-account-reservations-banner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ps-account-profile-info {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .ps-account-info-full {
+        grid-column: auto;
+    }
+
+    .ps-account-stat-card {
+        min-height: 140px;
+        padding: 20px;
+    }
+
+    .ps-account-section-heading {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ps-account-section-heading .btn {
+        align-self: flex-start;
+    }
+
+    .ps-account-table {
+        min-width: 650px;
+    }
+
+    .ps-account-reservations-banner {
+        padding: 25px;
+    }
+
+    .ps-account-banner-button {
+        width: 100%;
+        text-align: center;
+    }
+}

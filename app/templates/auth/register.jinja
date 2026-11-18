@@ -1,200 +1,354 @@
+
 {% extends "_modele.jinja" %}
 
 {% block title %}
 Créer un compte | ParkShare
 {% endblock %}
 
-{%block recherche%}
-{%endblock%}
+{% block body_class %}ps-register-page{% endblock %}
 
-{% block contenu %}
+{% block page_layout %}
 
-<main class="auth-page">
+<div class="ps-login ps-register">
 
-    <div class="auth-card">
+    <div class="container-fluid ps-site-shell">
 
-        <div class="auth-heading">
-            <h1>Créer un compte</h1>
+        <div class="ps-login-layout">
 
-            <p>
-                Inscrivez-vous pour publier votre stationnement
-                ou réserver une place sur ParkShare.
-            </p>
+            <section class="ps-login-promo">
+
+                <div class="ps-login-promo-content">
+
+                    <span class="ps-login-eyebrow">
+                        REJOIGNEZ PARKSHARE
+                    </span>
+
+                    <h1>
+                        Une place<br>
+                        pour vous.<br>
+                        Et pour tous.
+                    </h1>
+
+                    <p>
+                        Rejoignez une communauté qui simplifie
+                        le stationnement et contribue à
+                        mieux utiliser les espaces disponibles.
+                    </p>
+
+                    <div class="ps-login-promo-features">
+
+                        <div class="ps-login-promo-feature">
+
+                            <span class="ps-login-feature-icon">
+                                <i class="bi bi-search"
+                                   aria-hidden="true"></i>
+                            </span>
+
+                            <span>
+                                Trouvez une place près
+                                de votre destination.
+                            </span>
+
+                        </div>
+
+                        <div class="ps-login-promo-feature">
+
+                            <span class="ps-login-feature-icon">
+                                <i class="bi bi-calendar-check"
+                                   aria-hidden="true"></i>
+                            </span>
+
+                            <span>
+                                Réservez un stationnement
+                                selon vos besoins.
+                            </span>
+
+                        </div>
+
+                        <div class="ps-login-promo-feature">
+
+                            <span class="ps-login-feature-icon">
+                                <i class="bi bi-p-square"
+                                   aria-hidden="true"></i>
+                            </span>
+
+                            <span>
+                                Proposez vos places inutilisées
+                                aux autres utilisateurs.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="ps-login-promo-footer">
+
+                    <span class="ps-login-promo-mark">P</span>
+
+                    <span>
+                        Des espaces mieux utilisés,
+                        pour une ville plus accessible.
+                    </span>
+
+                </div>
+
+            </section>
+
+            <section class="ps-login-form-section"
+                     aria-labelledby="register-title">
+
+                <div class="ps-login-form-container">
+
+                    <span class="ps-login-form-eyebrow">
+                        COMMENCER AVEC PARKSHARE
+                    </span>
+
+                    <h2 id="register-title">
+                        Créez votre compte.
+                    </h2>
+
+                    <p class="ps-login-form-description">
+                        Quelques informations suffisent
+                        pour rejoindre ParkShare.
+                    </p>
+
+
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+
+                    <form method="POST"
+                          action="{{ url_for('auth.register') }}"
+                          data-ajax-form="register"
+                          novalidate>
+
+                        <input type="hidden"
+                               name="_csrf"
+                               value="{{ csrf_token() }}">
+
+
+                        {% if errors %}
+                        <div class="alert alert-danger"
+                             role="alert"
+                             data-server-errors>
+
+                            {% for field, message in errors.items() %}
+                            <p class="mb-1">{{ message }}</p>
+                            {% endfor %}
+
+                        </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+
+                            <div class="col-12 col-md-6">
+
+                                <div class="ps-login-field">
+
+                                    <label for="prenom"
+                                           class="form-label">
+                                        Prénom
+                                    </label>
+
+                                    <input type="text"
+                                           id="prenom"
+                                           name="prenom"
+                                           class="form-control"
+                                           value="{{ request.form.get('prenom', '') }}"
+                                           placeholder="Votre prénom"
+                                           autocomplete="given-name"
+                                           minlength="2"
+                                           maxlength="80"
+                                           required>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12 col-md-6">
+
+                                <div class="ps-login-field">
+
+                                    <label for="nom"
+                                           class="form-label">
+                                        Nom
+                                    </label>
+
+                                    <input type="text"
+                                           id="nom"
+                                           name="nom"
+                                           class="form-control"
+                                           value="{{ request.form.get('nom', '') }}"
+                                           placeholder="Votre nom"
+                                           autocomplete="family-name"
+                                           minlength="2"
+                                           maxlength="80"
+                                           required>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ps-login-field">
+
+                            <label for="email"
+                                   class="form-label">
+                                Adresse courriel
+                            </label>
+
+                            <div class="auth-input">
+
+                                <span class="auth-input-icon">
+                                    <i class="bi bi-envelope"
+                                       aria-hidden="true"></i>
+                                </span>
+
+                                <input type="email"
+                                       id="email"
+                                       name="email"
+                                       class="form-control"
+                                       value="{{ request.form.get('email', '') }}"
+                                       placeholder="votre@courriel.com"
+                                       autocomplete="email"
+                                       maxlength="254"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ps-login-field">
+
+                            <label for="password"
+                                   class="form-label">
+                                Mot de passe
+                            </label>
+
+                            <div class="auth-password">
+
+                                <input type="password"
+                                       id="password"
+                                       name="password"
+                                       class="form-control"
+                                       placeholder="Créez un mot de passe"
+                                       autocomplete="new-password"
+                                       minlength="8"
+                                       maxlength="128"
+                                       required>
+
+                                <button type="button"
+                                        class="password-toggle"
+                                        data-password-toggle="password"
+                                        aria-label="Afficher ou masquer le mot de passe"
+                                        aria-controls="password">
+
+                                    <i class="bi bi-eye"
+                                       aria-hidden="true"></i>
+
+                                </button>
+
+                            </div>
+
+                            <p class="ps-register-password-hint">
+
+                                <i class="bi bi-info-circle"
+                                   aria-hidden="true"></i>
+
+                                Entre 8 et 128 caractères.
+
+                            </p>
+
+                        </div>
+
+                        <div class="ps-login-field">
+
+                            <label for="password_confirm"
+                                   class="form-label">
+                                Confirmer le mot de passe
+                            </label>
+
+                            <div class="auth-password">
+
+                                <input type="password"
+                                       id="password_confirm"
+                                       name="password_confirm"
+                                       class="form-control"
+                                       placeholder="Confirmez votre mot de passe"
+                                       autocomplete="new-password"
+                                       minlength="8"
+                                       maxlength="128"
+                                       required>
+
+                                <button type="button"
+                                        class="password-toggle"
+                                        data-password-toggle="password_confirm"
+                                        aria-label="Afficher ou masquer la confirmation"
+                                        aria-controls="password_confirm">
+
+                                    <i class="bi bi-eye"
+                                       aria-hidden="true"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn ps-login-submit">
+
+                            Créer mon compte
+
+                            <i class="bi bi-arrow-right ms-2"
+                               aria-hidden="true"></i>
+
+                        </button>
+
+                    </form>
+
+                    <div class="ps-login-divider">
+                        <span>ou</span>
+                    </div>
+
+                    <a href="{{ url_for('auth.login') }}"
+                       class="btn ps-login-register">
+
+                        J'ai déjà un compte
+
+                        <i class="bi bi-arrow-up-right ms-2"
+                           aria-hidden="true"></i>
+
+                    </a>
+
+
+                    <p class="ps-login-form-footer">
+                        Vous avez déjà un compte ?
+                        Connectez-vous pour retrouver
+                        votre espace personnel.
+                    </p>
+
+                </div>
+
+            </section>
+
         </div>
-
-
-        {% if error %}
-            <div class="alert alert-danger">
-                {{ error }}
-            </div>
-        {% endif %}
-
-
-        <form method="POST" data-ajax-form="register" novalidate>
-<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-{% if errors %}<div class="alert alert-danger" role="alert" data-server-errors>{% for field, message in errors.items() %}<p class="mb-1">{{ message }}</p>{% endfor %}</div>{% endif %}
-
-
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-                    <label
-                        for="prenom"
-                        class="form-label"
-                    >
-                        Prénom
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="prenom"
-                        name="prenom"
-                        placeholder="Justin"
-                        autocomplete="given-name"
-                        required
-                    >
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-                    <label
-                        for="nom"
-                        class="form-label"
-                    >
-                        Nom
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="nom"
-                        name="nom"
-                        placeholder="Coulombe"
-                        autocomplete="family-name"
-                        required
-                    >
-                </div>
-
-            </div>
-
-
-            <div class="mb-3">
-                <label
-                    for="email"
-                    class="form-label"
-                >
-                    Courriel
-                </label>
-
-                <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                    placeholder="votre@email.com"
-                    autocomplete="email"
-                    required
-                >
-            </div>
-
-
-            <div class="mb-3">
-                <label
-                    for="password"
-                    class="form-label"
-                >
-                    Mot de passe
-                </label>
-
-                <div class="auth-password">
-
-                    <input
-                        type="password"
-                        class="form-control"
-                        id="password"
-                        name="password"
-                        placeholder="Minimum 8 caractères"
-                        autocomplete="new-password"
-                        minlength="8"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        class="password-toggle"
-                        data-password-toggle="password"
-                        aria-label="Afficher le mot de passe"
-                    >
-                        ◉
-                    </button>
-
-                </div>
-            </div>
-
-
-            <div class="mb-4">
-                <label
-                    for="password_confirm"
-                    class="form-label"
-                >
-                    Confirmer le mot de passe
-                </label>
-
-                <div class="auth-password">
-
-                    <input
-                        type="password"
-                        class="form-control"
-                        id="password_confirm"
-                        name="password_confirm"
-                        placeholder="Confirmez votre mot de passe"
-                        autocomplete="new-password"
-                        minlength="8"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        class="password-toggle"
-                        data-password-toggle="password_confirm"
-                        aria-label="Afficher le mot de passe"
-                    >
-                        ◉
-                    </button>
-
-                </div>
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn btn-dark auth-primary-button"
-            >
-                Créer mon compte
-            </button>
-
-        </form>
-
-
-        <div class="auth-separator">
-            <span>ou</span>
-        </div>
-
-
-        <a
-            href="{{ url_for('auth.login') }}"
-            class="btn btn-outline-dark auth-secondary-button"
-        >
-            J'ai déjà un compte
-        </a>
 
     </div>
 
-</main>
+</div>
 
-<script
-    src="{{ url_for('static', filename='js/auth.js') }}"
-></script>
+{% endblock %}
 
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 {% endblock %}
