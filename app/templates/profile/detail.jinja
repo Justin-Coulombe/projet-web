@@ -172,8 +172,7 @@ Mon profil | ParkShare
                                     </td>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ url_for('detail.edit', reservation_id=reservation.id) }}"
-                                                class="btn btn-outline-primary btn-sm">
+                                            <a href="{{ url_for('detail.edit', reservation_id=reservation.id) }}" class="btn btn-outline-primary btn-sm">
                                                 <i class="bi bi-pencil-square"></i>
                                                 Modifier
                                             </a>
@@ -391,10 +390,8 @@ Mon profil | ParkShare
                             <tbody>
                                 {% for reservation in reservations_recues %}
                                 <tr>
-                                    <td>
-                                        <a href="{{ url_for('detail.client', client_id=reservation.client_id) }}"
-                                            class="text-dark text-decoration-none fw-semibold">
-                                            {{ reservation.client_prenom }} {{ reservation.client_nom }}
+                                    <td>#{{ reservation.id }}</td>
+                                    {# <td><a href="{{}}"> #}
                                         </a>
                                     </td>
                                     <td>

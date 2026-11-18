@@ -11,8 +11,6 @@ from app.form_responses import fail, success
 
 from app.routes.auth import login_required
 from app.database.queries.publications import get_publications_by_user, get_publications_by_id
-from app.database.queries.users import get_user_by_id
-from app.database.queries.reservations import get_reservations_by_owner
 from app.database.queries.reservations import (
     get_reservation_by_user,
     get_reservations_by_owner, delete_reservation, update_reservation
@@ -104,28 +102,3 @@ def edit(reservation_id):
                            publication=publication,
                            reservation=reservation,
                            error=message)
-
-@bp_detail.route('/client/<int:client_id>')
-@login_required
-def client(client_id):
-    """Fiche publique d'un client"""
-    client = get_user_by_id(client_id)
-    if client is None:
-        abort(404, 'Utilisateur introuvable.')
-
-    return render_template('reservation/client.jinja', client=client)
-@bp_detail.route("/reservations", methods=["GET"])
-@login_required
-def mes_reservations():
-    """Affiche les réservations effectuées et reçues."""
-
-    user_id = session["user_id"]
-
-    lst_reversations = get_reservation_by_user(user_id)
-    reservations = get_reservations_by_owner(user_id)
-
-    return render_template(
-        "profile/reservations.jinja",
-        lst_reversations=lst_reversations,
-        reservations=reservations
-    )
