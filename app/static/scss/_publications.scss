@@ -1,0 +1,465 @@
+.ps-publications {
+    --pub-forest: #173c32;
+    --pub-lime: #d4f478;
+    --pub-background: #f6f8f5;
+    --pub-muted: #687b72;
+    --pub-border: #dfe7db;
+
+    min-height: 100vh;
+    padding-top: 45px;
+    padding-bottom: 65px;
+
+    background: var(--pub-background);
+    color: var(--pub-forest);
+}
+
+.ps-publications-header {
+    margin-bottom: 32px;
+}
+
+.ps-publications-eyebrow {
+    display: block;
+    margin-bottom: 18px;
+
+    color: var(--pub-muted);
+
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.ps-publications-header h1 {
+    margin-bottom: 14px;
+
+    font-size: clamp(2rem, 3.2vw, 3.3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+}
+
+.ps-publications-header p {
+    margin-bottom: 0;
+
+    color: var(--pub-muted);
+
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.ps-publications-search-section {
+    margin-bottom: 42px;
+}
+
+.ps-publications-search {
+    padding: 22px 20px 26px;
+
+    background: white;
+    border-radius: 16px;
+}
+
+.ps-publications-search-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 0.95fr)
+        140px;
+
+    align-items: end;
+    gap: 16px;
+}
+
+.ps-publications-search-field {
+    min-width: 0;
+}
+
+.ps-publications-search-field .form-label {
+    display: block;
+    margin-bottom: 9px;
+
+    color: var(--pub-muted);
+
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+}
+
+.ps-publications-search-field .form-control,
+.ps-publications-search-field .form-select {
+    width: 100%;
+    height: 49px;
+    min-width: 0;
+
+    padding: 0 13px;
+
+    background: white;
+    color: var(--pub-forest);
+
+    border: 1px solid var(--pub-border);
+    border-radius: 11px;
+
+    font-size: 0.9rem;
+
+    box-shadow: none;
+}
+
+.ps-publications-search-field .form-control:focus,
+.ps-publications-search-field .form-select:focus {
+    border-color: #789e83;
+    box-shadow: 0 0 0 3px rgba(120, 158, 131, 0.14);
+}
+
+.ps-publications-search-submit {
+    display: flex;
+    align-items: end;
+}
+
+.ps-publications-search-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 49px;
+
+    padding: 10px 20px;
+
+    background: var(--pub-forest);
+    color: white;
+
+    border: 0;
+    border-radius: 11px;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.ps-publications-search-button:hover,
+.ps-publications-search-button:focus {
+    background: #285a49;
+    color: white;
+}
+
+.ps-publications-search-button:active {
+    transform: translateY(1px);
+}
+
+.ps-publications-results {
+    padding-bottom: 28px;
+}
+
+.ps-publications-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.ps-publications-section-heading h2 {
+    margin: 0;
+
+    font-size: clamp(1.35rem, 2vw, 1.7rem);
+    font-weight: 700;
+}
+
+.ps-publications-map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--pub-forest);
+
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.ps-publications-map-link:hover {
+    color: #517b60;
+}
+
+.ps-publications-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 10px;
+
+    background: white;
+    color: var(--pub-forest);
+
+    border: 0;
+    border-radius: 16px;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.ps-publications-card:hover {
+    color: var(--pub-forest);
+
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(23, 60, 50, 0.08);
+}
+
+.ps-publications-card-image-wrapper {
+    width: 100%;
+    height: 190px;
+
+    overflow: hidden;
+    border-radius: 11px;
+}
+
+.ps-publications-card-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 0.25s ease;
+}
+
+.ps-publications-card:hover .ps-publications-card-image {
+    transform: scale(1.035);
+}
+
+.ps-publications-card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    padding: 17px 7px 8px;
+}
+
+.ps-publications-card-city {
+    margin-bottom: 7px;
+
+    color: var(--pub-muted);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.ps-publications-card-title {
+    margin-bottom: 8px;
+
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.ps-publications-card-meta {
+    margin-bottom: 20px;
+
+    color: var(--pub-muted);
+    font-size: 0.85rem;
+}
+
+.ps-publications-card-meta span {
+    padding-inline: 5px;
+}
+
+.ps-publications-card-footer {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+
+    margin-top: auto;
+}
+
+.ps-publications-card-price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.ps-publications-card-price strong {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.ps-publications-card-price span {
+    color: var(--pub-muted);
+    font-size: 0.75rem;
+}
+
+.ps-publications-empty {
+    padding: 70px 25px;
+
+    background: white;
+    border-radius: 16px;
+
+    text-align: center;
+}
+
+.ps-publications-empty > i {
+    display: block;
+    margin-bottom: 18px;
+
+    color: var(--pub-muted);
+    font-size: 2.6rem;
+}
+
+.ps-publications-empty h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.ps-publications-empty p {
+    margin-bottom: 22px;
+    color: var(--pub-muted);
+}
+
+.ps-publications-empty .btn {
+    width: auto;
+}
+
+.ps-publications-pagination {
+    margin-top: 18px;
+}
+
+.ps-publications-pagination .pagination {
+    gap: 6px;
+    margin-bottom: 0;
+}
+
+.ps-publications-pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 42px;
+    height: 42px;
+
+    padding: 8px 12px;
+
+    color: var(--pub-muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 9px;
+
+    font-size: 0.9rem;
+
+    box-shadow: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.ps-publications-pagination .page-link:hover {
+    color: var(--pub-forest);
+    background: #e8eee4;
+}
+
+.ps-publications-pagination .page-link.active {
+    background: var(--pub-forest);
+    color: white;
+    font-weight: 700;
+}
+
+.ps-publications-pagination .page-link.active:hover {
+    background: var(--pub-forest);
+    color: white;
+}
+
+.ps-publications-pagination .page-item.disabled .page-link {
+    background: transparent;
+    color: #aebbb3;
+}
+
+.ps-publications-pagination .ps-pagination-ellipsis {
+    cursor: default;
+}
+
+@media (max-width: 1199.98px) {
+
+    .ps-publications-search-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ps-publications-search-submit {
+        grid-column: 1 / -1;
+    }
+
+    .ps-publications-search-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .ps-publications {
+        padding-top: 30px;
+        padding-bottom: 45px;
+    }
+
+    .ps-publications-header {
+        margin-bottom: 25px;
+    }
+
+    .ps-publications-header h1 {
+        font-size: 2rem;
+    }
+
+    .ps-publications-header p {
+        font-size: 0.95rem;
+    }
+
+    .ps-publications-search-section {
+        margin-bottom: 35px;
+    }
+
+    .ps-publications-search {
+        padding: 20px;
+    }
+
+    .ps-publications-search-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .ps-publications-search-submit {
+        grid-column: auto;
+    }
+
+    .ps-publications-section-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .ps-publications-card-image-wrapper {
+        height: 210px;
+    }
+
+    .ps-publications-pagination .pagination {
+        gap: 2px;
+    }
+
+    .ps-publications-pagination .page-link {
+        min-width: 36px;
+        height: 38px;
+        padding: 7px;
+    }
+}

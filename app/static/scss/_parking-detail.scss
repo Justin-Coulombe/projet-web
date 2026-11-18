@@ -1,0 +1,544 @@
+.ps-parking-detail {
+    --detail-forest: #173c32;
+    --detail-lime: #d4f478;
+    --detail-muted: #687b72;
+    --detail-background: #f6f8f5;
+    --detail-soft: #eaf0e5;
+    --detail-border: #dfe7db;
+
+    min-height: 100vh;
+    padding: 30px 0 85px;
+    background: var(--detail-background);
+    color: var(--detail-forest);
+}
+
+.ps-detail-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 32px;
+
+    font-size: 0.82rem;
+    color: var(--detail-muted);
+
+    a {
+        color: var(--detail-muted);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--detail-forest);
+        }
+    }
+
+    i {
+        font-size: 0.65rem;
+    }
+}
+
+/* EN-TÊTE */
+
+.ps-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 30px;
+
+    h1 {
+        margin-bottom: 12px;
+        font-size: clamp(2rem, 3.2vw, 3.2rem);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.18;
+    }
+}
+
+.ps-detail-eyebrow,
+.ps-detail-section-label {
+    display: block;
+    margin-bottom: 12px;
+
+    color: var(--detail-muted);
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+.ps-detail-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+
+    color: var(--detail-muted);
+    font-size: 0.95rem;
+}
+
+.ps-detail-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr);
+    gap: 26px;
+    align-items: start;
+}
+
+.ps-detail-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-width: 0;
+}
+
+.ps-detail-image-card {
+    overflow: hidden;
+    background: white;
+    border-radius: 17px;
+}
+
+.ps-detail-image {
+    display: block;
+    width: 100%;
+    height: clamp(300px, 35vw, 460px);
+    object-fit: cover;
+}
+
+.ps-detail-card {
+    padding: clamp(24px, 3vw, 36px);
+    background: white;
+    border-radius: 16px;
+}
+
+.ps-detail-section-heading {
+    margin-bottom: 26px;
+
+    h2 {
+        margin-bottom: 9px;
+        font-size: clamp(1.3rem, 2vw, 1.65rem);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+    }
+
+    p {
+        margin-bottom: 0;
+        color: var(--detail-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+}
+
+.ps-detail-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 18px;
+}
+
+.ps-detail-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+
+    min-width: 0;
+
+    > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    span {
+        color: var(--detail-muted);
+        font-size: 0.79rem;
+    }
+
+    strong {
+        color: var(--detail-forest);
+        font-size: 0.92rem;
+        font-weight: 650;
+        overflow-wrap: anywhere;
+    }
+}
+
+.ps-detail-feature-icon,
+.ps-detail-address-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 44px;
+    height: 44px;
+
+    background: var(--detail-soft);
+    color: var(--detail-forest);
+
+    border-radius: 11px;
+    font-size: 1.25rem;
+}
+
+.ps-detail-address {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    padding: 20px;
+    background: #f8faf7;
+    border: 1px solid var(--detail-border);
+    border-radius: 12px;
+
+    strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+
+    p {
+        margin-bottom: 0;
+        color: var(--detail-muted);
+        font-size: 0.85rem;
+    }
+}
+
+.ps-detail-availability {
+    display: flex;
+    align-items: flex-start;
+    gap: 17px;
+
+    padding: 28px;
+    background: var(--detail-soft);
+    border-radius: 16px;
+
+    h2 {
+        margin-bottom: 10px;
+        font-size: 1.18rem;
+        font-weight: 700;
+    }
+
+    p {
+        max-width: 550px;
+        margin-bottom: 0;
+        color: var(--detail-muted);
+        font-size: 0.87rem;
+        line-height: 1.7;
+    }
+}
+
+.ps-detail-availability-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 45px;
+    height: 45px;
+
+    color: var(--detail-forest);
+    background: white;
+
+    border-radius: 12px;
+    font-size: 1.3rem;
+}
+
+.ps-detail-booking-column {
+    min-width: 0;
+}
+
+.ps-detail-booking-card {
+    position: sticky;
+    top: 100px;
+
+    padding: clamp(23px, 2.5vw, 32px);
+    background: white;
+
+    border: 1px solid #edf1e9;
+    border-radius: 17px;
+
+    box-shadow: 0 10px 35px rgba(23, 60, 50, 0.045);
+}
+
+.ps-detail-booking-price {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    > div {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+    }
+
+    strong {
+        color: var(--detail-forest);
+        font-size: 2.25rem;
+        font-weight: 750;
+        letter-spacing: -0.035em;
+    }
+
+    span {
+        color: var(--detail-muted);
+        font-size: 0.85rem;
+    }
+}
+
+.ps-detail-booking-price-caption {
+    font-size: 0.8rem;
+}
+
+.ps-detail-booking-divider {
+    height: 1px;
+    margin: 25px 0;
+    background: var(--detail-border);
+}
+
+.ps-detail-booking-form h2,
+.ps-detail-guest h2,
+.ps-detail-owner h2 {
+    margin-bottom: 10px;
+    font-size: 1.28rem;
+    font-weight: 700;
+}
+
+.ps-detail-booking-intro,
+.ps-detail-guest > p,
+.ps-detail-owner > p {
+    margin-bottom: 24px;
+    color: var(--detail-muted);
+    font-size: 0.87rem;
+    line-height: 1.65;
+}
+
+.ps-detail-booking-field {
+    margin-bottom: 18px;
+
+    .form-label {
+        margin-bottom: 9px;
+        color: var(--detail-forest);
+        font-size: 0.83rem;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        min-width: 0;
+        min-height: 49px;
+
+        padding: 10px 12px;
+        background: white;
+        color: var(--detail-forest);
+
+        border: 1px solid #cbd8ce;
+        border-radius: 10px;
+
+        font-size: 0.86rem;
+        opacity: 1;
+        box-shadow: none;
+
+        &:focus {
+            border-color: var(--detail-forest);
+            box-shadow: 0 0 0 3px rgba(23, 60, 50, 0.12);
+        }
+    }
+}
+
+.ps-parking-detail .ps-detail-primary-btn,
+.ps-parking-detail .ps-detail-outline-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 12px 19px;
+
+    border-radius: 10px;
+
+    font-size: 0.86rem;
+    font-weight: 650;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.ps-parking-detail .ps-detail-primary-btn {
+    background: var(--detail-forest);
+    color: white;
+    border: 1px solid var(--detail-forest);
+
+    &:hover:not(:disabled) {
+        background: #285a49;
+        color: white;
+    }
+}
+
+.ps-parking-detail .ps-detail-outline-btn {
+    background: white;
+    color: var(--detail-forest);
+    border: 1px solid #b9cbbd;
+
+    &:hover:not(:disabled) {
+        background: var(--detail-soft);
+        color: var(--detail-forest);
+    }
+}
+
+.ps-detail-booking-form .ps-detail-primary-btn,
+.ps-detail-booking-form .ps-detail-outline-btn,
+.ps-detail-guest .ps-detail-primary-btn,
+.ps-detail-owner .ps-detail-primary-btn {
+    width: 100%;
+}
+
+.ps-detail-booking-verify {
+    margin-bottom: 12px;
+}
+
+.ps-parking-detail .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.ps-detail-booking-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    margin: 18px 0;
+    padding: 14px;
+
+    border-radius: 10px;
+    font-size: 0.84rem;
+    line-height: 1.55;
+
+    i {
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+}
+
+.ps-detail-message-success {
+    background: #eaf5e7;
+    color: #22552d;
+    border: 1px solid #c9e6c4;
+}
+
+.ps-detail-message-error {
+    background: #fff0f0;
+    color: #922d2d;
+    border: 1px solid #f2cece;
+}
+
+.ps-detail-booking-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+
+    margin: 18px 0 0;
+    color: var(--detail-muted);
+
+    font-size: 0.78rem;
+    line-height: 1.6;
+}
+
+.ps-detail-owner-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 46px;
+    height: 46px;
+    margin-bottom: 20px;
+
+    border-radius: 12px;
+    background: var(--detail-soft);
+    color: var(--detail-forest);
+
+    font-size: 1.4rem;
+}
+
+.ps-detail-secondary-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+
+    margin-top: 18px;
+    color: var(--detail-forest);
+
+    font-size: 0.83rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.ps-detail-guest-register {
+    margin: 20px 0 0 !important;
+    text-align: center;
+
+    a {
+        color: var(--detail-forest);
+        font-weight: 700;
+        text-decoration: underline;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ps-detail-main-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ps-detail-booking-column {
+        grid-row: 1;
+    }
+
+    .ps-detail-booking-card {
+        position: static;
+    }
+
+    .ps-detail-image {
+        height: 380px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ps-parking-detail {
+        padding: 22px 0 50px;
+    }
+
+    .ps-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 24px;
+    }
+
+    .ps-detail-header h1 {
+        font-size: 2rem;
+    }
+
+    .ps-detail-image {
+        height: 260px;
+    }
+
+    .ps-detail-card {
+        padding: 24px 20px;
+    }
+
+    .ps-detail-features {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .ps-detail-availability {
+        padding: 22px;
+    }
+
+    .ps-detail-booking-card {
+        padding: 24px 20px;
+    }
+
+    .ps-detail-header .btn {
+        width: 100%;
+    }
+}

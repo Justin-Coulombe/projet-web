@@ -1,0 +1,210 @@
+:root {
+    --ps-forest: #173c32;
+    --ps-lime: #d4f478;
+    --ps-background: #f6f8f5;
+    --ps-muted: #687b72;
+}
+
+.ps-body {
+    background-color: var(--ps-background);
+    color: var(--ps-forest);
+}
+
+.ps-site-shell {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3.5vw, 50px);
+}
+
+.ps-site-header {
+    background: #fff;
+    border-bottom: 1px solid #eff1ed;
+    position: relative;
+    z-index: 1030;
+}
+
+.ps-navbar {
+    min-height: 74px;
+    padding-block: 0.65rem;
+}
+
+.ps-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--ps-forest);
+    font-size: 1.4rem;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+
+    &:hover,
+    &:focus { color: var(--ps-forest); }
+}
+
+.ps-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 34px;
+    color: var(--ps-forest);
+    font-weight: 900;
+    font-size: 2rem;
+    letter-spacing: -0.08em;
+    line-height: 1;
+}
+
+.ps-navbar-links {
+    gap: clamp(0.5rem, 2.6vw, 2.5rem);
+}
+
+.ps-navbar-links .nav-link {
+    color: #65776f;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus,
+    &.active {
+        color: var(--ps-forest);
+    }
+
+    &.active { font-weight: 700; }
+}
+
+.ps-navbar-actions { flex-shrink: 0; }
+
+.ps-nav-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 43px;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: var(--ps-lime);
+    color: var(--ps-forest);
+    font-size: 0.86rem;
+    font-weight: 700;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus {
+        background: #c8eb66;
+        color: var(--ps-forest);
+        border-color: transparent;
+    }
+}
+
+.ps-account-link,
+.ps-register-link {
+    color: var(--ps-forest);
+    font-size: 0.88rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.ps-account-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.4rem;
+    border: 0;
+
+    &:hover,
+    &:focus { color: var(--ps-forest); }
+}
+
+.ps-account-menu {
+    border: 1px solid #e1e9df;
+    border-radius: 12px;
+    padding: 0.5rem;
+    min-width: 200px;
+
+    .dropdown-item {
+        border-radius: 7px;
+        color: var(--ps-forest);
+        padding: 0.55rem 0.75rem;
+
+        &:hover,
+        &:focus { background: #eef3e9; }
+    }
+}
+
+.ps-register-link { padding: 0.6rem 0.4rem; }
+
+.ps-main { width: 100%; }
+.ps-page-heading:empty,
+.ps-page-search:empty { display: none; }
+.ps-content { padding-block: 1.5rem 3rem; }
+
+.ps-site-footer {
+    background: var(--ps-forest);
+    color: white;
+    padding-top: 2.7rem;
+}
+
+.ps-footer-columns { padding-bottom: 3.5rem; }
+
+.ps-footer-brand {
+    color: var(--ps-lime);
+    font-size: 1.6rem;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+
+    &:hover,
+    &:focus { color: #e6ff9f; }
+}
+
+.ps-footer-title {
+    color: #fff;
+    font-size: 0.84rem;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+}
+
+.ps-footer-description,
+.ps-footer-link,
+.ps-footer-bottom {
+    color: #bdcec5;
+    font-size: 0.86rem;
+    line-height: 1.6;
+}
+
+.ps-footer-link {
+    display: inline-block;
+    text-decoration: none;
+
+    &:hover,
+    &:focus { color: #fff; }
+}
+
+.ps-footer-pending {
+    cursor: default;
+    opacity: 0.75;
+}
+
+.ps-footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-block: 1rem 1.2rem;
+    font-size: 0.73rem;
+}
+
+@media (max-width: 991.98px) {
+    .ps-navbar { padding-block: 0.8rem; }
+    .ps-navbar-links { padding-block: 1.1rem 0.8rem; gap: 0.3rem; }
+    .ps-navbar-links .nav-link { padding-block: 0.65rem; }
+    .ps-navbar-actions { padding-bottom: 0.5rem; }
+    .ps-navbar-toggler {
+        border: 1px solid #e1e9df;
+        border-radius: 9px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ps-site-footer { padding-top: 2rem; }
+    .ps-footer-columns { padding-bottom: 2rem; }
+    .ps-content { padding-block: 1rem 2.2rem; }
+}
