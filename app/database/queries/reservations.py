@@ -425,3 +425,57 @@ def update_reservation(reservation_id, client_id, debut, fin):
 
     finally:
         conn.close()
+
+def get_reservations_by_client_for_owner(client_id, owner_id):
+    """
+    Retourne les réservations qu'un client a effectuées
+    sur les stationnements d'un propriétaire donné.
+    """
+
+    conn = create_connection()
+
+    try:
+        cursor = conn.cursor()
+
+        command = """
+            SELECT
+                r.id,
+                r.debut,
+                r.fin,
+                p.id,
+                p.address,
+                p.ville,
+                p.prix,
+                p.emplacement,
+                p.image
+            FROM Reservation AS r
+            JOIN Publication AS p
+                ON r.publication = p.id
+            WHERE r.client = ?
+              AND p.author = ?
+              AND p.banni = 0
+            ORDER BY r.debut DESC
+        """
+
+        cursor.execute(command, (client_id, owner_id))
+        results = cursor.fetchall()
+
+        reservations = []
+
+        for row in results:
+            reservations.append({
+                "id": row[0],
+                "debut": row[1],
+                "fin": row[2],
+                "publication_id": row[3],
+                "address": row[4],
+                "ville": row[5],
+                "prix": row[6],
+                "emplacement": row[7],
+                "image": row[8],
+            })
+
+        return reservations
+
+    finally:
+        conn.close()

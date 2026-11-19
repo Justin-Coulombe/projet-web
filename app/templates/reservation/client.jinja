@@ -1,0 +1,194 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}
+{{ client.prenom }} {{ client.nom }} | ParkShare
+{% endblock %}
+
+{% block body_class %}ps-client-page{% endblock %}
+
+{% block recherche %}{% endblock %}
+
+{% block page_layout %}
+
+{% set prix_total = namespace(valeur=0) %}
+
+<div class="container-fluid ps-site-shell py-4">
+
+    <nav class="ps-detail-breadcrumb" aria-label="Fil d'Ariane">
+
+        <a href="{{ url_for('index') }}">Accueil</a>
+
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+
+        <a href="{{ url_for('detail.mes_reservations') }}">Mes réservations</a>
+
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+
+        <span aria-current="page">Informations du client</span>
+
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1 class="h3 fw-bold mb-0">Fiche du client</h1>
+
+        <a href="{{ url_for('detail.mes_reservations') }}" class="btn ps-detail-outline-btn">
+
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+            Retour
+
+        </a>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-12 col-lg-4">
+
+            <div class="ps-profile-edit-card">
+
+                <div class="ps-profile-edit-card-header">
+
+                    <div>
+                        <span class="ps-profile-edit-section-label">
+                            Informations du client
+                        </span>
+
+                        <h2>
+                            {{ client.prenom }} {{ client.nom }}
+                        </h2>
+
+                        <p>
+                            Informations partagées par ce client.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="ps-account-profile-info">
+
+                    <div>
+                        <span>Prénom</span>
+                        <strong>{{ client.prenom }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Nom</span>
+                        <strong>{{ client.nom }}</strong>
+                    </div>
+
+                    <div class="ps-account-info-full">
+                        <span>Adresse courriel</span>
+                        <strong>{{ client.email }}</strong>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+
+            <div class="ps-profile-edit-card">
+
+                <div class="ps-profile-edit-card-header">
+
+                    <div>
+
+                        <h2>Réservations effectuées</h2>
+
+                        <p>
+                            Réservations que ce client a faites
+                            sur vos places de stationnement.
+                        </p>
+                    </div>
+
+
+
+                </div>
+
+                {% if reservations %}
+
+                <div class="table-responsive">
+
+                    <table class="table ps-account-table align-middle">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Stationnement</th>
+                                <th scope="col">Ville</th>
+                                <th scope="col">Début</th>
+                                <th scope="col">Fin</th>
+                                <th scope="col">Prix</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for reservation in reservations %}
+
+                            <tr>
+
+                                <td>
+                                    <a href="{{ url_for('stationnement.detail', publication_id=reservation.publication_id) }}"
+                                        class="ps-account-table-link">
+
+                                        <strong>{{ reservation.address }}</strong>
+
+                                        <span>{{ reservation.emplacement }}</span>
+
+                                    </a>
+                                </td>
+
+                                <td>{{ reservation.ville }}</td>
+
+                                <td class="text-nowrap">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    {{ reservation.debut | replace('T', ' ') }}
+                                </td>
+
+                                <td class="text-nowrap">
+                                    <i class="bi bi-calendar-check me-1"></i>
+                                    {{ reservation.fin | replace('T', ' ') }}
+                                </td>
+
+                                <td class="text-nowrap">
+                                    {{ "%.2f" | format(reservation.prix | float) | replace(".", ",") }} $
+                                    <span class="ps-account-muted">/h</span>
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="ps-account-empty">
+
+                    <i class="bi bi-calendar-x" aria-hidden="true"></i>
+
+                    <h3>Aucune réservation</h3>
+
+                    <p>
+                        Ce client n'a effectué aucune réservation
+                        sur vos stationnements pour le moment.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

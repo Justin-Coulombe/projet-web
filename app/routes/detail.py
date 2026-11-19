@@ -6,17 +6,17 @@ from flask import (
     abort,
     url_for,
     redirect
-    )
+)
 
 import os
 import sqlite3
 from app.form_responses import success
 from app.routes.auth import login_required
-from app.database.queries.publications import get_publications_by_user,get_publications_by_id
+from app.database.queries.publications import get_publications_by_user, get_publications_by_id
 from app.database.queries.users import get_user_by_id
 from app.database.queries.reservations import (
     get_reservation_by_user,
-    get_reservations_by_owner,delete_reservation,update_reservation
+    get_reservations_by_owner, delete_reservation, update_reservation, get_reservations_by_client_for_owner
 )
 
 bp_detail = Blueprint("detail", __name__)
@@ -54,6 +54,7 @@ def reservations_recues():
         reservations=reservations
     )
 
+
 @bp_detail.route("/reservations", methods=["GET"])
 @login_required
 def mes_reservations():
@@ -69,6 +70,7 @@ def mes_reservations():
         lst_reversations=lst_reversations,
         reservations=reservations
     )
+
 
 @bp_detail.route('/supprimer/<int:reservation_id>', methods=['POST'])
 @login_required
@@ -129,12 +131,23 @@ def edit(reservation_id):
                            error=message,
                            form=form)
 
+
 @bp_detail.route('/client/<int:client_id>')
 @login_required
 def client(client_id):
-    """Fiche publique d'un client"""
+    """Fiche publique d'un client, vue par un propriétaire."""
+
     client = get_user_by_id(client_id)
     if client is None:
         abort(404, 'Utilisateur introuvable.')
 
-    return render_template('reservation/client.jinja', client=client)
+    reservations = get_reservations_by_client_for_owner(
+        client_id=client_id,
+        owner_id=session['user_id'],
+    )
+
+    return render_template(
+        'reservation/client.jinja',
+        client=client,
+        reservations=reservations,
+    )
