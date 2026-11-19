@@ -1,4 +1,3 @@
-
 {% extends "_modele.jinja" %}
 
 {% block title %}
@@ -43,15 +42,12 @@ Mes réservations | ParkShare
                         <div class="ps-account-stat-card">
 
                             <div class="ps-account-stat-icon">
-                                <i class="bi bi-calendar-check"
-                                   aria-hidden="true"></i>
+                                <i class="bi bi-calendar-check" aria-hidden="true"></i>
                             </div>
 
                             <span>Réservations effectuées</span>
 
-                            <strong>
-                                {{ lst_reversations | length }}
-                            </strong>
+                            <strong>{{ lst_reversations | length }}</strong>
 
                         </div>
 
@@ -62,15 +58,12 @@ Mes réservations | ParkShare
                         <div class="ps-account-stat-card">
 
                             <div class="ps-account-stat-icon">
-                                <i class="bi bi-calendar-event"
-                                   aria-hidden="true"></i>
+                                <i class="bi bi-calendar-event" aria-hidden="true"></i>
                             </div>
 
                             <span>Réservations reçues</span>
 
-                            <strong>
-                                {{ reservations | length }}
-                            </strong>
+                            <strong>{{ reservations | length }}</strong>
 
                         </div>
 
@@ -96,8 +89,7 @@ Mes réservations | ParkShare
                         </div>
 
                         <div class="ps-profile-edit-header-icon">
-                            <i class="bi bi-calendar-check"
-                               aria-hidden="true"></i>
+                            <i class="bi bi-calendar-check" aria-hidden="true"></i>
                         </div>
 
                     </div>
@@ -114,6 +106,7 @@ Mes réservations | ParkShare
                                     <th scope="col">Début</th>
                                     <th scope="col">Fin</th>
                                     <th scope="col">Détails</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
 
@@ -124,20 +117,14 @@ Mes réservations | ParkShare
                                 <tr>
 
                                     <td>
-
                                         <a href="{{ url_for('stationnement.detail', publication_id=reservation.post.id) }}"
                                            class="ps-account-table-link">
 
-                                            <strong>
-                                                {{ reservation.post.address }}
-                                            </strong>
+                                            <strong>{{ reservation.post.address }}</strong>
 
-                                            <span>
-                                                {{ reservation.post.city }}
-                                            </span>
+                                            <span>{{ reservation.post.city }}</span>
 
                                         </a>
-
                                     </td>
 
                                     <td class="text-nowrap">
@@ -149,16 +136,43 @@ Mes réservations | ParkShare
                                     </td>
 
                                     <td>
-
                                         <a href="{{ url_for('stationnement.detail', publication_id=reservation.post.id) }}"
                                            class="ps-account-view-link">
 
                                             Voir l'annonce
-                                            <i class="bi bi-arrow-up-right"
-                                               aria-hidden="true"></i>
+                                            <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
 
                                         </a>
+                                    </td>
 
+                                    <td>
+                                        <div class="ps-account-table-actions">
+
+                                            <a href="{{ url_for('detail.edit', reservation_id=reservation.id) }}"
+                                               class="btn ps-account-action-button"
+                                               aria-label="Modifier la réservation">
+
+                                                <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                            </a>
+
+                                            <form method="POST"
+                                                  action="{{ url_for('detail.delete', reservation_id=reservation.id) }}"
+                                                  data-ajax-form="delete"
+                                                  data-confirm="Supprimer définitivement cette réservation ?">
+
+                                                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+                                                <button type="submit"
+                                                        class="btn ps-account-action-button ps-account-action-danger"
+                                                        aria-label="Supprimer la réservation">
+
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
                                     </td>
 
                                 </tr>
@@ -175,21 +189,14 @@ Mes réservations | ParkShare
 
                     <div class="ps-account-empty">
 
-                        <i class="bi bi-calendar-x"
-                           aria-hidden="true"></i>
+                        <i class="bi bi-calendar-x" aria-hidden="true"></i>
 
                         <h3>Aucune réservation effectuée</h3>
 
-                        <p>
-                            Vous n'avez pas encore réservé
-                            de stationnement.
-                        </p>
+                        <p>Vous n'avez pas encore réservé de stationnement.</p>
 
-                        <a href="/publications/recherche"
-                           class="btn ps-profile-edit-btn-primary">
-
+                        <a href="/publications/recherche" class="btn ps-profile-edit-btn-primary">
                             Trouver un stationnement
-
                         </a>
 
                     </div>
@@ -216,8 +223,7 @@ Mes réservations | ParkShare
                         </div>
 
                         <div class="ps-profile-edit-header-icon">
-                            <i class="bi bi-p-square"
-                               aria-hidden="true"></i>
+                            <i class="bi bi-p-square" aria-hidden="true"></i>
                         </div>
 
                     </div>
@@ -230,7 +236,7 @@ Mes réservations | ParkShare
 
                             <thead>
                                 <tr>
-                                    <th scope="col">N°</th>
+                                    <th scope="col">Client</th>
                                     <th scope="col">Stationnement</th>
                                     <th scope="col">Début</th>
                                     <th scope="col">Fin</th>
@@ -244,26 +250,26 @@ Mes réservations | ParkShare
                                 <tr>
 
                                     <td>
-                                        <span class="ps-account-tag">
-                                            #{{ reservation.id }}
-                                        </span>
-                                    </td>
-
-                                    <td>
-
-                                        <a href="{{ url_for('stationnement.detail', publication_id=reservation.publication_id) }}"
+                                        <a href="{{ url_for('detail.client', client_id=reservation.client_id) }}"
                                            class="ps-account-table-link">
 
                                             <strong>
-                                                {{ reservation.address }}
+                                                {{ reservation.client_prenom }}
+                                                {{ reservation.client_nom }}
                                             </strong>
 
-                                            <span>
-                                                {{ reservation.ville }}
-                                            </span>
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        <a href="{{ url_for('stationnement.detail', publication_id=reservation.publication_id) }}"
+                                           class="ps-account-table-link">
+
+                                            <strong>{{ reservation.address }}</strong>
+
+                                            <span>{{ reservation.ville }}</span>
 
                                         </a>
-
                                     </td>
 
                                     <td class="text-nowrap">
@@ -288,8 +294,7 @@ Mes réservations | ParkShare
 
                     <div class="ps-account-empty">
 
-                        <i class="bi bi-inbox"
-                           aria-hidden="true"></i>
+                        <i class="bi bi-inbox" aria-hidden="true"></i>
 
                         <h3>Aucune réservation reçue</h3>
 
@@ -300,9 +305,7 @@ Mes réservations | ParkShare
 
                         <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
                            class="btn ps-profile-edit-btn-outline">
-
                             Proposer une place
-
                         </a>
 
                     </div>

@@ -1,6 +1,6 @@
 class publication:
     def __init__(self, pId, pAuthor, pAddress, pPrice, pCity,
-                 pLocation, pImgUrl, pPlaceTotal, pBanni = False,
+                 pLocation, pImgUrl, pPlaceTotal, pBanni=False,
                  pLatitude=None, pLongitude=None):
         self.id = pId
         self.author_id = pAuthor
@@ -9,7 +9,7 @@ class publication:
         self.city = pCity
         self.location = pLocation
         self.img = pImgUrl
-        self.placeTotal = pPlaceTotal
+        self.place_total = pPlaceTotal
         self.banni = pBanni
         self.latitude = pLatitude
         self.longitude = pLongitude
@@ -19,8 +19,8 @@ class publication:
             'id': self.id, 'author': self.author_id,
             'address': self.address, 'price': self.price,
             'city': self.city, 'location': self.location,
-            'img': self.img, 'place_total': self.placeTotal,
-            'banni' : self.banni,'latitude': self.latitude,
+            'img': self.img, 'place_total': self.place_total,
+            'banni': self.banni, 'latitude': self.latitude,
             'longitude': self.longitude
         }
 
