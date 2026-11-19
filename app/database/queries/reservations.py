@@ -18,13 +18,11 @@ def create_reservation_table():
             FOREIGN KEY (publication)
                 REFERENCES Publication(id),
             FOREIGN KEY (client) REFERENCES User(id)
-
         )
     """
 
     cursor.execute(command)
     close_connection(conn, cursor)
-
 
 
 def _places_disponibles(conn, publication_id, debut, fin):
@@ -59,14 +57,12 @@ def _places_disponibles(conn, publication_id, debut, fin):
         (publication_id, fin, debut)
     ).fetchall()
 
-    # Chaque événement indique l'occupation d'une place.
     evenements = []
 
     for debut_res, fin_res in reservations:
         debut_res = datetime.fromisoformat(debut_res)
         fin_res = datetime.fromisoformat(fin_res)
 
-        # On limite les événements à la période demandée.
         debut_effectif = max(debut_res, datetime.fromisoformat(debut))
         fin_effective = min(fin_res, datetime.fromisoformat(fin))
 
@@ -74,7 +70,6 @@ def _places_disponibles(conn, publication_id, debut, fin):
             evenements.append((debut_effectif, 1))
             evenements.append((fin_effective, -1))
 
-    # À heure égale, une sortie précède une entrée.
     evenements.sort(key=lambda item: (item[0], item[1]))
 
     occupation = 0
@@ -110,7 +105,6 @@ def creer_reservation(user_id, debut, fin, publication_id):
     if user_id is None:
         return False, "Vous devez être connecté."
 
-    # Import local pour éviter une dépendance circulaire.
     from app.services.reservation_manager import valider_periode
 
     debut, fin, erreur = valider_periode(debut, fin)
@@ -121,7 +115,6 @@ def creer_reservation(user_id, debut, fin, publication_id):
     conn = create_connection()
 
     try:
-        # Verrou d'écriture avant la vérification.
         conn.execute("BEGIN IMMEDIATE")
 
         utilisateur = conn.execute(
@@ -146,8 +139,6 @@ def creer_reservation(user_id, debut, fin, publication_id):
             conn.rollback()
             return False, "Vous ne pouvez pas réserver votre propre stationnement."
 
-        # Vérifier si l'utilisateur possède déjà une réservation
-        # qui chevauche la période demandée.
         reservation_existante = conn.execute(
             """
             SELECT id
@@ -232,7 +223,10 @@ def get_reservation_by_user(user_id):
                 p.banni
             FROM Reservation r
             JOIN Publication p ON p.id = r.publication
+            JOIN User u ON u.id = p.author
             WHERE r.client = ?
+              AND p.banni = 0
+              AND u.banni = 0
             ORDER BY r.debut DESC
         """
 
@@ -263,6 +257,7 @@ def get_reservation_by_user(user_id):
     finally:
         conn.close()
 
+
 def get_reservations_by_owner(owner_id):
     """Retourne les réservations des stationnements d'un propriétaire."""
 
@@ -278,11 +273,18 @@ def get_reservations_by_owner(owner_id):
                 r.fin,
                 p.id,
                 p.address,
-                p.ville
+                p.ville,
+                u.id,
+                u.nom,
+                u.prenom
             FROM Reservation AS r
             JOIN Publication AS p
                 ON r.publication = p.id
+            JOIN User AS u
+                ON u.id = r.client
             WHERE p.author = ?
+              AND p.banni = 0
+              AND u.banni = 0
             ORDER BY r.debut ASC, r.id ASC
         """
 
@@ -298,13 +300,17 @@ def get_reservations_by_owner(owner_id):
                 "fin": row[2],
                 "publication_id": row[3],
                 "address": row[4],
-                "ville": row[5]
+                "ville": row[5],
+                "client_id": row[6],
+                "client_nom": row[7],
+                "client_prenom": row[8],
             })
 
         return reservations
 
     finally:
         conn.close()
+
 
 def get_reservations_in_range(date_debut, date_fin):
     conn = create_connection()
@@ -322,11 +328,12 @@ def get_reservations_in_range(date_debut, date_fin):
         reservations = []
         for row in res:
             reservations.append(
-                reservation(row[0], row[1],row[3],row[4],row[2]) 
+                reservation(row[0], row[1], row[3], row[4], row[2])
             )
         return reservations
     finally:
         close_connection(conn, curseur)
+
 
 def get_reservations_by_publication(pub_id):
     conn = create_connection()
@@ -338,8 +345,137 @@ def get_reservations_by_publication(pub_id):
         reservations = []
         for row in res:
             reservations.append(
-                reservation(row[0], row[1],row[3],row[4],row[2]) 
+                reservation(row[0], row[1], row[3], row[4], row[2])
             )
         return reservations
     finally:
         close_connection(conn, curseur)
+
+
+def delete_reservation(reservation_id, client_id):
+    """Supprime une réservation de la base de données."""
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        DELETE FROM Reservation WHERE id = ? and client = ?
+        """,
+        (reservation_id, client_id)
+    )
+    close_connection(conn, cursor)
+
+
+def update_reservation(reservation_id, client_id, debut, fin):
+    """Met à jour une réservation."""
+    if client_id is None:
+        return False, "Vous devez être connecté."
+
+    from app.services.reservation_manager import valider_periode
+
+    debut, fin, erreur = valider_periode(debut, fin)
+
+    if erreur:
+        return False, erreur
+
+    conn = create_connection()
+
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+
+        existante = conn.execute(
+            "SELECT client, publication FROM Reservation WHERE id = ?",
+            (reservation_id,)
+        ).fetchone()
+
+        if existante is None:
+            conn.rollback()
+            return False, "Réservation introuvable."
+
+        client, publication_id = existante
+
+        if client != client_id:
+            conn.rollback()
+            return False, "Vous ne pouvez pas modifier cette réservation."
+
+        conn.execute(
+            "DELETE FROM Reservation WHERE id = ?",
+            (reservation_id,)
+        )
+
+        disponible, message = _places_disponibles(
+            conn, publication_id, debut, fin
+        )
+
+        if not disponible:
+            conn.rollback()
+            return False, message
+
+        conn.execute(
+            "INSERT INTO Reservation (client, publication, debut, fin) "
+            "VALUES (?, ?, ?, ?)",
+            (client_id, publication_id, debut, fin)
+        )
+
+        conn.commit()
+        return True, "Votre réservation a été modifiée."
+
+    except sqlite3.Error:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
+def get_reservations_by_client_for_owner(client_id, owner_id):
+    """
+    Retourne les réservations qu'un client a effectuées
+    sur les stationnements d'un propriétaire donné.
+    """
+
+    conn = create_connection()
+
+    try:
+        cursor = conn.cursor()
+
+        command = """
+            SELECT
+                r.id,
+                r.debut,
+                r.fin,
+                p.id,
+                p.address,
+                p.ville,
+                p.prix,
+                p.emplacement,
+                p.image
+            FROM Reservation AS r
+            JOIN Publication AS p
+                ON r.publication = p.id
+            WHERE r.client = ?
+              AND p.author = ?
+              AND p.banni = 0
+            ORDER BY r.debut DESC
+        """
+
+        cursor.execute(command, (client_id, owner_id))
+        results = cursor.fetchall()
+
+        reservations = []
+
+        for row in results:
+            reservations.append({
+                "id": row[0],
+                "debut": row[1],
+                "fin": row[2],
+                "publication_id": row[3],
+                "address": row[4],
+                "ville": row[5],
+                "prix": row[6],
+                "emplacement": row[7],
+                "image": row[8],
+            })
+
+        return reservations
+
+    finally:
+        conn.close()

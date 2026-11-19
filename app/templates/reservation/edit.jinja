@@ -1,0 +1,327 @@
+{% extends "_modele.jinja" %}
+
+{% block title %}
+Modifier ma réservation | ParkShare
+{% endblock %}
+
+{% block body_class %}ps-reservation-edit-page{% endblock %}
+
+{% block page_layout %}
+
+{% set prix_formate = "%.2f" | format(publication.price | float) | replace(".", ",") %}
+
+<div class="ps-parking-detail">
+
+    <div class="container-fluid ps-site-shell">
+
+        <nav class="ps-detail-breadcrumb" aria-label="Fil d'Ariane">
+
+            <a href="{{ url_for('index') }}">Accueil</a>
+
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+
+            <a href="{{ url_for('detail.detail_profil') }}">Mon espace</a>
+
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+
+            <a href="{{ url_for('detail.mes_reservations') }}">Mes réservations</a>
+
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+
+            <span aria-current="page">Modifier</span>
+
+        </nav>
+
+        <header class="ps-detail-header">
+
+            <div>
+
+                <span class="ps-detail-eyebrow">
+                    MODIFIER UNE RÉSERVATION
+                </span>
+
+                <h1>{{ publication.address }}</h1>
+
+                <p class="ps-detail-location">
+                    <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                    {{ publication.city }}, Québec
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('detail.mes_reservations') }}"
+               class="btn ps-detail-outline-btn">
+
+                <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+                Retour
+
+            </a>
+
+        </header>
+
+        <div class="ps-detail-main-grid">
+
+            <div class="ps-detail-main-content">
+
+                <section class="ps-detail-image-card"
+                         aria-label="Photo du stationnement">
+
+                    {% if publication.img %}
+
+                    <img src="{{ url_for('static', filename='img/stationnement/' ~ publication.img) }}"
+                         alt="Stationnement situé au {{ publication.address }}"
+                         class="ps-detail-image">
+
+                    {% else %}
+
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}"
+                         alt="Photo non disponible"
+                         class="ps-detail-image">
+
+                    {% endif %}
+
+                </section>
+
+                <section class="ps-detail-card">
+
+                    <div class="ps-detail-section-heading">
+
+                        <span class="ps-detail-section-label">
+                            LE STATIONNEMENT
+                        </span>
+
+                        <h2>Rappel de l'emplacement.</h2>
+
+                        <p>
+                            Vérifiez les informations avant
+                            de modifier votre période.
+                        </p>
+
+                    </div>
+
+                    <div class="ps-detail-features">
+
+                        <div class="ps-detail-feature">
+
+                            <div class="ps-detail-feature-icon">
+                                <i class="bi bi-p-square" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+                                <span>Type d'emplacement</span>
+                                <strong>{{ publication.location }}</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="ps-detail-feature">
+
+                            <div class="ps-detail-feature-icon">
+                                <i class="bi bi-car-front" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+                                <span>Nombre de places</span>
+                                <strong>
+                                    {{ publication.place_total }}
+                                    place{% if publication.place_total | int != 1 %}s{% endif %}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="ps-detail-feature">
+
+                            <div class="ps-detail-feature-icon">
+                                <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+                                <span>Ville</span>
+                                <strong>{{ publication.city }}</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="ps-detail-feature">
+
+                            <div class="ps-detail-feature-icon">
+                                <i class="bi bi-cash-coin" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+                                <span>Tarif horaire</span>
+                                <strong>{{ prix_formate }} $ / heure</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="ps-detail-card">
+
+                    <div class="ps-detail-section-heading">
+
+                        <span class="ps-detail-section-label">
+                            NOUVELLE PÉRIODE
+                        </span>
+
+                        <h2>Modifiez vos dates de réservation.</h2>
+
+                        <p>
+                            Choisissez une nouvelle période
+                            de stationnement.
+                        </p>
+
+                    </div>
+
+                    <form method="POST"
+                          action="{{ url_for('detail.edit', reservation_id=reservation.id) }}"
+                          novalidate>
+
+                        <input type="hidden"
+                               name="_csrf"
+                               value="{{ csrf_token() }}">
+
+                        {% if error %}
+
+                        <div class="ps-detail-booking-message ps-detail-message-error"
+                             role="alert">
+
+                            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+
+                            <span>{{ error }}</span>
+
+                        </div>
+
+                        {% endif %}
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label for="date_du" class="form-label">
+                                    Date et heure d'arrivée
+                                </label>
+
+                                <input type="datetime-local"
+                                       id="date_du"
+                                       name="date_du"
+                                       class="form-control"
+                                       value="{{ form.date_du | replace(' ', 'T') }}"
+                                       required>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label for="date_au" class="form-label">
+                                    Date et heure de départ
+                                </label>
+
+                                <input type="datetime-local"
+                                       id="date_au"
+                                       name="date_au"
+                                       class="form-control"
+                                       value="{{ form.date_au | replace(' ', 'T') }}"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+
+                            <a href="{{ url_for('detail.mes_reservations') }}"
+                               class="btn ps-detail-outline-btn">
+
+                                Annuler
+
+                            </a>
+
+                            <button type="submit"
+                                    class="btn ps-detail-primary-btn">
+
+                                <i class="bi bi-check-circle me-2" aria-hidden="true"></i>
+
+                                Enregistrer les modifications
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+            <aside class="ps-detail-booking-column">
+
+                <div class="ps-detail-booking-card">
+
+                    <div class="ps-detail-booking-price">
+
+                        <div>
+                            <strong>{{ prix_formate }} $</strong>
+                            <span>/ heure</span>
+                        </div>
+
+                        <span class="ps-detail-booking-price-caption">
+                            Tarif du stationnement
+                        </span>
+
+                    </div>
+
+                    <div class="ps-detail-booking-divider"></div>
+
+                    <div class="ps-detail-owner">
+
+                        <div class="ps-detail-owner-icon">
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                        </div>
+
+                        <h2>Réservation actuelle</h2>
+
+                        <p>
+                            <strong>Arrivée :</strong>
+                            {{ reservation.start | replace('T', ' ') }}<br>
+                            <strong>Départ :</strong>
+                            {{ reservation.end | replace('T', ' ') }}
+                        </p>
+
+                        <p>
+                            Modifiez la période de votre reservation plus bas.
+                        </p>
+
+                        <a href="{{ url_for('stationnement.detail', publication_id=publication.id) }}"
+                           class="ps-detail-secondary-link">
+
+                            Voir l'annonce
+                            <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+
+                        </a>
+
+                        <a href="{{ url_for('detail.mes_reservations') }}"
+                           class="ps-detail-secondary-link">
+
+                            Retour à mes réservations
+                            <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
