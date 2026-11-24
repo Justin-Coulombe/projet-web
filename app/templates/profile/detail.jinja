@@ -1,4 +1,3 @@
-
 {% extends "_modele.jinja" %}
 
 {% block title %}
@@ -31,7 +30,7 @@ Mon profil | ParkShare
         <div class="ps-profile-edit-layout">
 
             {% with active_page = 'profil' %}
-                {% include "components/_account_sidebar.jinja" %}
+            {% include "components/_account_sidebar.jinja" %}
             {% endwith %}
 
             <div class="ps-profile-edit-content">
@@ -60,8 +59,7 @@ Mon profil | ParkShare
                         </div>
 
                         <div class="ps-profile-edit-header-icon">
-                            <i class="bi bi-person"
-                               aria-hidden="true"></i>
+                            <i class="bi bi-person" aria-hidden="true"></i>
                         </div>
 
                     </div>
@@ -87,11 +85,9 @@ Mon profil | ParkShare
 
                     <div class="ps-profile-edit-actions">
 
-                        <a href="{{ url_for('profile.edit') }}"
-                           class="btn ps-profile-edit-btn-outline">
+                        <a href="{{ url_for('profile.edit') }}" class="btn ps-profile-edit-btn-outline">
 
-                            <i class="bi bi-pencil-square me-2"
-                               aria-hidden="true"></i>
+                            <i class="bi bi-pencil-square me-2" aria-hidden="true"></i>
 
                             Modifier mes informations
                         </a>
@@ -118,10 +114,9 @@ Mon profil | ParkShare
                         </div>
 
                         <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
-                           class="btn ps-profile-edit-btn-primary">
+                            class="btn ps-profile-edit-btn-primary">
 
-                            <i class="bi bi-plus-lg me-1"
-                               aria-hidden="true"></i>
+                            <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
 
                             Ajouter
                         </a>
@@ -153,7 +148,7 @@ Mon profil | ParkShare
 
                                     <td>
                                         <a href="{{ url_for('stationnement.detail', publication_id=publication.id) }}"
-                                           class="ps-account-table-link">
+                                            class="ps-account-table-link">
 
                                             <strong>
                                                 {{ publication.address }}
@@ -177,7 +172,7 @@ Mon profil | ParkShare
                                     </td>
 
                                     <td>
-                                        {{ publication.placeTotal }}
+                                        {{ publication.place_total }}
                                     </td>
 
                                     <td>
@@ -190,28 +185,24 @@ Mon profil | ParkShare
                                         <div class="ps-account-table-actions">
 
                                             <a href="{{ url_for('stationnement.edit', publication_id=publication.id) }}"
-                                               class="btn ps-account-action-button"
-                                               aria-label="Modifier l'annonce {{ publication.address }}">
+                                                class="btn ps-account-action-button"
+                                                aria-label="Modifier l'annonce {{ publication.address }}">
 
-                                                <i class="bi bi-pencil-square"
-                                                   aria-hidden="true"></i>
+                                                <i class="bi bi-pencil-square" aria-hidden="true"></i>
                                             </a>
 
                                             <form method="POST"
-                                                  action="{{ url_for('stationnement.delete', publication_id=publication.id) }}"
-                                                  data-ajax-form="delete"
-                                                  data-confirm="Supprimer définitivement cette annonce ?">
+                                                action="{{ url_for('stationnement.delete', publication_id=publication.id) }}"
+                                                data-ajax-form="delete"
+                                                data-confirm="Supprimer définitivement cette annonce ?">
 
-                                                <input type="hidden"
-                                                       name="_csrf"
-                                                       value="{{ csrf_token() }}">
+                                                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
 
                                                 <button type="submit"
-                                                        class="btn ps-account-action-button ps-account-action-danger"
-                                                        aria-label="Supprimer l'annonce {{ publication.address }}">
+                                                    class="btn ps-account-action-button ps-account-action-danger"
+                                                    aria-label="Supprimer l'annonce {{ publication.address }}">
 
-                                                    <i class="bi bi-trash"
-                                                       aria-hidden="true"></i>
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
 
                                                 </button>
 
@@ -234,8 +225,7 @@ Mon profil | ParkShare
 
                     <div class="ps-account-empty">
 
-                        <i class="bi bi-p-square"
-                           aria-hidden="true"></i>
+                        <i class="bi bi-p-square" aria-hidden="true"></i>
 
                         <h3>Aucune annonce pour le moment</h3>
 
@@ -245,7 +235,7 @@ Mon profil | ParkShare
                         </p>
 
                         <a href="{{ url_for('stationnement.ajouter_stationnement') }}"
-                           class="btn ps-profile-edit-btn-primary">
+                            class="btn ps-profile-edit-btn-primary">
 
                             Proposer une place
                         </a>
@@ -271,13 +261,11 @@ Mon profil | ParkShare
                         </p>
                     </div>
 
-                    <a href="{{ url_for('detail.mes_reservations') }}"
-                       class="btn ps-account-banner-button">
+                    <a href="{{ url_for('detail.mes_reservations') }}" class="btn ps-account-banner-button">
 
                         Voir mes réservations
 
-                        <i class="bi bi-arrow-up-right ms-1"
-                           aria-hidden="true"></i>
+                        <i class="bi bi-arrow-up-right ms-1" aria-hidden="true"></i>
 
                     </a>
 
